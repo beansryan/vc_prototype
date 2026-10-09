@@ -20,7 +20,14 @@
     return getComputedStyle(document.body).backgroundColor || '#fff';
   }
 
+  // Purchases on a phone: the list and the order detail are the same tab, switched by rSel
+  const inReceiptDetail = (st) => st.tab === 'receipts' && !!st.rSel && L.props.size === 'compact';
   function classify(prev, patch) {
+    if (patch.tab === undefined && prev.tab === 'receipts' && patch.rSel !== undefined && L.props.size === 'compact' && !prev.splash) {
+      if (patch.rSel && !prev.rSel) return 'push';
+      if (!patch.rSel && prev.rSel) return 'pop';
+      return '';
+    }
     if (patch.tab === undefined || patch.tab === prev.tab || prev.splash) return '';
     const to = patch.tab, from = prev.tab;
     if (patch.tier !== undefined) return 'fade';
@@ -160,7 +167,7 @@
     rootEl.addEventListener('touchstart', (e) => {
       const t = e.touches[0]; const r = rootEl.getBoundingClientRect();
       const s = L && L.state;
-      on = !!(s && (s.history || []).length && !s.modal && !s.iam && !s.bdaySheet && s.tab !== 'scan' && t.clientX - r.left < 24);
+      on = !!(s && ((s.history || []).length || inReceiptDetail(s)) && !s.modal && !s.iam && !s.bdaySheet && s.tab !== 'scan' && t.clientX - r.left < 24);
       sx = t.clientX; sy = t.clientY; dx = 0;
       if (on && stack.length && L.scroller) {
         under = stack[stack.length - 1];
@@ -182,7 +189,7 @@
       const sc = L.scroller;
       if (dx > Math.min(110, sc.clientWidth * 0.3)) {
         sc.style.translate = ''; sc.style.boxShadow = '';
-        pendingPopFrom = dx; L.back();
+        pendingPopFrom = dx; if (inReceiptDetail(L.state)) L.setState({ rSel: '' }); else L.back();
       } else {
         const a = anim(sc, [{ translate: dx + 'px 0' }, { translate: '0 0' }], { duration: 250, easing: EASE_PUSH, fill: 'none' });
         const u = under; under = null;
