@@ -80,6 +80,29 @@
   .dv-sw.on { background: var(--dv-sw); }
   .dv-sw.on i { transform: translateX(20px); }
   .dv-foot { font-size: 12.5px; color: var(--dv-sub); text-align: center; margin: 18px 8px 0; }
+  /* iOS 26/27 Liquid Glass tab bar */
+  [data-tbwrap] { justify-content: space-between; }
+  [data-tabbar] { position: relative; max-width: 420px; touch-action: none; transition: max-width .5s cubic-bezier(.3,1.15,.4,1), scale .35s cubic-bezier(.3,1.4,.5,1); }
+  [data-tabbar] > button { transition: flex-grow .45s cubic-bezier(.3,1,.4,1), opacity .25s, color .25s; }
+  [data-tabbar] > button > span:last-child { transition: opacity .2s, font-size .3s; }
+  [data-tabbar].tb-press { scale: 1.035; }
+  [data-tabbar].tb-press > button:active { opacity: 1; }
+  [data-tabbar] > button.tb-hot { scale: 1.08; transition: scale .2s, color .2s; }
+  [data-tabind] { transition: scale .3s cubic-bezier(.3,1.5,.5,1), background-color .25s, box-shadow .25s, opacity .25s; }
+  [data-tabind].tb-lens { scale: 1.2 1.14; background-color: rgba(255,255,255,.55) !important; box-shadow: inset 0 0 0 .7px rgba(255,255,255,.9), inset 0 -8px 16px rgba(255,255,255,.35), 0 10px 26px rgba(18,23,53,.16); }
+  @media (prefers-color-scheme: dark) { [data-tabind].tb-lens { background-color: rgba(255,255,255,.16) !important; box-shadow: inset 0 0 0 .7px rgba(255,255,255,.35), 0 10px 26px rgba(0,0,0,.4); } }
+  [data-seg] { position: relative; }
+  [data-seg] > button { position: relative; z-index: 1; }
+  [data-tbmin] [data-tabbar] { max-width: 62px; }
+  [data-tbmin] [data-tabbar] > button:not([data-on]) { flex-grow: 0 !important; flex-basis: 0 !important; opacity: 0; overflow: hidden; pointer-events: none; }
+  [data-tbmin] [data-tabbar] > button > span:last-child { opacity: 0; font-size: 0; }
+  [data-tbmin] [data-tabind] { opacity: 0; }
+  /* scan viewfinder */
+  .fx-scanline { animation: fxScan 2.2s cubic-bezier(.45,0,.55,1) infinite alternate; }
+  @keyframes fxScan { from { top: 24%; } to { top: 72%; } }
+  .fx-breathe { animation: fxBreathe 1.6s ease-in-out infinite; }
+  @keyframes fxBreathe { 50% { opacity: .55; } }
+  @media (prefers-reduced-motion: reduce) { .fx-scanline, .fx-breathe { animation: none; } }
   /* press feedback, like a native tap */
   #root button, #root a { -webkit-touch-callout: none; }
   #root button:active, #root a:active { opacity: .62; transition: opacity 0s; }

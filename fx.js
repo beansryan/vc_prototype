@@ -51,6 +51,7 @@
         ghost.style.cssText = 'position:absolute;inset:0;overflow:hidden;pointer-events:none;background:' + bgOf(sc) + ';';
         const clone = page.cloneNode(true);
         clone.style.translate = '0 ' + (-sc.scrollTop) + 'px';
+        clone.querySelectorAll('[data-in],[data-seg],[data-tabind],[data-fx],[data-tabbar]').forEach((e) => ['data-in', 'data-seg', 'data-tabind', 'data-fx', 'data-tabbar'].forEach((k) => e.removeAttribute(k)));
         ghost.appendChild(clone);
         plan.ghost = ghost;
       }
@@ -76,6 +77,10 @@
         if (box) anim(box, isSheet(box) ? [{ translate: '0 0' }, { translate: '0 100%' }] : [{ scale: '1', opacity: 1 }, { scale: '.94', opacity: 0 }], { duration: 240, easing: EASE_OUT });
       } else if (kind === 'toast') {
         a = anim(el, [{ opacity: 1, scale: '1' }, { opacity: 0, scale: '.92' }], { duration: 200, easing: 'ease-in' });
+      } else if (kind === 'peel') {
+        a = anim(el, [{ opacity: 1, scale: '1', rotate: '0deg', translate: '0 0' }, { opacity: 0, scale: '1.15', rotate: '-8deg', translate: '-30px -40px' }], { duration: 480, easing: 'cubic-bezier(.3,.6,.4,1)' });
+      } else if (kind === 'screen') {
+        a = anim(el, [{ opacity: 1, scale: '1' }, { opacity: 0, scale: '1.03' }], { duration: 260, easing: 'ease' });
       } else if (kind === 'splash') {
         const logo = el.querySelector('img,span');
         if (logo) anim(logo, [{ scale: '1' }, { scale: '1.08' }], { duration: 420, easing: EASE_OUT });
@@ -98,6 +103,10 @@
         }
       } else if (kind === 'toast') {
         anim(el, [{ opacity: 0, translate: '0 14px', scale: '.94' }, { opacity: 1, translate: '0 0', scale: '1' }], { duration: 320, easing: EASE_PUSH, fill: 'none' });
+      } else if (kind === 'screen') {
+        anim(el, [{ opacity: 0 }, { opacity: 1 }], { duration: 300, easing: 'ease', fill: 'none' });
+        const card = el.querySelector('[data-wiggle]');
+        if (card) anim(card, [{ scale: '.7', opacity: 0, rotate: '-12deg' }, { scale: '1.04', opacity: 1, rotate: '1deg', offset: 0.7 }, { scale: '1', opacity: 1, rotate: '0deg' }], { duration: 560, delay: 80, easing: 'cubic-bezier(.2,.8,.3,1)', fill: 'backwards' });
       }
     });
     // skeleton to content
@@ -183,6 +192,190 @@
     });
   }
 
+  // ======================================================================
+  // After every render: tab bar, segmented controls, entrance animations
+  // ======================================================================
+  const seen = new WeakSet();
+  const segLast = new WeakMap();
+  const SPRING = 'cubic-bezier(.25,1.25,.45,1)';   // light overshoot, like a UIKit spring
+  const tb = { ind: null, x: null, w: null, min: false, pressing: false, dragged: false, suppress: false, raf: 0 };
+
+  function postRender() {
+    if (!L || !L.scroller) return;
+    const app = L.scroller.parentElement;
+    syncTabBar(app, false);
+    syncSegments(app);
+    entrances(app);
+  }
+
+  // ---------- iOS tab bar: sliding glass selection, press-and-drag lens, minimise on scroll ----------
+  function tabTarget(bar) {
+    const btn = bar.querySelector(':scope > button[data-on]');
+    return btn ? { btn, x: btn.offsetLeft, w: btn.offsetWidth } : null;
+  }
+  function placeInd(ind, x, w) { ind.style.translate = x + 'px 0'; ind.style.width = w + 'px'; tb.x = x; tb.w = w; }
+
+  function syncTabBar(app, force) {
+    const bar = app.querySelector('[data-tabbar]');
+    if (!bar) { tb.ind = null; return; }
+    const wrap = bar.parentElement;
+    wrap.setAttribute('data-tbwrap', '1');
+    const ind = bar.querySelector('[data-tabind]');
+    const s = L.state;
+    // minimise while scrolling down a main tab, like tabBarMinimizeBehavior(.onScrollDown)
+    const min = !!s.fabHide && !!MAIN_TABS[s.tab] && !tb.pressing;
+    if (min !== tb.min) {
+      tb.min = min;
+      if (min) wrap.setAttribute('data-tbmin', '1'); else wrap.removeAttribute('data-tbmin');
+      if (!min) {
+        // expanding: wait for the bar to grow back, then bring the selection pill in
+        ind.style.opacity = '0';
+        setTimeout(() => { const t = tabTarget(bar); if (t) placeInd(ind, t.x, t.w); anim(ind, [{ opacity: 0, scale: '.6' }, { opacity: 1, scale: '1' }], { duration: 320, easing: SPRING, fill: 'none' }); ind.style.opacity = ''; }, 430);
+      }
+      tb.ind = ind;
+      return;
+    }
+    if (tb.min || tb.pressing) { tb.ind = ind; return; }
+    const t = tabTarget(bar);
+    if (!t) return;
+    const fresh = tb.ind !== ind || !ind.style.width;
+    tb.ind = ind;
+    if (fresh || force || reduce.matches || tb.x === null) { placeInd(ind, t.x, t.w); return; }
+    if (Math.abs(t.x - tb.x) < 1 && Math.abs(t.w - tb.w) < 1) return;
+    // liquid morph: the pill stretches to cover both tabs, then settles on the new one
+    const x0 = tb.x, w0 = tb.w;
+    const lo = Math.min(x0, t.x), hi = Math.max(x0 + w0, t.x + t.w);
+    placeInd(ind, t.x, t.w);
+    anim(ind, [
+      { translate: x0 + 'px 0', width: w0 + 'px', scale: '1 1' },
+      { translate: lo + 'px 0', width: (hi - lo) + 'px', scale: '1 .86', offset: 0.45 },
+      { translate: t.x + 'px 0', width: t.w + 'px', scale: '1 1' }
+    ], { duration: 520, easing: 'cubic-bezier(.3,.9,.3,1.05)', fill: 'none' });
+    const icon = t.btn.querySelector('svg');
+    if (icon) anim(icon, [{ scale: '1' }, { scale: '1.22', offset: 0.35 }, { scale: '.94', offset: 0.7 }, { scale: '1' }], { duration: 480, easing: 'ease-out', fill: 'none' });
+  }
+
+  function tabBarGestures(rootEl) {
+    let bar = null, startX = 0;
+    const btnAt = (x) => {
+      let best = null, bd = 1e9;
+      bar.querySelectorAll(':scope > button').forEach((b) => { const r = b.getBoundingClientRect(); const d = Math.abs(r.left + r.width / 2 - x); if (d < bd) { bd = d; best = b; } });
+      return best;
+    };
+    const moveLens = (clientX) => {
+      const r = bar.getBoundingClientRect(); const k = r.width / bar.offsetWidth || 1;
+      const w = tb.w || 80; let x = (clientX - r.left) / k - w / 2;
+      x = Math.max(2, Math.min(bar.offsetWidth - w - 2, x));
+      tb.ind.style.translate = x + 'px 0';
+      bar.querySelectorAll(':scope > button').forEach((b) => b.classList.toggle('tb-hot', b === btnAt(clientX)));
+    };
+    rootEl.addEventListener('pointerdown', (e) => {
+      const b = e.target.closest && e.target.closest('[data-tabbar]');
+      if (!b || reduce.matches || tb.min || !tb.ind) return;
+      bar = b; startX = e.clientX; tb.pressing = true; tb.dragged = false;
+      bar.classList.add('tb-press'); tb.ind.classList.add('tb-lens');
+      moveLens(e.clientX);
+    });
+    rootEl.addEventListener('pointermove', (e) => {
+      if (!tb.pressing || !bar) return;
+      if (Math.abs(e.clientX - startX) > 8) tb.dragged = true;
+      moveLens(e.clientX);
+    });
+    const end = (e, cancelled) => {
+      if (!tb.pressing || !bar) return;
+      const target = !cancelled && tb.dragged ? btnAt(e.clientX) : null;
+      tb.pressing = false;
+      bar.classList.remove('tb-press'); tb.ind.classList.remove('tb-lens');
+      bar.querySelectorAll('.tb-hot').forEach((b) => b.classList.remove('tb-hot'));
+      // let the lens settle back onto a tab
+      const from = tb.ind.style.translate;
+      const b0 = bar;
+      bar = null;
+      if (target) {
+        tb.suppress = true; setTimeout(() => { tb.suppress = false; }, 400);
+        if (target.hasAttribute('data-on')) { const t = tabTarget(b0); anim(tb.ind, [{ translate: from }, { translate: t.x + 'px 0' }], { duration: 380, easing: SPRING, fill: 'none' }); tb.ind.style.translate = t.x + 'px 0'; }
+        else { tb.x = parseFloat(from) || tb.x; target.click(); }
+      } else if (!cancelled) {
+        // a plain tap: the button's own click selects the tab; start the morph from where the lens is
+        tb.x = parseFloat(from) || tb.x;
+        setTimeout(() => { if (b0.isConnected) syncTabBar(L.scroller.parentElement, false); const t = tabTarget(b0); if (t && Math.abs(parseFloat(tb.ind.style.translate) - t.x) > 1) { anim(tb.ind, [{ translate: from }, { translate: t.x + 'px 0' }], { duration: 380, easing: SPRING, fill: 'none' }); placeInd(tb.ind, t.x, t.w); } }, 0);
+      } else {
+        const t = tabTarget(b0); if (t) placeInd(tb.ind, t.x, t.w);
+      }
+    };
+    rootEl.addEventListener('pointerup', (e) => end(e, false));
+    rootEl.addEventListener('pointercancel', (e) => end(e, true));
+    // after a drag, the browser still fires a click on the button the finger started on: swallow it
+    document.addEventListener('click', (e) => { if (tb.suppress && e.isTrusted && e.target.closest && e.target.closest('[data-tabbar]')) { e.stopPropagation(); e.preventDefault(); tb.suppress = false; } }, true);
+  }
+
+  // ---------- segmented controls: the selected thumb slides ----------
+  function syncSegments(app) {
+    app.querySelectorAll('[data-seg]').forEach((wrap) => {
+      const btns = Array.from(wrap.querySelectorAll(':scope > button'));
+      const i = btns.findIndex((b) => { const c = getComputedStyle(b).backgroundColor; return c && c !== 'transparent' && !/rgba\(.*,\s*0\)$/.test(c); });
+      if (i < 0) return;
+      const b = btns[i];
+      const rect = { x: b.offsetLeft, y: b.offsetTop, w: b.offsetWidth, h: b.offsetHeight };
+      const last = segLast.get(wrap);
+      segLast.set(wrap, { i, rect });
+      if (!last || last.i === i || reduce.matches) return;
+      const cs = getComputedStyle(b);
+      const thumb = document.createElement('span');
+      thumb.setAttribute('aria-hidden', 'true');
+      thumb.style.cssText = 'position:absolute;left:0;top:0;pointer-events:none;z-index:0;background:' + cs.backgroundColor + ';border-radius:' + cs.borderRadius + ';box-shadow:' + cs.boxShadow + ';height:' + rect.h + 'px;';
+      wrap.insertBefore(thumb, wrap.firstChild);
+      const bg = b.style.getPropertyValue('background'), sh = b.style.getPropertyValue('box-shadow');
+      b.style.setProperty('background', 'transparent', 'important'); b.style.setProperty('box-shadow', 'none', 'important');
+      const a = anim(thumb, [
+        { translate: last.rect.x + 'px ' + last.rect.y + 'px', width: last.rect.w + 'px' },
+        { translate: rect.x + 'px ' + rect.y + 'px', width: rect.w + 'px' }
+      ], { duration: 360, easing: SPRING });
+      done(a, () => { thumb.remove(); b.style.removeProperty('background'); b.style.removeProperty('box-shadow'); if (bg) b.style.setProperty('background', bg); if (sh) b.style.setProperty('box-shadow', sh); });
+    });
+  }
+
+  // ---------- one-off entrance animations for things that appear ----------
+  function entrances(app) {
+    let coin = 0;
+    app.querySelectorAll('[data-in]').forEach((el) => {
+      if (seen.has(el)) return;
+      seen.add(el);
+      if (reduce.matches) return;
+      const k = el.getAttribute('data-in');
+      if (k === 'rise') anim(el, [{ opacity: 0, translate: '0 24px', scale: '.97' }, { opacity: 1, translate: '0 0', scale: '1' }], { duration: 480, easing: EASE_PUSH, fill: 'backwards' });
+      else if (k === 'pop') anim(el, [{ scale: '0', opacity: 0 }, { scale: '1.18', opacity: 1, offset: 0.6 }, { scale: '1', opacity: 1 }], { duration: 460, delay: 120, easing: 'ease-out', fill: 'backwards' });
+      else if (k === 'reveal') anim(el, [{ opacity: 0, translate: '0 -6px', clipPath: 'inset(0 0 100% 0)' }, { opacity: 1, translate: '0 0', clipPath: 'inset(0 0 0 0)' }], { duration: 300, easing: EASE_PUSH, fill: 'none' });
+      else if (k === 'coin') {
+        const n = coin++;
+        anim(el, [{ translate: '0 80px', scale: '0', opacity: 0 }, { translate: '0 -14px', scale: '1.2', opacity: 1, offset: 0.55 }, { translate: '0 0', scale: '1', opacity: 1 }], { duration: 620, delay: 60 + n * 55, easing: 'cubic-bezier(.2,.8,.3,1)', fill: 'backwards', composite: 'add' });
+      }
+    });
+  }
+
+  // ---------- small touches ----------
+  function extras(rootEl) {
+    // scratch card wiggles when scratched
+    rootEl.addEventListener('click', (e) => {
+      const c = e.target.closest && e.target.closest('[data-wiggle]');
+      if (c && !reduce.matches) anim(c, [{ rotate: '0deg' }, { rotate: '-4deg' }, { rotate: '3deg' }, { rotate: '-1.5deg' }, { rotate: '0deg' }], { duration: 420, easing: 'ease-out', fill: 'none', composite: 'add' });
+    }, true);
+    // home banners move on by themselves every 5 seconds, and pause while touched
+    let touching = false, lastTouch = 0;
+    rootEl.addEventListener('touchstart', () => { touching = true; lastTouch = Date.now(); }, { passive: true });
+    rootEl.addEventListener('touchend', () => { touching = false; lastTouch = Date.now(); }, { passive: true });
+    setInterval(() => {
+      if (!L || touching || Date.now() - lastTouch < 4000 || document.hidden || reduce.matches) return;
+      const s = L.state;
+      if (s.tab !== 'home' || s.modal || s.iam || s.splash || s.loading) return;
+      const row = rootEl.querySelector('[data-banners]');
+      if (!row || row.children.length < 2) return;
+      const item = row.firstElementChild; const step = item.offsetWidth + (parseFloat(getComputedStyle(row).columnGap) || 0);
+      const next = Math.round(row.scrollLeft / step) + 1;
+      row.scrollTo({ left: next >= row.children.length || row.scrollLeft + row.clientWidth >= row.scrollWidth - 4 ? 0 : next * step, behavior: 'smooth' });
+    }, 5000);
+  }
+
   window.VCFx = {
     install(logic, rootEl) {
       L = logic;
@@ -192,9 +385,17 @@
         if (!patch) return;
         let plan = null;
         try { plan = before(this.state, patch); } catch (e) { plan = null; }
-        orig.call(this, patch, plan ? () => { try { after(plan); } catch (e) { if (plan.ghost) plan.ghost.remove(); } if (cb) cb(); } : cb);
+        orig.call(this, patch, () => {
+          if (plan) { try { after(plan); } catch (e) { if (plan.ghost) plan.ghost.remove(); } }
+          try { postRender(); } catch (e) {}
+          if (cb) cb();
+        });
       };
       edgeSwipe(rootEl);
+      tabBarGestures(rootEl);
+      extras(rootEl);
+      addEventListener('resize', () => setTimeout(() => { try { if (L.scroller) syncTabBar(L.scroller.parentElement, true); } catch (e) {} }, 60));
+      setTimeout(postRender, 0);
     }
   };
 })();

@@ -125,7 +125,7 @@
     }, 120);
   }
 
-  // ---------- hidden gestures on the ValueClub logo: 5 taps resets, 10 taps opens the dev menu ----------
+  // ---------- hidden gestures on the ValueClub logo: 3 taps opens the dev menu, 5 taps resets ----------
   let taps = [], tapT;
   function hardReset() {
     store.clear();
@@ -139,9 +139,8 @@
     if (taps.length && now - taps[taps.length - 1] > 700) taps = [];
     taps.push(now);
     clearTimeout(tapT);
-    if (taps.length >= 10) { taps = []; Dev.open(); return; }
-    // wait a moment after the 5th tap, in case more taps are coming for the dev menu
-    tapT = setTimeout(() => { if (taps.length >= 5) hardReset(); taps = []; }, 650);
+    // decide once the taps stop: 3 or 4 taps open the dev menu, 5 or more reset
+    tapT = setTimeout(() => { const n = taps.length; taps = []; if (n >= 5) hardReset(); else if (n >= 3) Dev.open(); }, 600);
   }, true);
 
   // ---------- layout: full screen on a phone, iPhone 17 frame on a computer ----------
@@ -220,7 +219,7 @@
     document.getElementById('a2hsOk').onclick = () => { document.getElementById('a2hs').classList.remove('on'); store.set(KEY_A2HS, true); };
   }
 
-  // ---------- dev menu (10 taps on the logo) ----------
+  // ---------- dev menu (3 taps on the logo) ----------
   const Dev = (function () {
     const layer = document.getElementById('devLayer');
     const st = () => L.state;
@@ -300,7 +299,7 @@
         });
         html += '</div>';
       });
-      html += '<p class="dv-foot">5 taps on the ValueClub logo resets the app. 10 taps opens this menu.</p></div></div>';
+      html += '<p class="dv-foot">3 taps on the ValueClub logo opens this menu. 5 taps resets the app.</p></div></div>';
       const keep = layer.querySelector('.dv-body'); const top = keep ? keep.scrollTop : 0;
       layer.innerHTML = html;
       const body = layer.querySelector('.dv-body'); if (body) body.scrollTop = top;
