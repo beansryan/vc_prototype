@@ -35,12 +35,12 @@ On a computer, the same link shows the app inside an iPhone 17 frame.
   - Swipe from the left edge to go back.
   - Tab bar (iOS 26/27 Liquid Glass): the selection pill stretches and slides between tabs, and the icon bounces.
   - Press and drag along the tab bar to move the glass lens and pick a tab.
-  - The tab bar shrinks to one button while you scroll down, and comes back when you scroll up or tap it.
+  - The tab bar stays full size while you scroll, as in iOS 27.
   - Segmented controls slide.
+  - Swipe left or right across a page with tabs (My protection / Extended warranty, All vouchers / My vouchers, Active / Done, savings periods) to switch tabs. Swiping from the very left edge still goes back.
   - Sheets and messages animate in and out, and toasts pop up.
   - Scan slides up, the scan line sweeps, and the success card rises in.
   - The scratch card peels off and coins burst out.
-  - Home banners move on every 5 seconds.
   - Buttons dim when pressed.
 - **Saved progress:** tier, name, check-ins, claimed vouchers and settings stay saved after the app closes.
 - **Links:**

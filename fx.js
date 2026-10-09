@@ -223,7 +223,8 @@
     const ind = bar.querySelector('[data-tabind]');
     const s = L.state;
     // minimise while scrolling down a main tab, like tabBarMinimizeBehavior(.onScrollDown)
-    const min = !!s.fabHide && !!MAIN_TABS[s.tab] && !tb.pressing;
+    // iOS 27: the tab bar stays full size while scrolling (no minimise)
+    const min = false;
     if (min !== tb.min) {
       tb.min = min;
       if (min) wrap.setAttribute('data-tbmin', '1'); else wrap.removeAttribute('data-tbmin');
@@ -360,20 +361,7 @@
       const c = e.target.closest && e.target.closest('[data-wiggle]');
       if (c && !reduce.matches) anim(c, [{ rotate: '0deg' }, { rotate: '-4deg' }, { rotate: '3deg' }, { rotate: '-1.5deg' }, { rotate: '0deg' }], { duration: 420, easing: 'ease-out', fill: 'none', composite: 'add' });
     }, true);
-    // home banners move on by themselves every 5 seconds, and pause while touched
-    let touching = false, lastTouch = 0;
-    rootEl.addEventListener('touchstart', () => { touching = true; lastTouch = Date.now(); }, { passive: true });
-    rootEl.addEventListener('touchend', () => { touching = false; lastTouch = Date.now(); }, { passive: true });
-    setInterval(() => {
-      if (!L || touching || Date.now() - lastTouch < 4000 || document.hidden || reduce.matches) return;
-      const s = L.state;
-      if (s.tab !== 'home' || s.modal || s.iam || s.splash || s.loading) return;
-      const row = rootEl.querySelector('[data-banners]');
-      if (!row || row.children.length < 2) return;
-      const item = row.firstElementChild; const step = item.offsetWidth + (parseFloat(getComputedStyle(row).columnGap) || 0);
-      const next = Math.round(row.scrollLeft / step) + 1;
-      row.scrollTo({ left: next >= row.children.length || row.scrollLeft + row.clientWidth >= row.scrollWidth - 4 ? 0 : next * step, behavior: 'smooth' });
-    }, 5000);
+    // banners never auto-advance (canvas principle): members swipe them
   }
 
   window.VCFx = {
