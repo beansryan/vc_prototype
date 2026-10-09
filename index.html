@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ValueClub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="description" content="ValueClub app prototype">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<script>
+  /* Dark mode: draw under the status bar (white text on a dark app). Light mode: a light status bar with dark text. */
+  (function () { var dark = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches;
+    document.write('<meta name="apple-mobile-web-app-status-bar-style" content="' + (dark ? 'black-translucent' : 'default') + '">'); })();
+</script>
+<meta name="apple-mobile-web-app-title" content="ValueClub">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&amp;family=Google+Sans+Flex:wght@400..800&amp;family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}button:focus:not(:focus-visible){outline:none}@keyframes vcShim{0%{background-position:100% 0}100%{background-position:-100% 0}}@keyframes vcIn{0%{opacity:0;transform:scale(.92)}100%{opacity:1;transform:scale(1)}}</style>
+
+<style>
+  :root { --bg: #FFFFFF; --desk: #E9E9EE; --ink: #14151A; --sub: #5B5E6B; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #000000; --desk: #1A1A1D; --ink: #EDEDF0; --sub: #9A9CA6; } }
+  html, body { margin: 0; height: 100%; background: var(--bg); overscroll-behavior: none; }
+  body { -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; touch-action: manipulation; -webkit-user-select: none; user-select: none; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; }
+  input, textarea, select { -webkit-user-select: text; user-select: text; font-size: 16px; }
+  #root { position: fixed; inset: 0; overflow: hidden; }
+  /* desktop: show the app in an iPhone 17 frame */
+  body.desk { background: var(--desk); }
+  body.desk #root { inset: auto; left: 50%; top: 50%; width: 402px; height: 874px; transform-origin: center; border-radius: 56px; box-shadow: 0 0 0 11px #1C1C1E, 0 0 0 13px #3A3A3D, 0 30px 80px rgba(0,0,0,.35); }
+  body.desk #island { position: fixed; left: 50%; top: 50%; width: 124px; height: 36px; border-radius: 20px; background: #000; z-index: 50; pointer-events: none; }
+  #deskNote { display: none; }
+  body.desk #deskNote { display: block; position: fixed; left: 24px; bottom: 20px; max-width: 300px; font-size: 13px; line-height: 1.45; color: var(--sub); }
+  body.desk #deskNote b { color: var(--ink); }
+  /* add-to-home-screen hint (iPhone Safari, first visit only) */
+  #a2hs { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 200; display: none; padding: 16px 16px 14px; border-radius: 22px; background: rgba(255,255,255,.96); color: #14151A; box-shadow: 0 10px 40px rgba(0,0,0,.25); font-size: 15px; line-height: 1.4; -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); animation: a2hsIn .35s cubic-bezier(.2,.8,.2,1); }
+  #a2hs.on { display: block; }
+  #a2hs b { display: block; font-size: 17px; margin-bottom: 4px; }
+  #a2hs button { margin-top: 12px; width: 100%; height: 46px; border: 0; border-radius: 999px; background: #202958; color: #fff; font: inherit; font-weight: 600; }
+  @keyframes a2hsIn { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+  /* dev menu (10 taps on the logo) */
+  #devLayer { position: fixed; inset: 0; z-index: 150; display: none; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    --dv-bg: #F2F2F7; --dv-card: #FFFFFF; --dv-ink: #000000; --dv-sub: rgba(60,60,67,.6); --dv-line: rgba(60,60,67,.14); --dv-seg: rgba(118,118,128,.12); --dv-segOn: #FFFFFF; --dv-accent: #202958; --dv-sw: #34C759; }
+  #devLayer[data-theme="dark"] { --dv-bg: #1C1C1E; --dv-card: #2C2C2E; --dv-ink: #FFFFFF; --dv-sub: rgba(235,235,245,.6); --dv-line: rgba(84,84,88,.6); --dv-seg: rgba(118,118,128,.24); --dv-segOn: #636366; --dv-accent: #9FB0FF; --dv-sw: #30D158; }
+  body.desk #devLayer { inset: auto; left: 50%; top: 50%; width: 402px; height: 874px; transform-origin: center; border-radius: 56px; }
+  #devLayer.show { display: block; }
+  .dv-scrim { position: absolute; inset: 0; background: rgba(0,0,0,.4); opacity: 0; transition: opacity .3s; }
+  #devLayer.on .dv-scrim { opacity: 1; }
+  .dv-sheet { position: absolute; left: 0; right: 0; bottom: 0; top: 54px; display: flex; flex-direction: column; background: var(--dv-bg); color: var(--dv-ink); border-radius: 38px 38px 0 0;
+    transform: translateY(100%); transition: transform .38s cubic-bezier(.2,.9,.25,1); box-shadow: 0 -10px 40px rgba(0,0,0,.2); }
+  #devLayer.on .dv-sheet { transform: none; }
+  .dv-grab { width: 36px; height: 5px; border-radius: 3px; background: var(--dv-line); margin: 8px auto 0; flex: none; }
+  .dv-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 12px 20px 10px; flex: none; }
+  .dv-head b { display: block; font-size: 22px; letter-spacing: -.3px; }
+  .dv-head span { display: block; font-size: 13px; color: var(--dv-sub); margin-top: 2px; }
+  .dv-done { border: 0; background: var(--dv-seg); color: var(--dv-ink); font: inherit; font-weight: 600; font-size: 15px; height: 36px; padding: 0 16px; border-radius: 999px; }
+  .dv-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 16px calc(28px + env(safe-area-inset-bottom)); }
+  .dv-sec { font-size: 13px; color: var(--dv-sub); padding: 18px 16px 6px; }
+  .dv-group { background: var(--dv-card); border-radius: 14px; overflow: hidden; }
+  .dv-row { all: unset; box-sizing: border-box; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 10px 16px; cursor: pointer; }
+  .dv-row + .dv-row { box-shadow: inset 0 .5px 0 var(--dv-line); }
+  .dv-col { flex-direction: column; align-items: stretch; gap: 8px; cursor: default; padding: 12px 16px; }
+  .dv-lab { display: flex; flex-direction: column; gap: 2px; font-size: 16px; }
+  .dv-lab small { font-size: 12.5px; color: var(--dv-sub); }
+  .dv-act span { color: var(--dv-accent); font-weight: 500; }
+  .dv-act.danger span { color: #FF3B30; }
+  .dv-seg { display: flex; padding: 2px; border-radius: 9px; background: var(--dv-seg); }
+  .dv-seg button { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--dv-ink); font: inherit; font-size: 13px; font-weight: 500; height: 30px; border-radius: 7px; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background .2s, box-shadow .2s; }
+  .dv-seg button.on { background: var(--dv-segOn); box-shadow: 0 3px 8px rgba(0,0,0,.12), 0 0 0 .5px rgba(0,0,0,.04); font-weight: 600; }
+  .dv-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .dv-btns button { border: 0; background: var(--dv-seg); color: var(--dv-accent); font: inherit; font-size: 14px; font-weight: 600; height: 34px; padding: 0 14px; border-radius: 999px; }
+  .dv-sw { flex: none; width: 51px; height: 31px; border-radius: 999px; background: var(--dv-seg); position: relative; transition: background .25s; }
+  .dv-sw i { position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,.15); transition: transform .25s cubic-bezier(.3,.7,.3,1); }
+  .dv-sw.on { background: var(--dv-sw); }
+  .dv-sw.on i { transform: translateX(20px); }
+  .dv-foot { font-size: 12.5px; color: var(--dv-sub); text-align: center; margin: 18px 8px 0; }
+  #resetFlash { position: fixed; inset: 0; z-index: 300; background: var(--bg); opacity: 0; pointer-events: none; transition: opacity .35s; }
+  #resetFlash.on { opacity: 1; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="island"></div>
+<div id="deskNote"><b>ValueClub app prototype</b><br>Best on iPhone: open this page in Safari, tap Share, then Add to Home Screen. It opens full screen like the real app.</div>
+<div id="a2hs" role="dialog" aria-label="Add to Home Screen"><b>Add ValueClub to your Home Screen</b>Tap <span aria-label="Share">Share</span> in Safari, then <b style="display:inline;font-size:15px;margin:0">Add to Home Screen</b>. It opens full screen, like the real app.<button type="button" id="a2hsOk">Got it</button></div>
+<div id="devLayer"></div>
+<div id="resetFlash"></div>
+<script src="preact.min.js"></script>
+<script src="runtime.js"></script>
+<script src="app.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
