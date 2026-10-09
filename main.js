@@ -190,6 +190,7 @@
     s.tab = 'home'; s.history = []; s.splash = true; s.iam = '';
     L._onState = () => persist(L);
     wireLinks(L);
+    window.VCFx.install(L, document.getElementById('root'));
   }
 
   function mount() {

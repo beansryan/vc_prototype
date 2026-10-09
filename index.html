@@ -80,6 +80,9 @@
   .dv-sw.on { background: var(--dv-sw); }
   .dv-sw.on i { transform: translateX(20px); }
   .dv-foot { font-size: 12.5px; color: var(--dv-sub); text-align: center; margin: 18px 8px 0; }
+  /* press feedback, like a native tap */
+  #root button, #root a { -webkit-touch-callout: none; }
+  #root button:active, #root a:active { opacity: .62; transition: opacity 0s; }
   #resetFlash { position: fixed; inset: 0; z-index: 300; background: var(--bg); opacity: 0; pointer-events: none; transition: opacity .35s; }
   #resetFlash.on { opacity: 1; }
 </style>
@@ -94,6 +97,7 @@
 <script src="preact.min.js"></script>
 <script src="runtime.js"></script>
 <script src="app.js"></script>
+<script src="fx.js"></script>
 <script src="main.js"></script>
 </body>
 </html>

@@ -30,6 +30,13 @@ On a computer, the same link shows the app inside an iPhone 17 frame.
 - **Log in:** any email or mobile number with any password. A new login opens as a 12-month member.
 - **Log in with a code:** any 6 digits work.
 - **Scan at checkout:** scanning completes on its own after a few seconds.
+- **Motion:**
+  - Pages slide in and out like iOS.
+  - Swipe from the left edge to go back.
+  - Sheets and messages animate in and out.
+  - Toasts pop up.
+  - Scan slides up from the bottom.
+  - Buttons dim when pressed.
 - **Saved progress:** tier, name, check-ins, claimed vouchers and settings stay saved after the app closes.
 - **Links:**
   - Every website link opens https://online.challenger.sg.
