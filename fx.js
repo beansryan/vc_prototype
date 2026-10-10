@@ -55,6 +55,9 @@
     const app = sc && sc.parentElement;
     if (!app) return null;
     const plan = { layers: [], nav: classify(prev, patch), sc, app, loadingEnd: prev.loading && patch.loading === false };
+    plan.hadBand = !!app.querySelector('[data-band]');
+    // a new page starts with its header in place and the sheet's corners round (the scroll position is reset)
+    if (plan.nav) ['--hdrY:0px', '--hdrO:1', '--sheetR:28px', '--edgeO:0', '--stO:0'].forEach((kv) => { const [k, v] = kv.split(':'); app.style.setProperty(k, v); });
     if (plan.nav === 'tab') { const ord = ['home', 'discover', 'vouchers', 'account']; plan.dir = Math.sign(ord.indexOf(patch.tab) - ord.indexOf(prev.tab)) || 1; }
     app.querySelectorAll('[data-fx]').forEach((el) => plan.layers.push({ el, parent: el.parentElement }));
     if (plan.nav === 'push' || plan.nav === 'pop' || plan.nav === 'down' || plan.nav === 'tab' || plan.nav === 'fade') {
@@ -133,18 +136,32 @@
     if (!kind) return;
     const bg = bgOf(sc);
     const finish = () => { if (g) g.remove(); sc.style.background = ''; sc.style.boxShadow = ''; };
+    const bandToBand = (kind === 'push' || kind === 'pop') && plan.hadBand && !!app.querySelector('[data-band]') && g;
+    if (bandToBand) {
+      // both pages sit on the navy (Home to Cashback or Spend reward): the navy stays still, only the content moves
+      g.style.background = 'transparent';
+      const page = sc.firstElementChild; const gp = g.firstElementChild; const gy = gp.style.translate.split(' ')[1] || '0px';
+      const d = kind === 'push' ? 1 : -1;
+      if (kind === 'pop') { stack.pop(); if (under) { under.remove(); under = null; } pendingPopFrom = 0; }
+      sc.after(g);
+      // the old page clears quickly before the new one arrives, so two pages never show through each other
+      const a = anim(gp, [{ opacity: 1, translate: '0 ' + gy }, { opacity: 0, translate: (-d * 40) + 'px ' + gy }], { duration: 150, easing: 'cubic-bezier(.4,0,1,1)' });
+      if (page) anim(page, [{ opacity: 0, translate: (d * 56) + 'px 0' }, { opacity: 1, translate: '0 0' }], { duration: 380, delay: 90, easing: 'cubic-bezier(.2,.85,.25,1)', fill: 'backwards' });
+      done(a, () => { if (kind === 'push') stash(g); else g.remove(); });
+      return;
+    }
     if (kind === 'push') {
       if (g) sc.before(g);
       sc.style.background = bandBg(app, bg); sc.style.boxShadow = '-8px 0 24px rgba(0,0,0,.10)';
       const a = anim(sc, [{ translate: '100% 0' }, { translate: '0 0' }], { duration: 420, easing: EASE_PUSH, fill: 'none' });
       if (g) anim(g.firstElementChild, [{ translate: '0 ' + g.firstElementChild.style.translate.split(' ')[1] }, { translate: '-28% ' + g.firstElementChild.style.translate.split(' ')[1] }], { duration: 420, easing: EASE_PUSH });
-      if (g) anim(g, [{ filter: 'brightness(1)' }, { filter: 'brightness(.92)' }], { duration: 420, easing: EASE_PUSH });
+      if (g) { const dim = document.createElement('div'); dim.style.cssText = 'position:absolute;inset:0;background:#000;pointer-events:none;'; g.appendChild(dim); anim(dim, [{ opacity: 0 }, { opacity: 0.08 }], { duration: 420, easing: EASE_PUSH }); }
       done(a, () => { if (g) stash(g); sc.style.background = ''; sc.style.boxShadow = ''; });
     } else if (kind === 'pop') {
       const from = pendingPopFrom; pendingPopFrom = 0;
       stack.pop(); if (under) { under.remove(); under = null; }
       if (g) { sc.after(g); g.style.boxShadow = '-8px 0 24px rgba(0,0,0,.10)'; }
-      const a = anim(sc, [{ translate: (-28 + 28 * Math.min(1, from / sc.clientWidth)) + '% 0', filter: 'brightness(.92)' }, { translate: '0 0', filter: 'brightness(1)' }], { duration: 380, easing: EASE_PUSH, fill: 'none' });
+      const a = anim(sc, [{ translate: (-28 + 28 * Math.min(1, from / sc.clientWidth)) + '% 0' }, { translate: '0 0' }], { duration: 380, easing: EASE_PUSH, fill: 'none' });
       if (g) anim(g, [{ translate: from + 'px 0' }, { translate: '100% 0' }], { duration: 380, easing: EASE_PUSH });
       done(a, finish);
     } else if (kind === 'up') {
@@ -192,9 +209,9 @@
       sx = t.clientX; sy = t.clientY; dx = 0;
       if (on && stack.length && L.scroller) {
         under = stack[stack.length - 1];
-        under.style.translate = '-28% 0'; under.style.filter = 'brightness(.92)';
+        under.style.translate = '-28% 0';
         L.scroller.before(under);
-        L.scroller.style.background = bgOf(L.scroller);
+        L.scroller.style.background = bandBg(L.scroller.parentElement, bgOf(L.scroller));
       }
     }, { passive: true });
     rootEl.addEventListener('touchmove', (e) => {
@@ -202,7 +219,7 @@
       const t = e.touches[0]; dx = Math.max(0, t.clientX - sx);
       if (Math.abs(t.clientY - sy) > 40 && dx < 30) { on = false; L.scroller.style.translate = ''; L.scroller.style.background = ''; if (under) { under.remove(); under = null; } return; }
       L.scroller.style.translate = dx + 'px 0';
-      if (under) { const k = Math.min(1, dx / L.scroller.clientWidth); under.style.translate = (-28 + 28 * k) + '% 0'; under.style.filter = 'brightness(' + (0.92 + 0.08 * k) + ')'; }
+      if (under) { const k = Math.min(1, dx / L.scroller.clientWidth); under.style.translate = (-28 + 28 * k) + '% 0'; }
       L.scroller.style.boxShadow = '-8px 0 24px rgba(0,0,0,.10)';
     }, { passive: true });
     rootEl.addEventListener('touchend', () => {
