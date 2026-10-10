@@ -54,3 +54,27 @@ This correction was checked by script parsing, rendering logic and a focused siz
 ## Prototype 16 — scroll status colour
 
 The status backdrop switches from navy to #F2F3F8 when the sheet's cached starting position minus scrollTop reaches zero, and switches back when it is positive. Dark appearance uses black. The callback runs only on threshold changes; there are no additional layout measurements or page state renders. System status text/icon colour remains controlled by iOS and must be checked on device against the pale grey background.
+
+## Prototype 17 — smooth top and neutral bottom
+
+Top backdrop now interpolates continuously from navy to the content grey over a distance based on the actual top safe inset, with a 48px fallback. It uses the existing cached sheet position and animation-frame queue; there is no layout read or application state render per scroll. This replaces the threshold flip from v16. Neutral screens without a branded band use grey immediately.
+
+The bottom safe area gets its own fixed neutral backdrop. The HTML/body canvas remains neutral independently of the top, so any system-exposed space at the bottom no longer inherits navy. Dark appearance uses black. Compact standalone content spacing is explicit 14px after the measured CSS safe inset, instead of subtracting the simulated status reservation. No physical iPhone 17 Pro Max dimensions are hardcoded.
+
+Script/logic checks pass; visual iOS 27 testing remains outstanding. System clock colour remains controlled by iOS.
+
+## Prototype 18 — extend actual content to screen edge
+
+Prototype 17 coloured the exposed bottom area but did not correct the shortened fixed containing block seen in the device screenshot. Prototype 18 sets the installed phone shell height to the current display's CSS screen height minus its top safe inset. This extends the actual scrolling content and bottom navigation to the screen edge; the separate bottom colour strip has been removed. Portrait and landscape use the screen dimensions without hardcoding an iPhone model. Normal Safari and the desktop frame retain their existing layout. A focused-input/visual-viewport check temporarily shortens the shell when a large keyboard-sized occlusion is present.
+
+The focused geometry regression checks simulate a display taller than the reported fixed/visual viewport, plus landscape and keyboard cases. Real-device visual confirmation is still needed.
+
+## Prototype 19 — debug and polish pass
+
+- Physical display orientation replaces CSS viewport orientation in sizing; showing the keyboard on a portrait phone no longer selects landscape dimensions. Keyboard sizing remains until the viewport recovers after blur, avoiding an immediate jump during dismissal.
+- Startup/skeleton keeps the top navy rather than briefly grey. The scroll blend updates in the existing scroll animation frame rather than scheduling a second frame. Unchanged canvas colours no longer trigger repeated writes.
+- Explicit light/dark choices survive a change in device appearance.
+- Address and voucher-copy feedback waits for actual clipboard success.
+- HTML references versioned v19 scripts. The new offline worker matches only its own cache and preserves request query strings. Failed navigation responses fall back to the offline page rather than replacing it with an error document.
+
+Validation: 120 rendering logic configurations, navigation and simulated scan, full-screen geometry, keyboard open/closing/recovery, physical landscape, colour blend endpoints/midpoint/reversal, dark mode, startup and deduplicated style writes. All shipped scripts parse; referenced assets and offline precache paths exist. These checks execute real application functions with simulated browser geometry, not visual browser or iPhone tests. Browser launching remains blocked by the local sandbox. Actual scrolling smoothness, installed iOS system chrome and clock legibility still require device validation.

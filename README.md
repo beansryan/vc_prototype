@@ -7,12 +7,12 @@ This is a prototype. Nothing connects to real systems. Accounts are stored only 
 ## Put it on GitHub Pages
 
 1. Create a new repository on GitHub, for example `valueclub-prototype`. It can be private if your plan allows private Pages.
-2. Upload everything in this folder to the root of the repository: `index.html`, `app.js`, `assets/`, `icons/`, and the rest. Include the empty `.nojekyll` file.
+2. Upload everything in this folder to the root of the repository: `index.html`, the versioned `.v19.js` scripts, `assets/`, `icons/`, and the rest. Include the empty `.nojekyll` file.
 3. In the repository, open **Settings > Pages**.
 4. Under **Build and deployment**, set Source to **Deploy from a branch**, choose `main` and `/ (root)`, then **Save**.
 5. After a minute the site is live at `https://<your-github-name>.github.io/valueclub-prototype/`.
 
-To update it later, upload the changed files again. After uploading an update, fully close and reopen the app. The first load can still use the previous offline scripts while the new worker installs; reopen once more after installation. Updates do not force a reload during an active session. For this status-bar update, remove the existing Home Screen icon and add the site again.
+To update it later, upload the changed files again. After uploading an update, fully close and reopen the app. The HTML references versioned scripts to prevent a previous offline cache from supplying older code. Updates do not force a reload during an active session. For this status-bar update, remove the existing Home Screen icon and add the site again.
 
 ## Install on an iPhone
 
