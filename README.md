@@ -12,7 +12,7 @@ This is a prototype. Nothing connects to real systems. Accounts are stored only 
 4. Under **Build and deployment**, set Source to **Deploy from a branch**, choose `main` and `/ (root)`, then **Save**.
 5. After a minute the site is live at `https://<your-github-name>.github.io/valueclub-prototype/`.
 
-To update it later, upload the changed files again. The app picks up the new version the next time it opens twice (the first open refreshes the offline copy).
+To update it later, upload the changed files again. After uploading an update, fully close and reopen the app. The first load can still use the previous offline scripts while the new worker installs; reopen once more after installation. Updates do not force a reload during an active session. For this status-bar update, remove the existing Home Screen icon and add the site again.
 
 ## Install on an iPhone
 

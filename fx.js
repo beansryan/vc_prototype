@@ -9,7 +9,7 @@
   const stack = []; // snapshots of the pages underneath, for the swipe back
   const stash = (g) => { g.getAnimations({ subtree: true }).forEach((a) => a.cancel()); g.remove(); g.style.boxShadow = ''; stack.push(g); if (stack.length > 8) stack.shift(); };
 
-  const anim = (el, frames, opts) => (el && el.animate ? el.animate(frames, Object.assign({ fill: 'both' }, opts)) : null);
+  const anim = (el, frames, opts) => (!reduce.matches && el && el.animate ? el.animate(frames, Object.assign({ fill: 'both' }, opts)) : null);
   const done = (a, fn) => { if (a) a.onfinish = a.oncancel = fn; else fn(); };
 
   // pages with the navy band: the band is fixed behind the scroller, so a moving page carries a copy of it
@@ -211,7 +211,16 @@
   function edgeSwipe(rootEl) {
     let sx = 0, sy = 0, on = false, dx = 0, sb = null;
     const dropSb = () => { if (sb) { sb.remove(); sb = null; } };
+    const cancel = () => {
+      on = false; dx = 0; dropSb();
+      const sc = L && L.scroller;
+      if (sc) { sc.style.translate = ''; sc.style.boxShadow = ''; sc.style.background = ''; }
+      if (under) { under.remove(); under = null; }
+    };
+    rootEl.addEventListener('touchcancel', cancel);
     rootEl.addEventListener('touchstart', (e) => {
+      cancel();
+      if (reduce.matches || e.touches.length !== 1) return;
       const t = e.touches[0]; const r = rootEl.getBoundingClientRect();
       const s = L && L.state;
       on = !!(s && ((s.history || []).length || inReceiptDetail(s)) && !s.modal && !s.iam && !s.bdaySheet && s.tab !== 'scan' && t.clientX - r.left < 24);
@@ -227,7 +236,7 @@
     rootEl.addEventListener('touchmove', (e) => {
       if (!on) return;
       const t = e.touches[0]; dx = Math.max(0, t.clientX - sx);
-      if (Math.abs(t.clientY - sy) > 40 && dx < 30) { on = false; dropSb(); L.scroller.style.translate = ''; L.scroller.style.background = ''; if (under) { under.remove(); under = null; } return; }
+      if (Math.abs(t.clientY - sy) > 40 && dx < 30) { cancel(); return; }
       L.scroller.style.translate = dx + 'px 0';
       L.scroller.style.boxShadow = '-10px 0 30px rgba(0,0,0,.14)';
     }, { passive: true });
@@ -417,7 +426,7 @@
     // banners never auto-advance (canvas principle): members swipe them
   }
 
-  const useVT = !!document.startViewTransition && !reduce.matches;
+  const useVT = !!document.startViewTransition && !reduce.matches && !document.documentElement.classList.contains('vc-standalone');
   const app0 = () => L.scroller.parentElement;
   if (useVT) {
     const st = document.createElement('style');
@@ -462,7 +471,7 @@
             if (kind === 'push' && g) { try { const b = app0().querySelector('[data-band]'); g.style.background = bandBg(app0(), bgOf(L.scroller)); stash(g); } catch (e) {} }
             if (cb) cb(); res();
           })));
-          vt.finished.finally(() => { delete document.documentElement.dataset.vcnav; });
+          vt.finished.catch(() => {}).finally(() => { delete document.documentElement.dataset.vcnav; });
           return;
         }
         orig.call(this, patch, () => {

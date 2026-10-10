@@ -42,7 +42,7 @@ class AppLogic extends DCLogic {
     const duoV = (P.platform ?? 'ios') !== 'android' && String(P.duo ?? 'false') === 'true' && String(P.vbar ?? 'false') === 'true';
     const statusBottom = duoV ? ((P.size ?? 'compact') === 'compact' ? 72 : 24) + 86 : 58;
     // layout is measured once per page, never while scrolling (reading layout on every scroll frame causes jank)
-    if (sh._vcStart === undefined || sh._vcH !== sc.clientHeight) {
+    if (sh._vcStart === undefined) {
       const rel = () => sh.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop;
       if (duoV) { const first = sh.parentElement && sh.parentElement.firstElementChild; if (first && first !== sh) { first.style.marginTop = ''; const nat = rel(); if (nat < statusBottom + 12) first.style.marginTop = (statusBottom + 12 - nat) + 'px'; } }
       sh._vcStart = rel(); sh._vcH = sc.clientHeight;
@@ -65,7 +65,7 @@ class AppLogic extends DCLogic {
     if (prev.intro !== this.props.intro) this.setState({ iam: this.props.intro === 'duo' ? 'duo' : '' });
   }
 
-  componentWillUnmount() { clearTimeout(this._tt); clearTimeout(this._st); }
+  componentWillUnmount() { clearTimeout(this._tt); clearTimeout(this._st); clearTimeout(this._spinT); if (this._bandRaf) cancelAnimationFrame(this._bandRaf); }
 
   makeQr() {
     const n = 25, cells = [];
@@ -689,7 +689,7 @@ class AppLogic extends DCLogic {
       back: (vbar && !full) ? 'display:none;' : ios
         ? 'display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;width:44px;height:44px;border-radius:50%;cursor:pointer;color:' + ink + ';padding:0;' + glassC
         : 'display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;width:48px;height:48px;border:0;border-radius:50%;background:transparent;color:' + ink + ';cursor:pointer;padding:0;margin-left:-12px;',
-      edgeTop: 'position:absolute;left:0;right:' + padRight + 'px;top:0;height:' + Math.max(0, (vbar ? 20 : (compact || medium) ? 58 : 18) - (P.topAdjust || 0)) + 'px;pointer-events:none;z-index:5;background:#1A2150;height:env(safe-area-inset-top,47px);' + (bandOn ? 'opacity:var(--edgeO,0);' : ''),
+      edgeTop: 'position:absolute;left:0;right:' + padRight + 'px;top:0;height:' + Math.max(0, (vbar ? 20 : (compact || medium) ? 58 : 18) - (P.topAdjust || 0)) + 'px;pointer-events:none;z-index:5;background:#1A2150;height:' + (P.topAdjust === 54 ? '0px' : 'env(safe-area-inset-top,0px)') + ';' + (bandOn ? 'opacity:var(--edgeO,0);' : ''),
       edgeBottom: 'position:absolute;left:0;right:0;bottom:0;height:120px;pointer-events:none;z-index:4;background:linear-gradient(rgba(0,0,0,0), ' + (dark ? 'rgba(0,0,0,0.85)' : 'rgba(242,242,247,0.85)') + ' 70%);',
       sideToggle: 'width:52px;height:36px;border:0;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;color:' + ink + ';flex:none;',
       vBar: 'position:absolute;z-index:6;top:0;right:0;bottom:0;width:84px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:' + (duo ? duoTop + 86 + 12 : 20) + 'px 0 24px;box-sizing:border-box;pointer-events:none;' + (duo ? '--ink:#FFFFFF;--accent:#FFFFFF;color:#FFFFFF;' : ''),
@@ -1605,7 +1605,7 @@ class AppLogic extends DCLogic {
       sendFeedback: () => { this.toastMsg('Thanks, we have received your feedback'); },
       toastOtp: () => this.toastMsg('Code sent to your mobile'), toastCall: () => this.toastMsg('Calling 6282 8548'), toastDir: () => this.toastMsg('Opens Maps|Challenger Service Centre'),
       sendReset: () => this.setState({ resetSent: true }), resetSent: !!S.resetSent, resetForm: !S.resetSent,
-      doSpin: () => { if (this.state.spun || this.state.spinning) return; this.setState({ spinning: true, spinDeg: 1800 + 112 }); setTimeout(() => this.setState({ spinning: false, spun: true, modal: 'spinwin' }), 2700); },
+      doSpin: () => { if (this.state.spun || this.state.spinning) return; this.setState({ spinning: true, spinDeg: 1800 + 112 }); clearTimeout(this._spinT); this._spinT = setTimeout(() => this.setState({ spinning: false, spun: true, ...(this.state.tab === 'spin' ? { modal: 'spinwin' } : {}) }), 2700); },
       pzSolve: () => this.setState({ pz: [3, 7, 1, 5, 0, 8, 2, 6, 4], pzSel: -1, pzMoves: 0 }),
       t, scr, nav, navItems, compact, notCompact: !compact,
       showHeaderLogo: !ios || !(expanded && S.side), hideHeaderLogo: ios && expanded && S.side,

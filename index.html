@@ -7,10 +7,8 @@
 <meta name="description" content="ValueClub app prototype">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<!-- Opaque status bar. iOS 26 sizes a black-translucent home-screen app one status bar short at the bottom
-     (WebKit bug 301108), which cut off the tab bar. With "default", iOS paints the strip in theme-color,
-     which main.js keeps in step with the page (navy on band pages). iOS reads this tag only when the app is added. -->
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<!-- Paint a stable page background behind the iOS Home Screen status bar. -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ValueClub">
 <meta name="theme-color" id="vcTheme" content="#3348AD">
 <meta name="format-detection" content="telephone=no">
@@ -29,6 +27,14 @@
   body { -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; touch-action: manipulation; -webkit-user-select: none; user-select: none; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; }
   input, textarea, select { -webkit-user-select: text; user-select: text; font-size: 16px; }
   #root { position: fixed; inset: 0; overflow: hidden; }
+  html { --vc-status: #3348AD; }
+  html.vc-standalone #root { top: env(safe-area-inset-top, 0px); }
+  #vcStatus { display: none; }
+  html.vc-standalone #vcStatus { display: block; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: var(--vc-status); z-index: 100; pointer-events: none; }
+  #root [data-sheet] { overflow-anchor: none; }
+  @media (prefers-reduced-motion: reduce) {
+    #root *, #a2hs { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  }
   /* desktop: show the app in an iPhone 17 frame */
   body.desk { background: var(--desk); }
   body.desk #root { inset: auto; left: 50%; top: 50%; width: 402px; height: 874px; transform-origin: center; border-radius: 56px; box-shadow: 0 0 0 11px #1C1C1E, 0 0 0 13px #3A3A3D, 0 30px 80px rgba(0,0,0,.35); }
@@ -109,6 +115,7 @@
 </style>
 </head>
 <body>
+<div id="vcStatus" aria-hidden="true"></div>
 <div id="root"></div>
 <div id="island"></div>
 <div id="deskNote"><b>ValueClub app prototype</b><br>Best on iPhone: open this page in Safari, tap Share, then Add to Home Screen. It opens full screen like the real app.</div>
