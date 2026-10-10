@@ -166,8 +166,9 @@
     const root = document.getElementById('root');
     // The shell starts below the safe area; remove the canvas's simulated status space.
     const safeTop = parseFloat(getComputedStyle(root).top) || 0;
-    const vv = window.visualViewport;
-    if (vv && Math.abs(vv.scale - 1) < 0.01) root.style.height = Math.max(1, Math.round(vv.height - safeTop)) + 'px';
+    // Let fixed top/bottom insets define the shell. iOS standalone visualViewport
+    // can already exclude system areas; subtracting safeTop again leaves a bottom gap.
+    root.style.removeProperty('height');
     return { w: Math.round(root.clientWidth), h: Math.round(root.clientHeight),
       topAdjust: isStandalone ? 54 : Math.max(0, 54 - safeTop) };
 
@@ -222,13 +223,17 @@
     if (desk) return;
     const pref = L && L.state.themePref;
     const dark = pref === 'dark' || (pref !== 'light' && darkMq.matches);
-    const col = dark ? '#222E73' : '#3348AD';
+    const sc = L && L.scroller;
+    const sheet = sc && sc.querySelector('[data-sheet]');
+    const covered = sheet && sheet._vcStart !== undefined && sheet._vcStart - sc.scrollTop <= 0;
+    const col = covered ? (dark ? '#000000' : '#F2F3F8') : (dark ? '#222E73' : '#3348AD');
     document.documentElement.style.setProperty('--vc-status', col);
     document.documentElement.style.backgroundColor = col;
     document.body.style.backgroundColor = col;
     if (tcMeta) tcMeta.content = col;
   }
   function queueTheme() { if (!tcRaf) tcRaf = requestAnimationFrame(syncTheme); }
+  VCApp.syncStatus = queueTheme;
   if (darkMq.addEventListener) darkMq.addEventListener('change', queueTheme);
   queueTheme();
   if (darkMq.addEventListener) darkMq.addEventListener('change', remount);

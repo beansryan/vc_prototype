@@ -44,3 +44,13 @@ The patch controls the pixels painted by the page. iOS may still apply its own s
 - https://webkit.org/blog/18325/webkit-features-for-safari-27-0/
 
 Apple's legacy meta-tag documentation describes the overlay behaviour; it does not guarantee the precise appearance of system chrome in iOS 27. The current Safari 27 release article does not establish a universal fix for installed web-app status-bar tinting.
+
+## Prototype 15 correction
+
+The device screenshot showed a navy gap under the app after prototype 14. The sizing code assigned visualViewport.height minus the top safe inset to a shell already inset from the top. That relies on visualViewport and fixed-position geometry using identical system-area accounting, which this installed app did not satisfy. Removed the inline height assignment. The fixed shell now stretches between its CSS top safe inset and bottom:0, and the component measures that actual shell height. The status background and earlier interaction fixes remain.
+
+This correction was checked by script parsing, rendering logic and a focused sizing test using a visualViewport height smaller than the fixed shell. It still requires iPhone visual validation. The previous claim of improved keyboard sizing is unverified; the visualViewport height override has been removed.
+
+## Prototype 16 — scroll status colour
+
+The status backdrop switches from navy to #F2F3F8 when the sheet's cached starting position minus scrollTop reaches zero, and switches back when it is positive. Dark appearance uses black. The callback runs only on threshold changes; there are no additional layout measurements or page state renders. System status text/icon colour remains controlled by iOS and must be checked on device against the pale grey background.

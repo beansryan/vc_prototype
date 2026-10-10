@@ -38,7 +38,7 @@ class AppLogic extends DCLogic {
     if (!sc || !sc.parentElement) return;
     const root = sc.parentElement, sh = sc.querySelector('[data-sheet]'), page = sc.firstElementChild, P = this.props, cl = (v) => Math.max(0, Math.min(1, v));
     const setVar = (el, k, v) => { if (el && el.style.getPropertyValue(k) !== v) el.style.setProperty(k, v); };
-    if (!sh) { setVar(root, '--stO', '1'); return; }
+    if (!sh) { setVar(root, '--stO', '1'); if (window.VCApp && window.VCApp.syncStatus) window.VCApp.syncStatus(); return; }
     const duoV = (P.platform ?? 'ios') !== 'android' && String(P.duo ?? 'false') === 'true' && String(P.vbar ?? 'false') === 'true';
     const statusBottom = duoV ? ((P.size ?? 'compact') === 'compact' ? 72 : 24) + 86 : 58;
     // layout is measured once per page, never while scrolling (reading layout on every scroll frame causes jank)
@@ -48,6 +48,11 @@ class AppLogic extends DCLogic {
       sh._vcStart = rel(); sh._vcH = sc.clientHeight;
     }
     const y = sc.scrollTop, start = sh._vcStart, top = start - y;
+    const covered = top <= 0;
+    if (root._vcStatusCovered !== covered) {
+      root._vcStatusCovered = covered;
+      if (window.VCApp && window.VCApp.syncStatus) window.VCApp.syncStatus();
+    }
     // the sheet and the header live inside the page, so their values are set there, not on the whole app
     setVar(page, '--sheetR', (cl((top - 10) / 70) * 28).toFixed(1) + 'px');
     setVar(page, '--hdrY', (y * 0.45).toFixed(1) + 'px');
