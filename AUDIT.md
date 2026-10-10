@@ -86,3 +86,9 @@ The iPhone 17 Pro Max screenshot reports screen 440×956, inner and visual viewp
 Native default mode is required to be reinstalled via a fresh Home Screen icon. The previous translucent installation displayed a truncated usable viewport; simulated geometry tests did not establish that the native screen would paint outside it. The colour blend still drives theme-color and the root HTML/body background; its effect on the native iOS status region is device-dependent and unverified. Filling the actual content viewport and keeping the navigation visible takes priority over recreating a separate page-owned status strip.
 
 Measured-geometry regression checks verify a root of 894px rather than 832px for the supplied metrics. Real device confirmation of the newly installed default mode is pending.
+
+## Prototype 22 — swipe background contamination
+
+The transition's app.querySelector('[data-band]') searched through saved animation snapshots as well as the live page. When the Home snapshot was inserted beneath Purchases, the query found the snapshot's Home band and copied it over the live utility page. All transition band queries now target direct children of the live app root. Snapshot band clones also lose the live data-band marker. The native grey status mode and the corrected viewport are retained; the supplied device screenshot establishes that this native mode does not apply the requested status tint. The earlier blue-to-grey guarantee does not hold in this mode.
+
+A focused regression injects a nested Home band beneath a utility page and verifies that withBand adds nothing. The same test verifies that a genuine direct band still clones for branded screens. Script parsing and rendering logic checks pass. Device swipe validation remains pending.
