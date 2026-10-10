@@ -34,6 +34,18 @@ const samples=[];let last=performance.now();await new Promise(resolve=>{function
 report.motion.push({scope:'Desktop preview only; not physical iPhone frame-rate certification',meanMs:samples.reduce((a,b)=>a+b,0)/samples.length,maxMs:Math.max(...samples)});
 await wait(280);check('Temporary promotion layer hint clears',card.style.willChange==='');
 render().closeIam();await wait(230);check('Promotion closes without stranded overlay',!document.querySelector('[role="dialog"][aria-label="iPhone Duo is here"]'));
+// Mobile-style redundant viewport notifications must not repaint the page.
+const beforeResize=renders;
+for(let i=0;i<8;i++)dispatchEvent(new Event('resize'));
+await wait(250);check('Unchanged viewport resize does not render the app',renders===beforeResize,{beforeResize,renders});
+L.go('vewbuy');await wait(35);
+check('Live page is hidden during push',L.scroller.style.visibility==='hidden'&&document.getElementById('root').dataset.vcMotion==='1');
+check('Moving copies do not sample live backdrop blur',Array.from(document.querySelectorAll('[data-vc-layer] [style]')).filter(e=>/backdrop-filter/.test(e.style.cssText)).every(e=>getComputedStyle(e).backdropFilter==='none'));
+await state({qaMotionProbe:1});
+check('Unrelated state update cannot uncover live page mid-transition',L.scroller.style.visibility==='hidden');
+await wait(400);check('Live page restores after transition without leaked layers',L.scroller.style.visibility===''&&!document.querySelector('[data-vc-layer]'));
+check('Neutral detail cannot inherit Home edge tint',L.scroller.parentElement.style.getPropertyValue('--edgeO')==='0');
+L.back();await wait(350);
 VCApp.openShop=open;check('No runtime errors',report.errors.length===0,report.errors);
 report.passed=report.tests.filter(t=>t.pass).length;report.total=report.tests.length;
 const output=document.createElement('pre');output.id='qa-report';output.textContent=JSON.stringify(report,null,2);document.body.append(output);

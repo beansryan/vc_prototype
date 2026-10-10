@@ -144,11 +144,11 @@
 <div id="a2hs" role="dialog" aria-label="Add to Home Screen"><b>Add ValueClub to your Home Screen</b>Tap <span aria-label="Share">Share</span> in Safari, then <b style="display:inline;font-size:15px;margin:0">Add to Home Screen</b>. It opens full screen, like the real app.<button type="button" id="a2hsOk">Got it</button></div>
 <div id="devLayer"></div>
 <div id="resetFlash"></div>
-<script src="preact.min.js"></script>
+<script>if(location.search.includes("reduced")){const native=window.matchMedia;window.matchMedia=q=>q.includes("prefers-reduced-motion")?{matches:true,addEventListener(){},removeEventListener(){}}:native(q);}</script><script src="preact.min.js"></script>
 <script src="runtime.js?v=19-ready"></script>
 <script src="app.js?v=19-ready"></script>
 <script src="fx.js?v=19-ready"></script>
 <script src="sections.js?v=19-ready"></script>
 <script src="main.js?v=19-ready"></script>
-<script src="qa-review.js?v=19-ready"></script></body>
+<script src="qa-sections.js?v=19-ready"></script></body>
 </html>

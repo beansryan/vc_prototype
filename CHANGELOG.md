@@ -1,14 +1,22 @@
-# ValueClub v17
+# ValueClub v19
 
-- White background added to the Zenbook S14 image tile.
-- iPhone Duo is always the first hero and links directly to its 512GB Star White product page.
-- Replaced the old printer and Acer hero banners with live square Instax Pal 2 and Huawei Watch GT 7 Pro creatives from online.challenger.sg. No F1 campaign.
-- Each of the six laptop cards opens its matching product page. Campaign cards and See all open their matching collections; membership, privacy and warranty actions have explicit destinations.
-- Removed the rule that sent any message mentioning challenger.sg to the homepage.
-- Banner swipe dots update without rendering the page. Native horizontal scrolling and snapping remain; indicator movement uses transforms.
-- iPhone promotion pop-up uses a small slide and fade instead of scaling its image, text and shadow. The shade and card animate separately, with temporary layer hints cleared after animation. Likely promotion images decode while idle.
-- Retains v16 back animation, detail scroll restoration, tab state retention, gesture guards and navy header animation. Tap the selected tab to return to its root; tap again to scroll to top.
+- Warranty (My protection / Extended warranty) and Rewards (All vouchers / My vouchers) now have sliding content and a moving selection pill. The header and bottom navigation stay in place.
+- Swipe within section content to change sections. Content follows the finger; cancelled gestures settle back. Vertical scrolling, the left-edge Back gesture and nested horizontal scrolling retain priority.
+- Each section remembers its own scroll, including after opening a detail page and returning. Rapid taps settle without orphaned transition layers.
+- Added tab semantics, selected state, panel labelling and arrow-key navigation. Reduced-motion mode switches sections immediately.
+- Tapping the active bottom tab from a detail page now slides back to its root, including from deeper pages. A subsequent tap scrolls the root to the top. Switching to another bottom tab remains immediate and restores that tab's state.
+- Glass navigation has a lighter tint and softer shadow. Dark selected icons use white to retain contrast. Solid alternatives for accessibility and unsupported blur remain available. Content cards remain ordinary surfaces.
+- Removed the expired iPad extended-warranty purchase action and stale Home reminder; its sample purchase window ended on 10 October.
 
-Validation: 138 browser assertions passed (60 normal navigation, 60 reduced motion, 18 shopping/promotion). All 16 checked product/collection destinations returned valid content. JavaScript syntax and ZIP integrity checked. Preview frame intervals averaged about 8.3 ms during the promotion test; these are desktop measurements, not a physical iPhone guarantee. Physical Safari/PWA testing remains necessary to confirm device frame rate.
+Apple guidance checked: Liquid Glass belongs primarily in floating navigation and controls. Regular material balances translucency and legibility; clear material has restricted use cases. This CSS prototype approximates that appearance and does not reproduce native optical rendering or automatic system adaptation.
 
-Live banner sources were read from Challenger's homepage on 11 October 2026. Their destinations and image provenance are included in SHOP-LINKS.json. External store availability, prices and campaigns can change; existing prototype product prices remain illustrative.
+Sources:
+- https://developer.apple.com/design/human-interface-guidelines/materials
+- https://developer.apple.com/videos/play/wwdc2025/219/
+- https://developer.apple.com/documentation/TechnologyOverviews/adopting-liquid-glass
+
+Validation is recorded in TEST-RESULTS.json. It covers normal/reduced motion, section selection and cancellation, edge Back, nested scrolling, rapid taps, independent scroll restoration, keyboard navigation, glass contrast and responsive page layouts. Physical iPhone FPS and VoiceOver experience still require device validation.
+
+The UX pass also extends the scroll-stop tap guard to the new section scrollers, while keeping section tabs responsive on the first tap during momentum scrolling. Nested horizontal scrollers retain their gestures.
+
+Validation outcome: 908/908 browser assertions passed — 673 responsive layout, 47 glass, 60 normal navigation, 60 reduced navigation, 22 section gestures, 22 reduced section gestures, and 24 shopping/promotion/flicker checks. Syntax and ZIP integrity checks passed.

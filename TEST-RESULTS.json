@@ -1,6 +1,6 @@
 {
-  "version": 17,
-  "normal": {
+  "version": 19,
+  "normalNavigation": {
     "tests": [
       {
         "name": "Detail starts at top",
@@ -253,8 +253,8 @@
     "motion": [
       {
         "sample": "Local preview rAF intervals; not iPhone performance",
-        "maxMs": 9.30000000000291,
-        "meanMs": 7.68000000023836
+        "maxMs": 9.299999999999272,
+        "meanMs": 7.643999999761581
       },
       {
         "sample": "Push animation",
@@ -269,7 +269,7 @@
     "passed": 60,
     "total": 60
   },
-  "reduced": {
+  "reducedNavigation": {
     "tests": [
       {
         "name": "Detail starts at top",
@@ -522,8 +522,8 @@
     "motion": [
       {
         "sample": "Local preview rAF intervals; not iPhone performance",
-        "maxMs": 9.30000000000291,
-        "meanMs": 7.792000000119151
+        "maxMs": 9.299999999999272,
+        "meanMs": 7.887999999761523
       },
       {
         "sample": "Push animation",
@@ -538,7 +538,4173 @@
     "passed": 60,
     "total": 60
   },
-  "shoppingAndPromotion": {
+  "sections": {
+    "tests": [
+      {
+        "name": "Section has bounded independent scroller",
+        "pass": true
+      },
+      {
+        "name": "Section scroll leaves header stationary",
+        "pass": true
+      },
+      {
+        "name": "Section tap uses content slide",
+        "pass": true
+      },
+      {
+        "name": "Header stays stationary during section slide",
+        "pass": true
+      },
+      {
+        "name": "My protection restores its own scroll",
+        "pass": true,
+        "detail": {
+          "saved": 220,
+          "actual": 220
+        }
+      },
+      {
+        "name": "Tab selection is accessible",
+        "pass": true
+      },
+      {
+        "name": "Horizontal swipe follows finger",
+        "pass": true
+      },
+      {
+        "name": "Swipe commits next section",
+        "pass": true
+      },
+      {
+        "name": "Cancelled swipe keeps selected section",
+        "pass": true
+      },
+      {
+        "name": "Vertical scroll never changes section",
+        "pass": true
+      },
+      {
+        "name": "Arrow keys switch section",
+        "pass": true
+      },
+      {
+        "name": "Detail Back restores section scroll",
+        "pass": true
+      },
+      {
+        "name": "Active bottom tab animates return to root",
+        "pass": true
+      },
+      {
+        "name": "Root return cleans layers",
+        "pass": true
+      },
+      {
+        "name": "Voucher sibling sections slide and select",
+        "pass": true
+      },
+      {
+        "name": "Rapid section taps settle coherently",
+        "pass": true
+      },
+      {
+        "name": "Left-edge swipe returns Back instead of changing section",
+        "pass": true
+      },
+      {
+        "name": "Nested horizontal scroller keeps its gesture",
+        "pass": true
+      },
+      {
+        "name": "Scroll-stop tap cannot activate section cards",
+        "pass": true
+      },
+      {
+        "name": "Section tab responds once even after scrolling",
+        "pass": true
+      },
+      {
+        "name": "Expired fixture purchase window never offers an add-warranty action",
+        "pass": true
+      },
+      {
+        "name": "No runtime errors",
+        "pass": true,
+        "detail": []
+      }
+    ],
+    "errors": [],
+    "passed": 22,
+    "total": 22
+  },
+  "reducedSections": {
+    "tests": [
+      {
+        "name": "Section has bounded independent scroller",
+        "pass": true
+      },
+      {
+        "name": "Section scroll leaves header stationary",
+        "pass": true
+      },
+      {
+        "name": "Section tap uses content slide",
+        "pass": true
+      },
+      {
+        "name": "Header stays stationary during section slide",
+        "pass": true
+      },
+      {
+        "name": "My protection restores its own scroll",
+        "pass": true,
+        "detail": {
+          "saved": 220,
+          "actual": 220
+        }
+      },
+      {
+        "name": "Tab selection is accessible",
+        "pass": true
+      },
+      {
+        "name": "Horizontal swipe follows finger",
+        "pass": true
+      },
+      {
+        "name": "Swipe commits next section",
+        "pass": true
+      },
+      {
+        "name": "Cancelled swipe keeps selected section",
+        "pass": true
+      },
+      {
+        "name": "Vertical scroll never changes section",
+        "pass": true
+      },
+      {
+        "name": "Arrow keys switch section",
+        "pass": true
+      },
+      {
+        "name": "Detail Back restores section scroll",
+        "pass": true
+      },
+      {
+        "name": "Active bottom tab animates return to root",
+        "pass": true
+      },
+      {
+        "name": "Root return cleans layers",
+        "pass": true
+      },
+      {
+        "name": "Voucher sibling sections slide and select",
+        "pass": true
+      },
+      {
+        "name": "Rapid section taps settle coherently",
+        "pass": true
+      },
+      {
+        "name": "Left-edge swipe returns Back instead of changing section",
+        "pass": true
+      },
+      {
+        "name": "Nested horizontal scroller keeps its gesture",
+        "pass": true
+      },
+      {
+        "name": "Scroll-stop tap cannot activate section cards",
+        "pass": true
+      },
+      {
+        "name": "Section tab responds once even after scrolling",
+        "pass": true
+      },
+      {
+        "name": "Expired fixture purchase window never offers an add-warranty action",
+        "pass": true
+      },
+      {
+        "name": "No runtime errors",
+        "pass": true,
+        "detail": []
+      }
+    ],
+    "errors": [],
+    "passed": 22,
+    "total": 22
+  },
+  "glass": {
+    "tests": [
+      {
+        "name": "light single consistent blur",
+        "pass": true,
+        "detail": "blur(12px) saturate(1.4)"
+      },
+      {
+        "name": "light no SVG lens maps",
+        "pass": true
+      },
+      {
+        "name": "light pill never blurs its parent",
+        "pass": true
+      },
+      {
+        "name": "light Scan touch area",
+        "pass": true,
+        "detail": {
+          "width": 62,
+          "height": 62
+        }
+      },
+      {
+        "name": "light Scan worst-case tint contrast",
+        "pass": true,
+        "detail": {
+          "ratio": 4.850874330463927
+        }
+      },
+      {
+        "name": "light Inbox touch area",
+        "pass": true,
+        "detail": {
+          "width": 44,
+          "height": 44
+        }
+      },
+      {
+        "name": "light Inbox worst-case tint contrast",
+        "pass": true,
+        "detail": {
+          "ratio": 4.850874330463927
+        }
+      },
+      {
+        "name": "light Home touch area",
+        "pass": true,
+        "detail": {
+          "width": 91,
+          "height": 54
+        }
+      },
+      {
+        "name": "light Home worst-case tint contrast",
+        "pass": true,
+        "detail": {
+          "ratio": 4.850874330463927
+        }
+      },
+      {
+        "name": "light Rewards touch area",
+        "pass": true,
+        "detail": {
+          "width": 91,
+          "height": 54
+        }
+      },
+      {
+        "name": "light Rewards worst-case tint contrast",
+        "pass": true,
+        "detail": {
+          "ratio": 7.3709355625018365
+        }
+      },
+      {
+        "name": "light Account touch area",
+        "pass": true,
+        "detail": {
+          "width": 91,
+          "height": 54
+        }
+      },
+      {
+        "name": "light Account worst-case tint contrast",
+        "pass": true,
+        "detail": {
+          "ratio": 7.3709355625018365
+        }
+      },
+      {
+        "name": "light Rewards pill aligns after one click",
+        "pass": true
+      },
+      {
+        "name": "light Rewards exposes selected state",
+        "pass": true
+      },
+      {
+        "name": "light Account pill aligns after one click",
+        "pass": true
+      },
+      {
+        "name": "light Account exposes selected state",
+        "pass": true
+      },
+      {
+        "name": "light Home pill aligns after one click",
+        "pass": true
+      },
+      {
+        "name": "light Home exposes selected state",
+        "pass": true
+      },
+      {
+        "name": "light solid alternative has no blur",
+        "pass": true
+      },
+      {
+        "name": "light Scan returns to originating tab",
+        "pass": true
+      },
+      {
+        "name": "light Back on navy header contrast",
+        "pass": true
+      },
+      {
+        "name": "light Back remains 44px",
+        "pass": true
+      },
+      {
+        "name": "dark single consistent blur",
+        "pass": true,
+        "detail": "blur(12px) saturate(1.4)"
+      },
+      {
+        "name": "dark no SVG lens maps",
+        "pass": true
+      },
+      {
+        "name": "dark pill never blurs its parent",
+        "pass": true
+      },
+      {
+        "name": "dark Scan touch area",
+        "pass": true,
+        "detail": {
+          "width": 62,
+          "height": 62
+        }
+      },
+      {
+        "name": "dark Scan worst-case tint contrast",
+        "pass": true,
+        "detail": {
+          "ratio": 5.631356235615874
+        }
+      },
+      {
+        "name": "dark Inbox touch area",
+        "pass": true,
+        "detail": {
+          "width": 44,
+          "height": 44
+        }
+      },
+      {
+        "name": "dark Inbox worst-case tint contrast",
+        "pass": true,
+        "detail": {
+          "ratio": 5.631356235615874
+        }
+      },
+      {
+        "name": "dark Home touch area",
+        "pass": true,
+        "detail": {
+          "width": 91,
+          "height": 54
+        }
+      },
+      {
+        "name": "dark Home worst-case tint contrast",
+        "pass": true,
+        "detail": {
+          "ratio": 5.631356235615874
+        }
+      },
+      {
+        "name": "dark Rewards touch area",
+        "pass": true,
+        "detail": {
+          "width": 91,
+          "height": 54
+        }
+      },
+      {
+        "name": "dark Rewards worst-case tint contrast",
+        "pass": true,
+        "detail": {
+          "ratio": 5.631356235615874
+        }
+      },
+      {
+        "name": "dark Account touch area",
+        "pass": true,
+        "detail": {
+          "width": 91,
+          "height": 54
+        }
+      },
+      {
+        "name": "dark Account worst-case tint contrast",
+        "pass": true,
+        "detail": {
+          "ratio": 5.631356235615874
+        }
+      },
+      {
+        "name": "dark Rewards pill aligns after one click",
+        "pass": true
+      },
+      {
+        "name": "dark Rewards exposes selected state",
+        "pass": true
+      },
+      {
+        "name": "dark Account pill aligns after one click",
+        "pass": true
+      },
+      {
+        "name": "dark Account exposes selected state",
+        "pass": true
+      },
+      {
+        "name": "dark Home pill aligns after one click",
+        "pass": true
+      },
+      {
+        "name": "dark Home exposes selected state",
+        "pass": true
+      },
+      {
+        "name": "dark solid alternative has no blur",
+        "pass": true
+      },
+      {
+        "name": "dark Scan returns to originating tab",
+        "pass": true
+      },
+      {
+        "name": "dark Back on navy header contrast",
+        "pass": true
+      },
+      {
+        "name": "dark Back remains 44px",
+        "pass": true
+      },
+      {
+        "name": "No runtime errors",
+        "pass": true,
+        "detail": []
+      }
+    ],
+    "errors": [],
+    "passed": 47,
+    "total": 47
+  },
+  "layout": {
+    "tests": [
+      {
+        "name": "ios 402×874 default typography scale",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default dimensions",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default home actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default home renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default home page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default home text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default vouchers actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default vouchers renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default vouchers page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default vouchers text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default account actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default account renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default account page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default account text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default cashback actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default cashback renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default cashback page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default cashback text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default spendreward actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default spendreward renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default spendreward page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default spendreward text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default scan actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default scan renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default scan page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default scan text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default receipts actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default receipts renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default receipts page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default receipts text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default inbox actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default inbox renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default inbox page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default inbox text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default settings actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default settings renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default settings page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default settings text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default profile actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default profile renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default profile page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default profile text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default plans actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default plans renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default plans page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default plans text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default signup actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default signup renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default signup page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default signup text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default login actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default login renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default login page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default login text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default otp actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default otp renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default otp page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default otp text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default faq actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default faq renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default faq page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default faq text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default stores actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default stores renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default stores page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default stores text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default vew actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default vew renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default vew page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default vew text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default vewbuy actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default vewbuy renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default vewbuy page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default vewbuy text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default deal actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default deal renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default deal page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default deal text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default ecredits actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default ecredits renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default ecredits page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default ecredits text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default voucher actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default voucher renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default voucher page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default voucher text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default contact actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default contact renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default contact page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default contact text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default terms actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default terms renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default terms page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default terms text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default subscribe actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default subscribe renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default subscribe page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default subscribe text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default card actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default card renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default card page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default card text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default manage actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default manage renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default manage page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default manage text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default guide actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default guide renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default guide page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default guide text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default forgot actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default forgot renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default forgot page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default forgot text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default recap actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default recap renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default recap page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default recap text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default challenges actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default challenges renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default challenges page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default challenges text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default spin actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default spin renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default spin page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default spin text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default puzzle actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default puzzle renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default puzzle page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default puzzle text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default tiles actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 default tiles renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 default tiles page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 default tiles text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default typography scale",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default dimensions",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default home actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default home renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default home page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default home text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default vouchers actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default vouchers renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default vouchers page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default vouchers text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default account actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default account renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default account page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default account text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default cashback actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default cashback renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default cashback page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default cashback text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default spendreward actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default spendreward renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default spendreward page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default spendreward text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default scan actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default scan renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default scan page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default scan text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default receipts actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default receipts renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default receipts page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default receipts text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default inbox actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default inbox renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default inbox page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default inbox text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default settings actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default settings renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default settings page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default settings text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default profile actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default profile renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default profile page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default profile text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default plans actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default plans renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default plans page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default plans text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default signup actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default signup renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default signup page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default signup text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default login actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default login renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default login page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default login text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default otp actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default otp renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default otp page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default otp text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default faq actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default faq renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default faq page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default faq text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default stores actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default stores renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default stores page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default stores text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default vew actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default vew renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default vew page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default vew text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default vewbuy actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default vewbuy renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default vewbuy page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default vewbuy text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default deal actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default deal renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default deal page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default deal text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default ecredits actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default ecredits renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default ecredits page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default ecredits text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default voucher actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default voucher renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default voucher page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default voucher text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default contact actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default contact renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default contact page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default contact text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default terms actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default terms renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default terms page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default terms text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default subscribe actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default subscribe renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default subscribe page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default subscribe text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default card actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default card renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default card page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default card text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default manage actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default manage renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default manage page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default manage text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default guide actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default guide renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default guide page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default guide text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default forgot actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default forgot renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default forgot page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default forgot text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default recap actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default recap renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default recap page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default recap text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default challenges actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default challenges renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default challenges page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default challenges text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default spin actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default spin renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default spin page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default spin text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default puzzle actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default puzzle renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default puzzle page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default puzzle text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default tiles actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 520×760 default tiles renders",
+        "pass": true
+      },
+      {
+        "name": "ios 520×760 default tiles page width",
+        "pass": true,
+        "detail": {
+          "width": 520,
+          "content": 520
+        }
+      },
+      {
+        "name": "ios 520×760 default tiles text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default typography scale",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default dimensions",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default home actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default home renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default home page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default home text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default vouchers actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default vouchers renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default vouchers page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default vouchers text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default account actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default account renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default account page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default account text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default cashback actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default cashback renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default cashback page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default cashback text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default spendreward actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default spendreward renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default spendreward page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default spendreward text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default scan actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default scan renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default scan page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default scan text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default receipts actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default receipts renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default receipts page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default receipts text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default inbox actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default inbox renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default inbox page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default inbox text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default settings actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default settings renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default settings page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default settings text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default profile actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default profile renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default profile page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default profile text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default plans actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default plans renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default plans page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default plans text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default signup actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default signup renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default signup page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default signup text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default login actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default login renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default login page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default login text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default otp actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default otp renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default otp page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default otp text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default faq actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default faq renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default faq page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default faq text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default stores actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default stores renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default stores page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default stores text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default vew actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default vew renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default vew page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default vew text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default vewbuy actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default vewbuy renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default vewbuy page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default vewbuy text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default deal actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default deal renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default deal page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default deal text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default ecredits actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default ecredits renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default ecredits page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default ecredits text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default voucher actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default voucher renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default voucher page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default voucher text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default contact actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default contact renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default contact page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default contact text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default terms actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default terms renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default terms page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default terms text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default subscribe actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default subscribe renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default subscribe page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default subscribe text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default card actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default card renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default card page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default card text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default manage actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default manage renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default manage page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default manage text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default guide actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default guide renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default guide page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default guide text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default forgot actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default forgot renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default forgot page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default forgot text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default recap actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default recap renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default recap page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default recap text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default challenges actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default challenges renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default challenges page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default challenges text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default spin actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default spin renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default spin page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default spin text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default puzzle actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default puzzle renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default puzzle page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default puzzle text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default tiles actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 760×820 default tiles renders",
+        "pass": true
+      },
+      {
+        "name": "ios 760×820 default tiles page width",
+        "pass": true,
+        "detail": {
+          "width": 760,
+          "content": 760
+        }
+      },
+      {
+        "name": "ios 760×820 default tiles text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% typography scale",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% dimensions",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% home actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% home renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% home page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% home text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% vouchers actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% vouchers renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% vouchers page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% vouchers text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% account actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% account renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% account page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% account text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% cashback actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% cashback renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% cashback page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% cashback text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% spendreward actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% spendreward renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% spendreward page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% spendreward text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% scan actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% scan renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% scan page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% scan text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% receipts actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% receipts renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% receipts page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% receipts text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% inbox actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% inbox renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% inbox page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% inbox text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% settings actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% settings renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% settings page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% settings text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% profile actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% profile renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% profile page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% profile text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% plans actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% plans renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% plans page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% plans text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% signup actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% signup renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% signup page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% signup text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% login actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% login renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% login page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% login text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% otp actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% otp renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% otp page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% otp text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% faq actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% faq renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% faq page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% faq text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% stores actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% stores renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% stores page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% stores text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% vew actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% vew renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% vew page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% vew text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% vewbuy actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% vewbuy renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% vewbuy page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% vewbuy text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% deal actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% deal renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% deal page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% deal text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% ecredits actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% ecredits renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% ecredits page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% ecredits text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% voucher actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% voucher renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% voucher page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% voucher text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% contact actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% contact renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% contact page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% contact text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% terms actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% terms renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% terms page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% terms text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% subscribe actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% subscribe renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% subscribe page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% subscribe text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% card actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% card renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% card page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% card text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% manage actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% manage renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% manage page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% manage text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% guide actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% guide renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% guide page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% guide text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% forgot actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% forgot renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% forgot page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% forgot text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% recap actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% recap renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% recap page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% recap text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% challenges actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% challenges renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% challenges page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% challenges text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% spin actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% spin renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% spin page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% spin text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% puzzle actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% puzzle renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% puzzle page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% puzzle text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% tiles actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "ios 402×874 200% tiles renders",
+        "pass": true
+      },
+      {
+        "name": "ios 402×874 200% tiles page width",
+        "pass": true,
+        "detail": {
+          "width": 402,
+          "content": 402
+        }
+      },
+      {
+        "name": "ios 402×874 200% tiles text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% typography scale",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% dimensions",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% home actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% home renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% home page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% home text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% vouchers actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% vouchers renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% vouchers page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% vouchers text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% account actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% account renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% account page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% account text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% cashback actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% cashback renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% cashback page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% cashback text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% spendreward actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% spendreward renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% spendreward page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% spendreward text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% scan actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% scan renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% scan page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% scan text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% receipts actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% receipts renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% receipts page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% receipts text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% inbox actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% inbox renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% inbox page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% inbox text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% settings actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% settings renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% settings page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% settings text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% profile actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% profile renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% profile page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% profile text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% plans actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% plans renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% plans page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% plans text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% signup actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% signup renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% signup page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% signup text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% login actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% login renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% login page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% login text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% otp actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% otp renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% otp page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% otp text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% faq actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% faq renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% faq page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% faq text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% stores actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% stores renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% stores page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% stores text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% vew actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% vew renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% vew page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% vew text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% vewbuy actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% vewbuy renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% vewbuy page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% vewbuy text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% deal actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% deal renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% deal page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% deal text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% ecredits actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% ecredits renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% ecredits page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% ecredits text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% voucher actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% voucher renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% voucher page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% voucher text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% contact actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% contact renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% contact page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% contact text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% terms actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% terms renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% terms page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% terms text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% subscribe actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% subscribe renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% subscribe page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% subscribe text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% card actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% card renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% card page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% card text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% manage actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% manage renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% manage page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% manage text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% guide actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% guide renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% guide page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% guide text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% forgot actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% forgot renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% forgot page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% forgot text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% recap actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% recap renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% recap page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% recap text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% challenges actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% challenges renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% challenges page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% challenges text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% spin actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% spin renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% spin page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% spin text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% puzzle actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% puzzle renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% puzzle page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% puzzle text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% tiles actions are wired",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "android 412×915 200% tiles renders",
+        "pass": true
+      },
+      {
+        "name": "android 412×915 200% tiles page width",
+        "pass": true,
+        "detail": {
+          "width": 412,
+          "content": 412
+        }
+      },
+      {
+        "name": "android 412×915 200% tiles text fits",
+        "pass": true,
+        "detail": []
+      },
+      {
+        "name": "Modal animates on entry",
+        "pass": true
+      },
+      {
+        "name": "Modal exit cleans up",
+        "pass": true
+      },
+      {
+        "name": "No runtime errors",
+        "pass": true,
+        "detail": []
+      }
+    ],
+    "errors": [],
+    "motion": [
+      {
+        "sample": "Active push in local browser; not hardware certification",
+        "frames": 41,
+        "meanMs": 8.200000000072688,
+        "maxMs": 16.80000000000291
+      }
+    ],
+    "passed": 673,
+    "total": 673
+  },
+  "shoppingAndFlicker": {
     "tests": [
       {
         "name": "iPhone Duo is first and goes directly to matching product",
@@ -611,6 +4777,34 @@
         "pass": true
       },
       {
+        "name": "Unchanged viewport resize does not render the app",
+        "pass": true,
+        "detail": {
+          "beforeResize": 5,
+          "renders": 5
+        }
+      },
+      {
+        "name": "Live page is hidden during push",
+        "pass": true
+      },
+      {
+        "name": "Moving copies do not sample live backdrop blur",
+        "pass": true
+      },
+      {
+        "name": "Unrelated state update cannot uncover live page mid-transition",
+        "pass": true
+      },
+      {
+        "name": "Live page restores after transition without leaked layers",
+        "pass": true
+      },
+      {
+        "name": "Neutral detail cannot inherit Home edge tint",
+        "pass": true
+      },
+      {
         "name": "No runtime errors",
         "pass": true,
         "detail": []
@@ -620,126 +4814,14 @@
     "motion": [
       {
         "scope": "Desktop preview only; not physical iPhone frame-rate certification",
-        "meanMs": 8.157142856972548,
-        "maxMs": 9.399999999999636
+        "meanMs": 8.239999999914861,
+        "maxMs": 9.300000000000182
       }
     ],
-    "passed": 18,
-    "total": 18
+    "passed": 24,
+    "total": 24
   },
-  "liveDestinations": [
-    {
-      "url": "https://online.challenger.sg/collections/10-10-notebook-mega-sales",
-      "status": 200,
-      "title": null,
-      "products": 1,
-      "pass": true
-    },
-    {
-      "url": "https://online.challenger.sg/collections/acer-redemption-promotion",
-      "status": 200,
-      "title": null,
-      "products": 1,
-      "pass": true
-    },
-    {
-      "url": "https://online.challenger.sg/collections/brother",
-      "status": 200,
-      "title": null,
-      "products": 1,
-      "pass": true
-    },
-    {
-      "url": "https://online.challenger.sg/collections/gaming-consoles",
-      "status": 200,
-      "title": null,
-      "products": 1,
-      "pass": true
-    },
-    {
-      "url": "https://online.challenger.sg/collections/polaroid-september-promotion",
-      "status": 200,
-      "title": null,
-      "products": 1,
-      "pass": true
-    },
-    {
-      "url": "https://online.challenger.sg/collections/valore-and-vce-buy-1-get-1-free",
-      "status": 200,
-      "title": null,
-      "products": 1,
-      "pass": true
-    },
-    {
-      "url": "https://online.challenger.sg/pages/valueclub-membership",
-      "status": 200,
-      "title": null,
-      "products": null,
-      "pass": true
-    },
-    {
-      "url": "https://online.challenger.sg/products/asus-tuf-fx608jpr-qt046w-i7-14650h-32gb-1tb-rtx5070-16-grey",
-      "status": 200,
-      "title": "Asus TUF Gaming F16 FX608JPR-QT046W - i7-14650H 32GB 1TB RTX5070 16\"",
-      "products": null,
-      "pass": true
-    },
-    {
-      "url": "https://online.challenger.sg/products/asus-vb-s3407aa-sf014w-ut7-355-32gb-1tb-14-cp",
-      "status": 200,
-      "title": "Asus Vivobook S14 S3407AA-SF014W - UT7-355 32GB 1TB 14\" CP+",
-      "products": null,
-      "pass": true
-    },
-    {
-      "url": "https://online.challenger.sg/products/asus-zb-ux3405ca-su954w-u7-255h-32gb-1tb-14-t",
-      "status": 200,
-      "title": "Asus Zenbook 14 UX3405CA-SU954W - U7-255H 32GB 1TB 14\" OLED Touch",
-      "products": null,
-      "pass": true
-    },
-    {
-      "url": "https://online.challenger.sg/products/asus-zb-ux5406aa-su098w-u9-386h-32gb-1tb-14-cp-t",
-      "status": 200,
-      "title": "Asus Zenbook S14 UX5406AA-SU098W - U9-386H 32GB 1TB 14\" OLED Touch CP+",
-      "products": null,
-      "pass": true
-    },
-    {
-      "url": "https://online.challenger.sg/products/asus-zb-ux5606sa-rk231w-u7-258v-32gb-1tb-16-t",
-      "status": 200,
-      "title": "Asus Zenbook S16 UX5606SA-RK231W - U7-258V 32GB 1TB 16\" OLED",
-      "products": null,
-      "pass": true
-    },
-    {
-      "url": "https://online.challenger.sg/products/fujifilm-instax-pal-2-digital-camera-white",
-      "status": 200,
-      "title": "Fujifilm Instax Pal 2 Digital Camera - White",
-      "products": null,
-      "pass": true
-    },
-    {
-      "url": "https://online.challenger.sg/products/huawei-watch-gt-7-pro-46mm-black",
-      "status": 200,
-      "title": "Huawei Watch GT 7 Pro 46mm Black",
-      "products": null,
-      "pass": true
-    },
-    {
-      "url": "https://online.challenger.sg/products/mk2f4x-a-iphone-duo-512gb-star-white",
-      "status": 200,
-      "title": "Apple iPhone Duo 512GB Star White",
-      "products": null,
-      "pass": true
-    },
-    {
-      "url": "https://online.challenger.sg/products/msi-katana-15-hx-b14wfk-452sg-i7-14650hx-16gb-512gb-rtx5060",
-      "status": 200,
-      "title": "MSI Katana 15 HX B14WFK-452SG - i7-14650HX 16GB 512GB GeForce RTX 5060",
-      "products": null,
-      "pass": true
-    }
-  ],
-  "scope": "138 browser assertions and 16 live destination checks. Desktop timing is not physical iPhone FPS."
+  "scope": "Browser checks across the v19 implementation pass. Physical iPhone frame rate, VoiceOver and native optical material behavior remain unverified.",
+  "passed": 908,
+  "total": 908
 }

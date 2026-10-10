@@ -19,3 +19,10 @@ Final results: 60/60 normal navigation, 60/60 reduced motion, 673/673 page matri
 
 ## v17 promotion pass
 Banner scrolling updates indicator transforms without page state updates. The iPhone modal animates its own translate/opacity and a separate shade opacity layer, avoiding a scaling card nested inside a full-screen opacity group. No background-color animation, layout animation or persistent card will-change. Reduced motion bypasses transitions. Normal and reduced navigation each passed 60 assertions; 18 new promotion/link assertions also passed. Desktop timing is not a device FPS certification.
+
+
+## v18 continuity pass
+Unchanged resize notifications skip remounting and animation cancellation. Live content stays hidden behind moving copies, including when state changes during navigation. Moving copies retain their tint but no backdrop blur. Neutral pages reset --edgeO. Animation cadence requests highest only when Animation.frameRate exists; no app FPS cap was present. 144 automated assertions passed; physical iPhone validation remains outstanding.
+
+## v19 sibling sections
+The local section motion owner is separate from root navigation. Warranty and voucher sibling sections have bounded vertical scrollers, persistent per-section offsets and isolated content transforms. Header and bottom navigation do not slide with section content. Tap transitions last 250ms; drag completion/cancellation lasts 180ms. Direction locking excludes vertical gestures, left-edge Back and nested horizontal scrollers. Interrupted animation callbacks cannot clean up newer transitions. Filter controls retain ordinary result updates. Reduced motion bypasses settling animations. Active bottom-tab return from deeper pages now uses the existing Back transition.

@@ -8,7 +8,7 @@
   const { defineDC, h, render } = window.VCRuntime;
 
   // ---------- storage (never fatal) ----------
-  const isQA = /\/QA(?:-motion|-review|-shop)?\.html$/.test(location.pathname);
+  const isQA = /\/QA(?:-motion|-review|-shop|-sections)?\.html$/.test(location.pathname);
   const store = {
     get(k, d) { if(isQA)return d; try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
     set(k, v) { if(isQA)return; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
@@ -196,10 +196,17 @@
     L._onState = () => persist(L);
     wireLinks(L);
     window.VCFx.install(L, document.getElementById('root'));
+    window.VCSections.install(L, document.getElementById('root'));
   }
 
+  let mountedLayout = '';
   function mount() {
     const sz = size();
+    const layoutKey=JSON.stringify([sz,devProps,darkMq.matches]);
+    // Safari URL-bar / keyboard notifications may repeat without changing layout.
+    // Desktop frame scaling already happens in size(); it does not need a page render.
+    if(layoutKey===mountedLayout)return;
+    mountedLayout=layoutKey;
     render(h(App, { p: { platform: 'ios', size: sz.w < 600 ? 'compact' : sz.w < 840 ? 'medium' : 'expanded', tier: 'guest', w: sz.w, h: sz.h, theme: darkMq.matches ? 'dark' : 'light', intro: 'none', topAdjust: sz.topAdjust || 0, ...devProps, ...(preview.get('platform') === 'android' ? {platform:'android'} : {}), ...(preview.get('text') === '200' ? {textSize:'large'} : {}) }, onLogic }), document.getElementById('root'));
   }
   if (isQA) VCApp.testLayout = (w,h,p={}) => {devProps={...p,w,h,size:w<600?'compact':w<840?'medium':'expanded'};mount();};
@@ -207,12 +214,12 @@
   const warmImages = () => ['assets/f4f1fe1c497a6645f7a23a31777d8539.jpg','assets/45fa7290869b5e4143ac98d29a13cc15.jpg','assets/hero-instax.png','assets/hero-huawei.jpg','assets/zenbook.png','assets/756b2a9aa853d0e4aa0b55ee8f8967cf.jpg','assets/7ee051c627c52b393a4afacbc93f2a61.jpg','assets/eb79d24a3a3b837fc614d883978ea6f6.jpg','assets/b5ef8f8a7ae1d1dffe0456083ba922a6.jpg','assets/f7b5ee2a9a440913f685e18f56a1b0d4.jpg'].forEach(src=>{const img=new Image();img.src=src;if(img.decode)img.decode().catch(()=>{});});
   if(window.requestIdleCallback)requestIdleCallback(warmImages,{timeout:3000});else setTimeout(warmImages,3000);
   let mT;
-  const remount = () => { clearTimeout(mT); mT = setTimeout(mount, 60); };
+  const remount = () => { clearTimeout(mT); mT = setTimeout(mount, 180); };
   addEventListener('resize', remount);
   addEventListener('orientationchange', remount);
   addEventListener('pageshow', remount);
   if (window.visualViewport) visualViewport.addEventListener('resize', remount);
-  setTimeout(mount, 300); setTimeout(mount, 1200);
+
 
   // Keep system chrome stable; never sample pixels or recolour the canvas during motion.
   const tcMeta = document.getElementById('vcTheme');

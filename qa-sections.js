@@ -1,0 +1,30 @@
+(async()=>{
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const wait=ms=>new Promise(r=>setTimeout(r,ms)),report={tests:[],errors:[]};addEventListener('error',e=>report.errors.push(e.message));const check=(name,pass,detail)=>report.tests.push({name,pass:!!pass,detail});
+await wait(3800);const L=VCApp._L;VCApp.testLayout(402,874);const state=p=>new Promise(r=>L.setState(p,r));await state({splash:false,loading:false,iam:'',modal:'',tier:'m12'});
+L.go('home',true);await wait(450);L.go('vew');await wait(450);
+let p=document.querySelector('[data-section-panel=vew]');check('Section has bounded independent scroller',p.clientHeight>200&&p.scrollHeight>p.clientHeight);
+const header=document.querySelector('h1'),top=header.getBoundingClientRect().top;p.scrollTop=220;await wait(40);const saved=p.scrollTop;check('Section scroll leaves header stationary',header.getBoundingClientRect().top===top);
+L.renderVals().vewPlans();await wait(40);check('Section tap uses content slide',reduced?!document.getElementById('root').dataset.sectionMotion:document.getElementById('root').dataset.sectionMotion==='slide');check('Header stays stationary during section slide',header.getBoundingClientRect().top===top);await wait(300);
+p=document.querySelector('[data-section-panel=vew]');p.scrollTop=100;await wait(40);L.renderVals().vewMine();await wait(300);check('My protection restores its own scroll',p.scrollTop===saved,{saved,actual:p.scrollTop});
+check('Tab selection is accessible',document.querySelector('[role=tab][aria-selected=true]').innerText==='My protection');
+function touch(type,x,y){const t=new Touch({identifier:22,target:p,clientX:x,clientY:y});p.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true,touches:/end|cancel/.test(type)?[]:[t],changedTouches:[t]}));}
+const rect=p.getBoundingClientRect(),x=rect.left+240,y=rect.top+100;
+touch('touchstart',x,y);touch('touchmove',x-130,y+2);await wait(40);check('Horizontal swipe follows finger',document.getElementById('root').dataset.sectionMotion==='drag'&&Math.abs(parseFloat(p.style.transform.slice(12))-(p.clientWidth-130/(document.getElementById('root').getBoundingClientRect().width/document.getElementById('root').offsetWidth)))<2);touch('touchend',x-130,y+2);await wait(250);check('Swipe commits next section',L.state.vewSeg==='plans');
+touch('touchstart',x-100,y);touch('touchmove',x-65,y+1);await wait(30);touch('touchcancel',x-65,y+1);await wait(250);check('Cancelled swipe keeps selected section',L.state.vewSeg==='plans');
+touch('touchstart',x,y);touch('touchmove',x+3,y+80);touch('touchend',x+3,y+80);await wait(50);check('Vertical scroll never changes section',L.state.vewSeg==='plans');
+const b=document.querySelector('[role=tab][aria-selected=true]');b.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true}));await wait(300);check('Arrow keys switch section',L.state.vewSeg==='mine'&&document.activeElement.innerText==='My protection');
+L.go('vewbuy');await wait(430);L.back();await wait(400);p=document.querySelector('[data-section-panel=vew]');check('Detail Back restores section scroll',p.scrollTop===saved);
+L.go('vewbuy');await wait(400);L.go('home',true);await wait(30);check('Active bottom tab animates return to root',document.getElementById('root').dataset.navKind==='pop'&&(reduced?!document.querySelector('[data-vc-layer]'):!!document.querySelector('[data-vc-layer]')));await wait(400);check('Root return cleans layers',L.state.tab==='home'&&!document.querySelector('[data-vc-layer]'));
+L.go('vouchers',true);await wait(400);L.renderVals().segMine();await wait(300);check('Voucher sibling sections slide and select',L.state.vSeg==='mine'&&!!document.querySelector('[data-section-panel=vouchers]'));
+L.renderVals().segAvail();L.renderVals().segMine();L.renderVals().segAvail();await wait(400);check('Rapid section taps settle coherently',L.state.vSeg==='available'&&!document.querySelector('[data-section-panel][aria-hidden=true]')&&!document.getElementById('root').dataset.sectionMotion);
+L.go('home',true);await wait(380);L.go('vew');await wait(400);p=document.querySelector('[data-section-panel=vew]');
+const edge=document.getElementById('root').getBoundingClientRect().left+5;touch('touchstart',edge,y);touch('touchmove',edge+190,y+2);touch('touchend',edge+190,y+2);await wait(350);check('Left-edge swipe returns Back instead of changing section',L.state.tab==='home');
+L.go('vew');await wait(400);p=document.querySelector('[data-section-panel=vew]');
+const carousel=document.createElement('div');carousel.style.cssText='width:100px;overflow-x:auto';carousel.innerHTML='<div style="width:500px;height:24px">Horizontal fixture</div>';p.firstElementChild.append(carousel);
+const original=p; p=carousel;const segBefore=L.state.vewSeg;touch('touchstart',x,y);touch('touchmove',x-150,y);touch('touchend',x-150,y);await wait(250);check('Nested horizontal scroller keeps its gesture',L.state.vewSeg===segBefore&&!document.getElementById('root').dataset.sectionMotion);carousel.remove();p=original;
+p.dispatchEvent(new Event('scroll'));touch('touchstart',x,y);touch('touchend',x,y);const card=p.querySelector('button');if(card)card.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,detail:1}));await wait(30);check('Scroll-stop tap cannot activate section cards',L.state.tab==='vew');
+const nextTab=document.querySelector('[role=tab][aria-selected=false]');nextTab.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,detail:1}));await wait(300);check('Section tab responds once even after scrolling',L.state.vewSeg==='plans');
+check('Expired fixture purchase window never offers an add-warranty action',Date.now()<=Date.parse('2026-10-10T23:59:59+08:00')||(!L.renderVals().assets[0].canBuy&&L.renderVals().assets[0].windowClosed));
+check('No runtime errors',report.errors.length===0,report.errors);report.passed=report.tests.filter(t=>t.pass).length;report.total=report.tests.length;const output=document.createElement('pre');output.id='qa-report';output.textContent=JSON.stringify(report,null,2);document.body.append(output);
+})();
