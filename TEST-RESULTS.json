@@ -1,4 +1,5 @@
 {
+  "version": 17,
   "normal": {
     "tests": [
       {
@@ -191,6 +192,54 @@
         "pass": true
       },
       {
+        "name": "No misleading QR fallback service",
+        "pass": true
+      },
+      {
+        "name": "No misleading QR fallback wrong",
+        "pass": true
+      },
+      {
+        "name": "No misleading QR fallback expired",
+        "pass": true
+      },
+      {
+        "name": "No misleading QR fallback linked",
+        "pass": true
+      },
+      {
+        "name": "No misleading QR fallback offline",
+        "pass": true
+      },
+      {
+        "name": "Free Scan never fabricates transaction cashback",
+        "pass": true
+      },
+      {
+        "name": "Cashback chart has no redundant earn CTA",
+        "pass": true
+      },
+      {
+        "name": "Cashback distinguishes expiry rules",
+        "pass": true
+      },
+      {
+        "name": "Reward page states daily cap",
+        "pass": true
+      },
+      {
+        "name": "Navy header morphs between tabs",
+        "pass": true
+      },
+      {
+        "name": "Stationary screen edges cannot flash above moving page",
+        "pass": true
+      },
+      {
+        "name": "Screen edges restore after motion",
+        "pass": true
+      },
+      {
         "name": "No leaked navigation animations",
         "pass": true
       },
@@ -204,8 +253,8 @@
     "motion": [
       {
         "sample": "Local preview rAF intervals; not iPhone performance",
-        "maxMs": 9.200000000000728,
-        "meanMs": 7.8439999998807615
+        "maxMs": 9.30000000000291,
+        "meanMs": 7.68000000023836
       },
       {
         "sample": "Push animation",
@@ -217,8 +266,8 @@
       }
     ],
     "reduced": false,
-    "passed": 48,
-    "total": 48
+    "passed": 60,
+    "total": 60
   },
   "reduced": {
     "tests": [
@@ -412,6 +461,54 @@
         "pass": true
       },
       {
+        "name": "No misleading QR fallback service",
+        "pass": true
+      },
+      {
+        "name": "No misleading QR fallback wrong",
+        "pass": true
+      },
+      {
+        "name": "No misleading QR fallback expired",
+        "pass": true
+      },
+      {
+        "name": "No misleading QR fallback linked",
+        "pass": true
+      },
+      {
+        "name": "No misleading QR fallback offline",
+        "pass": true
+      },
+      {
+        "name": "Free Scan never fabricates transaction cashback",
+        "pass": true
+      },
+      {
+        "name": "Cashback chart has no redundant earn CTA",
+        "pass": true
+      },
+      {
+        "name": "Cashback distinguishes expiry rules",
+        "pass": true
+      },
+      {
+        "name": "Reward page states daily cap",
+        "pass": true
+      },
+      {
+        "name": "Navy header morphs between tabs",
+        "pass": true
+      },
+      {
+        "name": "Stationary screen edges cannot flash above moving page",
+        "pass": true
+      },
+      {
+        "name": "Screen edges restore after motion",
+        "pass": true
+      },
+      {
         "name": "No leaked navigation animations",
         "pass": true
       },
@@ -425,8 +522,8 @@
     "motion": [
       {
         "sample": "Local preview rAF intervals; not iPhone performance",
-        "maxMs": 9.299999999999272,
-        "meanMs": 7.715999999880733
+        "maxMs": 9.30000000000291,
+        "meanMs": 7.792000000119151
       },
       {
         "sample": "Push animation",
@@ -438,7 +535,211 @@
       }
     ],
     "reduced": true,
-    "passed": 48,
-    "total": 48
-  }
+    "passed": 60,
+    "total": 60
+  },
+  "shoppingAndPromotion": {
+    "tests": [
+      {
+        "name": "iPhone Duo is first and goes directly to matching product",
+        "pass": true
+      },
+      {
+        "name": "New campaigns have separate product destinations",
+        "pass": true
+      },
+      {
+        "name": "F1 and outdated hero artwork excluded",
+        "pass": true
+      },
+      {
+        "name": "All three hero images are square",
+        "pass": true
+      },
+      {
+        "name": "Banner scroll never renders the page",
+        "pass": true,
+        "detail": 0
+      },
+      {
+        "name": "Banner dot tracks second page",
+        "pass": true,
+        "detail": 1
+      },
+      {
+        "name": "Banner keeps browser-native horizontal snap",
+        "pass": true
+      },
+      {
+        "name": "All six product taps use distinct matching destinations",
+        "pass": true
+      },
+      {
+        "name": "See all opens laptop collection",
+        "pass": true
+      },
+      {
+        "name": "Other deal tiles have matching campaign destinations",
+        "pass": true
+      },
+      {
+        "name": "Informational text never opens the homepage",
+        "pass": true
+      },
+      {
+        "name": "S14 image has white background",
+        "pass": true
+      },
+      {
+        "name": "iPhone pop-up opens",
+        "pass": true
+      },
+      {
+        "name": "Pop-up moves without scaling its artwork or text",
+        "pass": true
+      },
+      {
+        "name": "No full-screen opacity group during pop-up motion",
+        "pass": true
+      },
+      {
+        "name": "Temporary promotion layer hint clears",
+        "pass": true
+      },
+      {
+        "name": "Promotion closes without stranded overlay",
+        "pass": true
+      },
+      {
+        "name": "No runtime errors",
+        "pass": true,
+        "detail": []
+      }
+    ],
+    "errors": [],
+    "motion": [
+      {
+        "scope": "Desktop preview only; not physical iPhone frame-rate certification",
+        "meanMs": 8.157142856972548,
+        "maxMs": 9.399999999999636
+      }
+    ],
+    "passed": 18,
+    "total": 18
+  },
+  "liveDestinations": [
+    {
+      "url": "https://online.challenger.sg/collections/10-10-notebook-mega-sales",
+      "status": 200,
+      "title": null,
+      "products": 1,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/collections/acer-redemption-promotion",
+      "status": 200,
+      "title": null,
+      "products": 1,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/collections/brother",
+      "status": 200,
+      "title": null,
+      "products": 1,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/collections/gaming-consoles",
+      "status": 200,
+      "title": null,
+      "products": 1,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/collections/polaroid-september-promotion",
+      "status": 200,
+      "title": null,
+      "products": 1,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/collections/valore-and-vce-buy-1-get-1-free",
+      "status": 200,
+      "title": null,
+      "products": 1,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/pages/valueclub-membership",
+      "status": 200,
+      "title": null,
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/asus-tuf-fx608jpr-qt046w-i7-14650h-32gb-1tb-rtx5070-16-grey",
+      "status": 200,
+      "title": "Asus TUF Gaming F16 FX608JPR-QT046W - i7-14650H 32GB 1TB RTX5070 16\"",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/asus-vb-s3407aa-sf014w-ut7-355-32gb-1tb-14-cp",
+      "status": 200,
+      "title": "Asus Vivobook S14 S3407AA-SF014W - UT7-355 32GB 1TB 14\" CP+",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/asus-zb-ux3405ca-su954w-u7-255h-32gb-1tb-14-t",
+      "status": 200,
+      "title": "Asus Zenbook 14 UX3405CA-SU954W - U7-255H 32GB 1TB 14\" OLED Touch",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/asus-zb-ux5406aa-su098w-u9-386h-32gb-1tb-14-cp-t",
+      "status": 200,
+      "title": "Asus Zenbook S14 UX5406AA-SU098W - U9-386H 32GB 1TB 14\" OLED Touch CP+",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/asus-zb-ux5606sa-rk231w-u7-258v-32gb-1tb-16-t",
+      "status": 200,
+      "title": "Asus Zenbook S16 UX5606SA-RK231W - U7-258V 32GB 1TB 16\" OLED",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/fujifilm-instax-pal-2-digital-camera-white",
+      "status": 200,
+      "title": "Fujifilm Instax Pal 2 Digital Camera - White",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/huawei-watch-gt-7-pro-46mm-black",
+      "status": 200,
+      "title": "Huawei Watch GT 7 Pro 46mm Black",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/mk2f4x-a-iphone-duo-512gb-star-white",
+      "status": 200,
+      "title": "Apple iPhone Duo 512GB Star White",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/msi-katana-15-hx-b14wfk-452sg-i7-14650hx-16gb-512gb-rtx5060",
+      "status": 200,
+      "title": "MSI Katana 15 HX B14WFK-452SG - i7-14650HX 16GB 512GB GeForce RTX 5060",
+      "products": null,
+      "pass": true
+    }
+  ],
+  "scope": "138 browser assertions and 16 live destination checks. Desktop timing is not physical iPhone FPS."
 }

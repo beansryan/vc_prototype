@@ -18,7 +18,36 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&amp;family=Google+Sans+Flex:wght@400..800&amp;family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;display=swap" rel="stylesheet">
-<style>body{margin:0}button:focus:not(:focus-visible){outline:none}@keyframes vcShim{0%{background-position:100% 0}100%{background-position:-100% 0}}@keyframes vcMenu{0%{opacity:0;transform:scale(.85)}100%{opacity:1;transform:scale(1)}}@keyframes vcIn{0%{opacity:0;transform:scale(.92)}100%{opacity:1;transform:scale(1)}}</style>
+<style>body{margin:0}button:focus:not(:focus-visible){outline:none}@keyframes vcShim{0%{background-position:100% 0}100%{background-position:-100% 0}}@keyframes vcMenu{0%{opacity:0;transform:scale(.85)}100%{opacity:1;transform:scale(1)}}@keyframes vcIn{0%{opacity:0;transform:scale(.92)}100%{opacity:1;transform:scale(1)}}
+/* Accessibility: real text reflow, without zooming screen geometry. */
+[data-text="large"] { --vc-type-scale:2; --vc-display-scale:1.35; }
+[data-text="large"] [data-text-row] { flex-wrap:wrap; height:auto !important; min-width:0; }
+[data-text="large"] [data-text-row] > span { min-width:0; max-width:100%; }
+[data-text="large"] [data-text-row] > span:first-child { flex:1 1 100%; }
+[data-text="large"] [data-text-grid] { grid-template-columns:minmax(0,1fr) !important; }
+[data-text="large"] [data-text-grid] > [style*="grid-column"] { grid-column:auto !important; }
+[data-text="large"] button:not(nav button), [data-text="large"] a { height:auto; overflow-wrap:anywhere; }
+[data-text="large"] span:not([aria-hidden]) { overflow-wrap:anywhere; }
+[data-text="large"] [style*="white-space: nowrap"], [data-text="large"] [style*="white-space:nowrap"] { white-space:normal !important; }
+[data-text="large"] [style*="-webkit-line-clamp"] { -webkit-line-clamp:unset !important; }
+[data-text="large"] nav button { min-width:0; }
+[data-text="large"] nav button span { font-size:17px !important; }
+[data-text="large"] [data-banners] { flex-wrap:nowrap !important; }
+@media (prefers-reduced-motion:reduce) { *, *::before, *::after { animation-duration:0.01ms !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; } }
+
+
+/* Glass uses one blur per surface, an opaque accessibility/fallback path, and no lens filters. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) {
+ [data-glass] { background:var(--card) !important; }
+}
+@media (prefers-reduced-transparency:reduce), (prefers-contrast:more) {
+ [data-glass] { background:var(--card) !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important; box-shadow:inset 0 0 0 1px var(--line) !important; }
+}
+[data-transparency="solid"] [data-glass] { background:var(--card) !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
+[data-glass] button:focus-visible, button[data-glass]:focus-visible { outline:2px solid var(--accent);outline-offset:3px; }
+@media (forced-colors:active) { [data-glass] { background:Canvas !important;color:CanvasText !important;backdrop-filter:none !important;border:1px solid ButtonText !important; } }
+
+</style>
 
 <style>
   :root { --bg: #F2F3F8; --desk: #E9E9EE; --ink: #14151A; --sub: #5B5E6B; }
@@ -114,9 +143,9 @@
 <div id="devLayer"></div>
 <div id="resetFlash"></div>
 <script src="preact.min.js"></script>
-<script src="runtime.js"></script>
-<script src="app.js"></script>
-<script src="fx.js"></script>
-<script src="main.js"></script>
+<script src="runtime.js?v=17-verified"></script>
+<script src="app.js?v=17-verified"></script>
+<script src="fx.js?v=17-verified"></script>
+<script src="main.js?v=17-verified"></script>
 </body>
 </html>

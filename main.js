@@ -8,7 +8,7 @@
   const { defineDC, h, render } = window.VCRuntime;
 
   // ---------- storage (never fatal) ----------
-  const isQA = /\/QA(?:-motion)?\.html$/.test(location.pathname);
+  const isQA = /\/QA(?:-motion|-review|-shop)?\.html$/.test(location.pathname);
   const store = {
     get(k, d) { if(isQA)return d; try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
     set(k, v) { if(isQA)return; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
@@ -87,11 +87,12 @@
     a.href = u; a.target = u.indexOf('http') === 0 ? '_blank' : '_self'; a.rel = 'noopener';
     document.body.appendChild(a); a.click(); a.remove();
   }
+  VCApp.openShop = (url) => { if (typeof url === 'string' && url.startsWith(WEB + '/')) openUrl(url); else if (url === WEB) openUrl(url); };
   function wireLinks(L) {
     const toast = L.toastMsg.bind(L);
     L.toastMsg = (m) => {
       const msg = String(m || '');
-      if (/challenger\.sg/i.test(msg)) { toast(msg.indexOf('Code copied') === 0 ? msg : 'Opening challenger.sg'); setTimeout(() => openUrl(WEB), 250); return; }
+
       if (/^Opens Maps/.test(msg)) { openUrl('https://maps.apple.com/?q=' + encodeURIComponent(msg.split('|')[1] || 'Challenger Singapore')); return; }
       if (/^Calling/.test(msg)) { const d = msg.replace(/\D/g, ''); openUrl('tel:+65' + (d.length === 8 ? d : '63335858')); return; }
       if (msg === 'You have logged out' || msg === 'Account deleted') {
@@ -147,20 +148,24 @@
   // ---------- layout: full screen on a phone, iPhone 17 frame on a computer ----------
   const isStandalone = window.navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
   const isTouchPhone = matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) < 600;
-  const desk = !isTouchPhone;
+  const preview = new URLSearchParams(location.search);
+  const fullViewport = preview.has('viewport') || (matchMedia('(pointer: coarse)').matches && !isTouchPhone);
+  const desk = !isTouchPhone && !fullViewport;
   if (desk) document.body.classList.add('desk');
   const darkMq = matchMedia('(prefers-color-scheme: dark)');
 
   function size() {
     if (desk) {
-      const sc = Math.min(1, (innerHeight - 48) / 874, (innerWidth - 48) / 402);
+      const w=Number(devProps.w || 402), h=Number(devProps.h || 874);
+      const sc = Math.min(1, (innerHeight - 48) / h, (innerWidth - 48) / w);
       const root = document.getElementById('root');
+      root.style.width=w+'px';root.style.height=h+'px';
       root.style.transform = 'translate(-50%, -50%) scale(' + sc + ')';
-      document.getElementById('devLayer').style.transform = root.style.transform;
-      const isl = document.getElementById('island');
-      isl.style.transform = 'translate(-50%, ' + (-437 * sc + 11 * sc) + 'px) scale(' + sc + ')';
+      const devLayer=document.getElementById('devLayer');devLayer.style.transform=root.style.transform;devLayer.style.width=w+'px';devLayer.style.height=h+'px';
+      const isl = document.getElementById('island');isl.style.display=w>=600?'none':'';
+      isl.style.transform = 'translate(-50%, ' + (-h/2 * sc + 11 * sc) + 'px) scale(' + sc + ')';
       isl.style.transformOrigin = 'top center';
-      return { w: 402, h: 874 };
+      return { w, h };
     }
     // how much of the 54px status bar area the page actually sits under (0 in Safari or a light standalone bar)
     const probe = document.createElement('div');
@@ -195,10 +200,11 @@
 
   function mount() {
     const sz = size();
-    render(h(App, { p: { platform: 'ios', size: 'compact', tier: 'guest', w: sz.w, h: sz.h, theme: darkMq.matches ? 'dark' : 'light', intro: 'none', topAdjust: sz.topAdjust || 0, ...devProps }, onLogic }), document.getElementById('root'));
+    render(h(App, { p: { platform: 'ios', size: sz.w < 600 ? 'compact' : sz.w < 840 ? 'medium' : 'expanded', tier: 'guest', w: sz.w, h: sz.h, theme: darkMq.matches ? 'dark' : 'light', intro: 'none', topAdjust: sz.topAdjust || 0, ...devProps, ...(preview.get('platform') === 'android' ? {platform:'android'} : {}), ...(preview.get('text') === '200' ? {textSize:'large'} : {}) }, onLogic }), document.getElementById('root'));
   }
+  if (isQA) VCApp.testLayout = (w,h,p={}) => {devProps={...p,w,h,size:w<600?'compact':w<840?'medium':'expanded'};mount();};
   mount();
-  const warmImages = () => ['assets/zenbook.png','assets/756b2a9aa853d0e4aa0b55ee8f8967cf.jpg','assets/7ee051c627c52b393a4afacbc93f2a61.jpg','assets/eb79d24a3a3b837fc614d883978ea6f6.jpg','assets/b5ef8f8a7ae1d1dffe0456083ba922a6.jpg','assets/f7b5ee2a9a440913f685e18f56a1b0d4.jpg'].forEach(src=>{const img=new Image();img.src=src;if(img.decode)img.decode().catch(()=>{});});
+  const warmImages = () => ['assets/f4f1fe1c497a6645f7a23a31777d8539.jpg','assets/45fa7290869b5e4143ac98d29a13cc15.jpg','assets/hero-instax.png','assets/hero-huawei.jpg','assets/zenbook.png','assets/756b2a9aa853d0e4aa0b55ee8f8967cf.jpg','assets/7ee051c627c52b393a4afacbc93f2a61.jpg','assets/eb79d24a3a3b837fc614d883978ea6f6.jpg','assets/b5ef8f8a7ae1d1dffe0456083ba922a6.jpg','assets/f7b5ee2a9a440913f685e18f56a1b0d4.jpg'].forEach(src=>{const img=new Image();img.src=src;if(img.decode)img.decode().catch(()=>{});});
   if(window.requestIdleCallback)requestIdleCallback(warmImages,{timeout:3000});else setTimeout(warmImages,3000);
   let mT;
   const remount = () => { clearTimeout(mT); mT = setTimeout(mount, 60); };
@@ -278,7 +284,7 @@
       ['Scan QA', [{ label: 'Simulate result', type: 'buttons', opts: [['done','Success'],['expired','Expired'],['linked','Linked'],['offline','Offline'],['permission','Permission'],['camera','Camera'],['service','Service'],['wrong','Wrong QR']], set: (v) => { close(); L.go('scan'); clearTimeout(L._st); set({scan:v}); } }]],
       ['Display', [
         { label: 'Appearance', type: 'seg', opts: [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']], get: () => st().themePref || 'system', set: (v) => set({ themePref: v }) },
-        { label: 'Text size', type: 'seg', opts: [[false, 'Default'], [true, 'Large']], get: () => st().bigText === true, set: (v) => set({ bigText: v }) }
+        { label: 'Text size', type: 'seg', opts: [[false, 'Default'], [true, '200%']], get: () => st().bigText === true, set: (v) => set({ bigText: v }) }
       ]],
       ['App', [
         { label: 'Restart app', sub: 'Plays the launch screen again. Keeps everything.', type: 'action', run: () => { close(); setTimeout(() => location.reload(), 250); } },
@@ -315,7 +321,7 @@
         });
         html += '</div>';
       });
-      html += '<p class="dv-foot">3 taps on the ValueClub logo opens this menu. 5 taps resets the app.<br>Build: navigation rebuild v15</p></div></div>';
+      html += '<p class="dv-foot">3 taps on the ValueClub logo opens this menu. 5 taps resets the app.<br>Build: navigation and accessibility v16</p></div></div>';
       const keep = layer.querySelector('.dv-body'); const top = keep ? keep.scrollTop : 0;
       layer.innerHTML = html;
       const body = layer.querySelector('.dv-body'); if (body) body.scrollTop = top;

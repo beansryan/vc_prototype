@@ -1,4 +1,4 @@
-# ValueClub prototype v15 — navigation rebuild
+# ValueClub prototype v16 — navigation rebuild
 
 Unzip and serve this folder over HTTP locally, or upload its contents unchanged to your existing static host. Open index.html through the server. HTTPS is required for installed PWA offline support. No build step or package installation is needed. This is a browser-local prototype; POS, camera, payments and CRM services remain simulated.
 
@@ -41,3 +41,7 @@ Deploy all app files and assets together. The service-worker version is content-
 Desktop preview uses the original phone frame. The existing medium/expanded and Android component variants remain in source; this release's recorded browser interaction tests exercise compact iOS. Production CRM governance and adaptive layout handoff are in CRM-HANDOFF.md. These tests do not establish physical iPhone PWA frame rates or real POS/payment reliability.
 
 Preact is MIT licensed; see PREACT-LICENSE.
+
+Additional page matrix: open `QA.html?layout=1`. Visual fixtures: `QA-review.html?page=scan&large` or `QA-review.html?w=760&h=820`. Production app responsive preview: `?viewport`; Android styling: `?viewport&platform=android`. Tests isolate local storage from the product preview.
+
+Final v16 checks: 840/840 local-browser assertions. See TEST-RESULTS.json, MOTION-AUDIT.md and GLASS-AUDIT.md for scope and physical-device limits. The Cashback history chart no longer includes the redundant earning CTA.

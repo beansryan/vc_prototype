@@ -92,7 +92,12 @@
         const [k, v] = attrs[i];
         let val = interp(v, sc);
         if (BOOL[k] && val === '') val = true;
-        if (k.slice(0, 2) === 'on' && typeof val !== 'function') continue;
+        if (k.slice(0, 2) === 'on' && typeof val !== 'function') { if(k==='onClick')p['data-missing-action']=v; continue; }
+        if (k === 'style' && typeof val === 'string') {
+          // Scale type only. Icons, spacing, hit targets and screen dimensions remain physical pixels.
+          if (/t\.(avatarSm|badgeCount|stepNum|badge|avatar)\b/.test(v)) val += ';--vc-type-scale:1;';
+          val = val.replace(/font-size:\s*([\d.]+)px/g, (_, n) => 'font-size:calc(' + n + 'px * var(' + (+n >= 28 ? '--vc-display-scale' : '--vc-type-scale') + ',1))');
+        }
         p[k] = val;
       }
       return h(tag, p, renderKids(sc));

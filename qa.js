@@ -53,8 +53,20 @@
   await goto('home',true);await goto('deal');const times=[];let last=performance.now();await new Promise(resolve=>{let n=0;function tick(now){times.push(now-last);last=now;if(++n<25)requestAnimationFrame(tick);else resolve();}requestAnimationFrame(tick);});report.motion.push({sample:'Local preview rAF intervals; not iPhone performance',maxMs:Math.max(...times),meanMs:times.reduce((a,b)=>a+b,0)/times.length});await back();
   // Sample active motion before completion; all navigation uses transform only.
   L.go('stores');await wait(30);const moving=Array.from(document.querySelectorAll('[data-vc-layer]')).flatMap(el=>el.getAnimations());
-  check('Push is compositor-friendly',reduced?moving.length===0:moving.length===1&&moving[0].effect.getKeyframes().every(f=>f.transform));
+  check('Push is compositor-friendly',reduced?moving.length===0:moving.length===2&&moving.every(a=>a.effect.getKeyframes().every(f=>f.transform)));
   report.motion.push({sample:'Push animation',duration:reduced?0:320,layers:document.querySelectorAll('[data-vc-layer]').length,properties:['transform']});await wait(360);await back();
+
+  await goto('scan');clearTimeout(L._st);
+  for (const scan of ['service','wrong','expired','linked','offline']) { await state({scan}); check('No misleading QR fallback '+scan,!document.body.innerText.includes('Show my member QR')); }
+  await state({tier:'free',scan:'done'});check('Free Scan never fabricates transaction cashback',!L.scroller.innerText.includes('$12.00')&&!L.scroller.innerText.includes('$22.90'));
+  await state({tier:'m12',scan:'idle',sr:'got'});await goto('cashback');check('Cashback chart has no redundant earn CTA',!L.scroller.innerText.includes('Spend $25'));
+  await state({sr:'open'});check('Cashback distinguishes expiry rules',L.scroller.innerText.includes('Purchase cashback has no expiry')&&L.scroller.innerText.includes('Spend Reward expiry'));await goto('spendreward');check('Reward page states daily cap',L.scroller.innerText.includes('once a day'));
+  await goto('home',true);
+
+  await goto('home',true);L.go('vouchers',true);await wait(30);
+  const wave=L.scroller.parentElement.querySelector('[data-band] svg');check('Navy header morphs between tabs',reduced?wave.getAnimations().length===0:wave.getAnimations().some(a=>a.effect.getKeyframes().every(f=>f.transform)));await wait(380);
+  L.go('stores');await wait(30);check('Stationary screen edges cannot flash above moving page',Array.from(L.scroller.parentElement.querySelectorAll(':scope > [data-screen-edge]')).every(el=>el.style.visibility===(reduced?'':'hidden')));
+  await wait(360);check('Screen edges restore after motion',Array.from(L.scroller.parentElement.querySelectorAll(':scope > [data-screen-edge]')).every(el=>el.style.visibility===''));await back();
   const animations=document.getAnimations();check('No leaked navigation animations',document.querySelectorAll('[data-vc-layer]').length===0);
   check('No runtime errors',report.errors.length===0,report.errors);
   report.passed=report.tests.filter(t=>t.pass).length;report.total=report.tests.length;
