@@ -18,6 +18,11 @@
     if (!b) return bg;
     return getComputedStyle(b).backgroundImage + ' 0 0 / 100% ' + b.offsetHeight + 'px no-repeat, ' + bg;
   }
+  function withBand(sc, app) {
+    const b = app && app.querySelector('[data-band]');
+    if (!b) return null;
+    const c = b.cloneNode(true); c.style.position = 'absolute'; c.removeAttribute('data-band'); sc.prepend(c); return c;
+  }
   function bgOf(el) {
     for (let e = el; e && e !== document.documentElement; e = e.parentElement) {
       const c = getComputedStyle(e).backgroundColor;
@@ -65,12 +70,12 @@
       if (page) {
         const ghost = document.createElement('div');
         ghost.setAttribute('aria-hidden', 'true');
-        ghost.style.cssText = 'position:absolute;inset:0;overflow:hidden;pointer-events:none;background:' + bandBg(app, bgOf(sc)) + ';';
+        ghost.style.cssText = 'position:absolute;inset:0;overflow:hidden;pointer-events:none;background:' + bgOf(sc) + ';';
+        // the snapshot carries its own navy and waves, so it can move or fade as one layer
+        const band0 = app.querySelector('[data-band]'); if (band0) ghost.appendChild(band0.cloneNode(true));
         const clone = page.cloneNode(true);
         clone.style.translate = '0 ' + (-sc.scrollTop) + 'px';
         clone.querySelectorAll('[data-in],[data-seg],[data-tabind],[data-fx],[data-tabbar]').forEach((e) => ['data-in', 'data-seg', 'data-tabind', 'data-fx', 'data-tabbar'].forEach((k) => e.removeAttribute(k)));
-        // a tab switch keeps the navy band in place: only the page content travels
-        if (plan.nav === 'tab' && app.querySelector('[data-band]')) { ghost.style.background = 'transparent'; ghost.dataset.keepBand = '1'; }
         ghost.appendChild(clone);
         plan.ghost = ghost;
       }
@@ -136,33 +141,43 @@
     if (!kind) return;
     const bg = bgOf(sc);
     const finish = () => { if (g) g.remove(); sc.style.background = ''; sc.style.boxShadow = ''; };
-    const bandToBand = (kind === 'push' || kind === 'pop') && plan.hadBand && !!app.querySelector('[data-band]') && g;
+    const bandToBand = false;
     if (bandToBand) {
-      // both pages sit on the navy (Home to Cashback or Spend reward): the navy stays still, only the content moves
-      g.style.background = 'transparent';
-      const page = sc.firstElementChild; const gp = g.firstElementChild; const gy = gp.style.translate.split(' ')[1] || '0px';
-      const d = kind === 'push' ? 1 : -1;
+      // every navy page puts the sheet at the same height: the navy and the sheet stay still, only what is on them changes
+      if (kind === 'tab') stack.length = 0;
       if (kind === 'pop') { stack.pop(); if (under) { under.remove(); under = null; } pendingPopFrom = 0; }
+      const d = kind === 'tab' ? (plan.dir || 1) : kind === 'push' ? 1 : -1;
+      g.style.background = 'transparent'; g.style.zIndex = '3';
+      const gs = g.querySelector('[data-sheet]'); if (gs) { gs.style.background = 'transparent'; gs.style.boxShadow = 'none'; }
       sc.after(g);
-      // the old page clears quickly before the new one arrives, so two pages never show through each other
-      const a = anim(gp, [{ opacity: 1, translate: '0 ' + gy }, { opacity: 0, translate: (-d * 40) + 'px ' + gy }], { duration: 150, easing: 'cubic-bezier(.4,0,1,1)' });
-      if (page) anim(page, [{ opacity: 0, translate: (d * 56) + 'px 0' }, { opacity: 1, translate: '0 0' }], { duration: 380, delay: 90, easing: 'cubic-bezier(.2,.85,.25,1)', fill: 'backwards' });
-      done(a, () => { if (kind === 'push') stash(g); else g.remove(); });
+      const gp = g.firstElementChild; const gy = gp.style.translate.split(' ')[1] || '0px';
+      const a = anim(gp, [{ opacity: 1, translate: '0 ' + gy }, { opacity: 0, translate: (-d * 36) + 'px ' + gy }], { duration: 120, easing: 'cubic-bezier(.4,0,1,1)' });
+      const page = sc.firstElementChild, inner = page && page.querySelector(':scope > div');
+      const parts = [];
+      const add = (el) => { if (getComputedStyle(el).display === 'contents') [...el.children].forEach(add); else parts.push(el); };
+      if (inner) [...inner.children].forEach((c) => { if (c.hasAttribute('data-sheet')) [...c.children].forEach(add); else add(c); });
+      parts.forEach((el) => anim(el, [{ opacity: 0, translate: (d * 48) + 'px 0' }, { opacity: 1, translate: '0 0' }], { duration: 380, delay: 110, easing: 'cubic-bezier(.2,.85,.25,1)', fill: 'backwards' }));
+      done(a, () => {
+        if (kind !== 'push') { g.remove(); return; }
+        // keep a snapshot for the edge swipe back, with its own navy and sheet
+        g.getAnimations({ subtree: true }).forEach((x) => x.cancel()); gp.style.opacity = '';
+        if (gs) { gs.style.background = ''; gs.style.boxShadow = ''; } g.style.background = bandBg(app, bgOf(sc)); stash(g);
+      });
       return;
     }
     if (kind === 'push') {
       if (g) sc.before(g);
-      sc.style.background = bandBg(app, bg); sc.style.boxShadow = '-8px 0 24px rgba(0,0,0,.10)';
+      // the new page slides in on top as a full layer, carrying its own navy; the page underneath stays put
+      const nb = withBand(sc, app);
+      sc.style.background = bg; sc.style.boxShadow = '-10px 0 30px rgba(0,0,0,.14)';
       const a = anim(sc, [{ translate: '100% 0' }, { translate: '0 0' }], { duration: 420, easing: EASE_PUSH, fill: 'none' });
-      if (g) anim(g.firstElementChild, [{ translate: '0 ' + g.firstElementChild.style.translate.split(' ')[1] }, { translate: '-28% ' + g.firstElementChild.style.translate.split(' ')[1] }], { duration: 420, easing: EASE_PUSH });
-      if (g) { const dim = document.createElement('div'); dim.style.cssText = 'position:absolute;inset:0;background:#000;pointer-events:none;'; g.appendChild(dim); anim(dim, [{ opacity: 0 }, { opacity: 0.08 }], { duration: 420, easing: EASE_PUSH }); }
-      done(a, () => { if (g) stash(g); sc.style.background = ''; sc.style.boxShadow = ''; });
+      done(a, () => { if (nb) nb.remove(); if (g) stash(g); sc.style.background = ''; sc.style.boxShadow = ''; });
     } else if (kind === 'pop') {
       const from = pendingPopFrom; pendingPopFrom = 0;
       stack.pop(); if (under) { under.remove(); under = null; }
-      if (g) { sc.after(g); g.style.boxShadow = '-8px 0 24px rgba(0,0,0,.10)'; }
-      const a = anim(sc, [{ translate: (-28 + 28 * Math.min(1, from / sc.clientWidth)) + '% 0' }, { translate: '0 0' }], { duration: 380, easing: EASE_PUSH, fill: 'none' });
-      if (g) anim(g, [{ translate: from + 'px 0' }, { translate: '100% 0' }], { duration: 380, easing: EASE_PUSH });
+      // the top layer slides off to the right and uncovers the page underneath, which does not move
+      if (g) { sc.after(g); g.style.zIndex = '3'; g.style.boxShadow = '-10px 0 30px rgba(0,0,0,.14)'; }
+      const a = g ? anim(g, [{ translate: from + 'px 0' }, { translate: '100% 0' }], { duration: 360, easing: EASE_PUSH }) : null;
       done(a, finish);
     } else if (kind === 'up') {
       sc.style.background = bg;
@@ -176,20 +191,9 @@
       stack.length = 0;
       const page = sc.firstElementChild;
       const band = app.querySelector('[data-band]');
-      if (kind === 'tab' && band && g && g.dataset.keepBand) {
-        // tab switch: the band stays, its waves glide (CSS), the old page slides out and the new one slides in
-        const d = plan.dir || 1;
-        const inner = page && page.querySelector(':scope > div');
-        sc.after(g);
-        const a = anim(g.firstElementChild, [{ opacity: 1, transform: 'translateX(0)' }, { opacity: 0, transform: 'translateX(' + (-d * 70) + 'px)' }], { duration: 260, easing: EASE_PUSH });
-        if (inner) anim(inner, [{ opacity: 0, transform: 'translateX(' + (d * 70) + 'px)' }, { opacity: 1, transform: 'translateX(0)' }], { duration: 440, easing: 'cubic-bezier(.25,.9,.3,1)', fill: 'none' });
-        done(a, finish);
-        return;
-      }
-      // a reset to home: quick cross-fade
-      if (g) sc.after(g);
-      const a = g ? anim(g, [{ opacity: 1 }, { opacity: 0 }], { duration: 180, easing: 'ease' }) : null;
-      anim(sc.firstElementChild, [{ opacity: 0.4, translate: '0 6px' }, { opacity: 1, translate: '0 0' }], { duration: 240, easing: EASE_PUSH, fill: 'none' });
+      // tab switch: the whole screen, navy included, cross-fades
+      if (g) { sc.after(g); g.style.zIndex = '3'; }
+      const a = g ? anim(g, [{ opacity: 1 }, { opacity: 0 }], { duration: 260, easing: 'ease' }) : null;
       done(a, finish);
     }
   }
@@ -201,7 +205,8 @@
 
   // ---------- iOS edge swipe back ----------
   function edgeSwipe(rootEl) {
-    let sx = 0, sy = 0, on = false, dx = 0;
+    let sx = 0, sy = 0, on = false, dx = 0, sb = null;
+    const dropSb = () => { if (sb) { sb.remove(); sb = null; } };
     rootEl.addEventListener('touchstart', (e) => {
       const t = e.touches[0]; const r = rootEl.getBoundingClientRect();
       const s = L && L.state;
@@ -209,30 +214,29 @@
       sx = t.clientX; sy = t.clientY; dx = 0;
       if (on && stack.length && L.scroller) {
         under = stack[stack.length - 1];
-        under.style.translate = '-28% 0';
+        under.style.translate = '0 0';
         L.scroller.before(under);
-        L.scroller.style.background = bandBg(L.scroller.parentElement, bgOf(L.scroller));
+        dropSb(); sb = withBand(L.scroller, L.scroller.parentElement);
+        L.scroller.style.background = bgOf(L.scroller);
       }
     }, { passive: true });
     rootEl.addEventListener('touchmove', (e) => {
       if (!on) return;
       const t = e.touches[0]; dx = Math.max(0, t.clientX - sx);
-      if (Math.abs(t.clientY - sy) > 40 && dx < 30) { on = false; L.scroller.style.translate = ''; L.scroller.style.background = ''; if (under) { under.remove(); under = null; } return; }
+      if (Math.abs(t.clientY - sy) > 40 && dx < 30) { on = false; dropSb(); L.scroller.style.translate = ''; L.scroller.style.background = ''; if (under) { under.remove(); under = null; } return; }
       L.scroller.style.translate = dx + 'px 0';
-      if (under) { const k = Math.min(1, dx / L.scroller.clientWidth); under.style.translate = (-28 + 28 * k) + '% 0'; }
-      L.scroller.style.boxShadow = '-8px 0 24px rgba(0,0,0,.10)';
+      L.scroller.style.boxShadow = '-10px 0 30px rgba(0,0,0,.14)';
     }, { passive: true });
     rootEl.addEventListener('touchend', () => {
       if (!on) return; on = false;
       const sc = L.scroller;
       if (dx > Math.min(110, sc.clientWidth * 0.3)) {
-        sc.style.translate = ''; sc.style.boxShadow = '';
+        sc.style.translate = ''; sc.style.boxShadow = ''; dropSb();
         pendingPopFrom = dx; if (inReceiptDetail(L.state)) L.setState({ rSel: '' }); else L.back();
       } else {
         const a = anim(sc, [{ translate: dx + 'px 0' }, { translate: '0 0' }], { duration: 250, easing: EASE_PUSH, fill: 'none' });
         const u = under; under = null;
-        if (u) anim(u, [{ translate: u.style.translate }, { translate: '-28% 0' }], { duration: 250, easing: EASE_PUSH, fill: 'none' });
-        sc.style.translate = ''; done(a, () => { sc.style.boxShadow = ''; sc.style.background = ''; if (u) u.remove(); });
+        sc.style.translate = ''; done(a, () => { dropSb(); sc.style.boxShadow = ''; sc.style.background = ''; if (u) u.remove(); });
       }
     });
   }
