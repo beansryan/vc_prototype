@@ -229,6 +229,10 @@
     if (!col) col = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#F2F3F8';
     if (tcMeta.getAttribute('content') !== col) tcMeta.setAttribute('content', col);
     // iOS 26 colours the status area from the page background, not theme-color, so set that too
+    // Safari 26 also samples fixed elements touching the top edge
+    let tint = document.getElementById('vcTint');
+    if (!tint) { tint = document.createElement('div'); tint.id = 'vcTint'; tint.style.cssText = 'position:fixed;top:0;left:0;right:0;height:6px;z-index:1;pointer-events:none'; document.body.appendChild(tint); }
+    tint.style.backgroundColor = col; root.style.backgroundColor = col;
     if (document.documentElement.style.backgroundColor !== col) { document.documentElement.style.backgroundColor = col; document.body.style.backgroundColor = col; }
   }
   const queueTheme = () => { if (!tcRaf) tcRaf = requestAnimationFrame(syncTheme); };
@@ -338,7 +342,7 @@
         });
         html += '</div>';
       });
-      html += '<p class="dv-foot">3 taps on the ValueClub logo opens this menu. 5 taps resets the app.</p></div></div>';
+      html += '<p class="dv-foot">3 taps on the ValueClub logo opens this menu. 5 taps resets the app.<br>Build: status bar v3</p></div></div>';
       const keep = layer.querySelector('.dv-body'); const top = keep ? keep.scrollTop : 0;
       layer.innerHTML = html;
       const body = layer.querySelector('.dv-body'); if (body) body.scrollTop = top;
