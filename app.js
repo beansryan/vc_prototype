@@ -37,7 +37,7 @@ class AppLogic extends DCLogic {
   syncBand(sc) {
     if (!sc || !sc.parentElement) return;
     const root = sc.parentElement, sh = sc.querySelector('[data-sheet]'), page = sc.firstElementChild, P = this.props, cl = (v) => Math.max(0, Math.min(1, v));
-    const setVar = (el, k, v) => { if (!el) return; const c = el._vc || (el._vc = {}); if (c[k] !== v) { c[k] = v; el.style.setProperty(k, v); } };
+    const setVar = (el, k, v) => { if (el && el.style.getPropertyValue(k) !== v) el.style.setProperty(k, v); };
     if (!sh) { setVar(root, '--stO', '1'); return; }
     const duoV = (P.platform ?? 'ios') !== 'android' && String(P.duo ?? 'false') === 'true' && String(P.vbar ?? 'false') === 'true';
     const statusBottom = duoV ? ((P.size ?? 'compact') === 'compact' ? 72 : 24) + 86 : 58;

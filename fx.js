@@ -62,10 +62,9 @@
     const plan = { layers: [], nav: classify(prev, patch), sc, app, loadingEnd: prev.loading && patch.loading === false };
     plan.hadBand = !!app.querySelector('[data-band]');
     // a new page starts with its header in place and the sheet's corners round (the scroll position is reset)
-    if (plan.nav) ['--hdrY:0px', '--hdrO:1', '--sheetR:28px', '--edgeO:0', '--stO:0'].forEach((kv) => { const [k, v] = kv.split(':'); app.style.setProperty(k, v); });
     if (plan.nav === 'tab') { const ord = ['home', 'discover', 'vouchers', 'account']; plan.dir = Math.sign(ord.indexOf(patch.tab) - ord.indexOf(prev.tab)) || 1; }
     app.querySelectorAll('[data-fx]').forEach((el) => plan.layers.push({ el, parent: el.parentElement }));
-    const vtSkip = useVT && (plan.nav === 'tab' || (plan.nav === 'pop' && !pendingPopFrom));
+    const vtSkip = useVT && plan.nav === 'pop' && !pendingPopFrom;
     if (!vtSkip && (plan.nav === 'push' || plan.nav === 'pop' || plan.nav === 'down' || plan.nav === 'tab' || plan.nav === 'fade')) {
       const page = sc.firstElementChild;
       if (page) {
@@ -73,7 +72,10 @@
         ghost.setAttribute('aria-hidden', 'true');
         ghost.style.cssText = 'position:absolute;inset:0;overflow:hidden;pointer-events:none;background:' + bgOf(sc) + ';';
         // the snapshot carries its own navy and waves, so it can move or fade as one layer
-        const band0 = app.querySelector('[data-band]'); if (band0) ghost.appendChild(band0.cloneNode(true));
+        const band0 = app.querySelector('[data-band]');
+        // a tab switch leaves the live navy in place so its waves can glide; a page push carries its own copy
+        if (band0 && plan.nav === 'tab') ghost.style.background = 'transparent';
+        else if (band0) ghost.appendChild(band0.cloneNode(true));
         const clone = page.cloneNode(true);
         clone.style.translate = '0 ' + (-sc.scrollTop) + 'px';
         clone.querySelectorAll('[data-in],[data-seg],[data-tabind],[data-fx],[data-tabbar]').forEach((e) => ['data-in', 'data-seg', 'data-tabind', 'data-fx', 'data-tabbar'].forEach((k) => e.removeAttribute(k)));
@@ -194,7 +196,8 @@
       const band = app.querySelector('[data-band]');
       // tab switch: the whole screen, navy included, cross-fades
       if (g) { sc.after(g); g.style.zIndex = '3'; }
-      const a = g ? anim(g, [{ opacity: 1 }, { opacity: 0 }], { duration: 260, easing: 'ease' }) : null;
+      const a = g ? anim(g, [{ opacity: 1 }, { opacity: 0 }], { duration: 240, easing: 'ease' }) : null;
+      const pg = sc.firstElementChild; if (pg) anim(pg, [{ opacity: 0 }, { opacity: 1 }], { duration: 300, easing: 'ease', fill: 'none' });
       done(a, finish);
     }
   }
@@ -446,7 +449,7 @@
         // page moves use the browser's own view transitions where available: it animates flat snapshots on the GPU,
         // so nothing is rebuilt, re-decoded or re-laid out mid-animation
         const kind = plan && plan.nav;
-        if (useVT && (kind === 'push' || kind === 'tab' || (kind === 'pop' && !pendingPopFrom))) {
+        if (useVT && (kind === 'push' || (kind === 'pop' && !pendingPopFrom))) {
           const g = plan.ghost; plan.ghost = null; plan.nav = '';
           if (kind === 'pop') { stack.pop(); if (under) { under.remove(); under = null; } }
           if (kind === 'tab') stack.length = 0;
@@ -454,6 +457,8 @@
           const vt = document.startViewTransition(() => new Promise((res) => orig.call(self, patch, () => {
             try { after(plan); } catch (e) {}
             try { postRender(); } catch (e) {}
+            // settle the header and sheet before the new screen is captured, so nothing moves after the fade
+            try { const sh = L.scroller && L.scroller.querySelector('[data-sheet]'); if (sh) sh._vcStart = undefined; if (L.syncBand) L.syncBand(L.scroller); } catch (e) {}
             if (kind === 'push' && g) { try { const b = app0().querySelector('[data-band]'); g.style.background = bandBg(app0(), bgOf(L.scroller)); stash(g); } catch (e) {} }
             if (cb) cb(); res();
           })));
