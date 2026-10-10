@@ -197,8 +197,45 @@
     render(h(App, { p: { platform: 'ios', size: 'compact', tier: 'guest', w: sz.w, h: sz.h, theme: darkMq.matches ? 'dark' : 'light', intro: 'none', topAdjust: sz.topAdjust || 0, ...devProps }, onLogic }), document.getElementById('root'));
   }
   mount();
-  addEventListener('resize', mount);
-  if (darkMq.addEventListener) darkMq.addEventListener('change', mount);
+  let mT;
+  const remount = () => { clearTimeout(mT); mT = setTimeout(mount, 60); };
+  addEventListener('resize', remount);
+  addEventListener('orientationchange', remount);
+  addEventListener('pageshow', remount);
+  if (window.visualViewport) visualViewport.addEventListener('resize', remount);
+  setTimeout(mount, 300); setTimeout(mount, 1200);
+
+  // ---------- status bar colour: iOS paints the opaque bar in theme-color, so match whatever is at the top ----------
+  const tcMeta = document.getElementById('vcTheme');
+  const BAND_TOP = { light: '#3348AD', dark: '#222E73' };
+  let tcRaf = 0;
+  function syncTheme() {
+    tcRaf = 0;
+    if (desk || !tcMeta) return;
+    const root = document.getElementById('root');
+    // the band ignores taps (pointer-events: none), so let it be hit for this one check
+    const peStyle = document.createElement('style'); peStyle.textContent = '#root [data-band], #root [data-band] * { pointer-events: auto !important; }';
+    document.head.appendChild(peStyle);
+    const els = document.elementsFromPoint(innerWidth / 2, 2);
+    peStyle.remove();
+    let col = '';
+    for (const el of els) {
+      if (!root.contains(el) || el === root) continue;
+      if (el.closest('[data-band]')) { col = BAND_TOP[darkMq.matches ? 'dark' : 'light']; break; }
+      const cs = getComputedStyle(el);
+      const bg = cs.backgroundColor;
+      if (bg && bg !== 'transparent' && !/rgba\(.*,\s*0\)$/.test(bg) && parseFloat(cs.opacity) > 0.5) { col = bg; break; }
+    }
+    if (!col) col = getComputedStyle(document.body).backgroundColor;
+    if (tcMeta.getAttribute('content') !== col) tcMeta.setAttribute('content', col);
+  }
+  const queueTheme = () => { if (!tcRaf) tcRaf = requestAnimationFrame(syncTheme); };
+  new MutationObserver(queueTheme).observe(document.getElementById('root'), { childList: true, subtree: true });
+  document.addEventListener('scroll', queueTheme, true);
+  addEventListener('touchend', () => setTimeout(queueTheme, 450), { passive: true });
+  if (darkMq.addEventListener) darkMq.addEventListener('change', queueTheme);
+  queueTheme();
+  if (darkMq.addEventListener) darkMq.addEventListener('change', remount);
 
   // cold start: launch screen, then a short skeleton while "Braze and member data load"
   setTimeout(() => {
@@ -320,5 +357,9 @@
   VCApp.dev = Dev;
 
   // offline support once installed
-  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    const had = !!navigator.serviceWorker.controller; let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !reloaded) { reloaded = true; location.reload(); } });
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then((r) => r.update()).catch(() => {});
+  }
 })();
