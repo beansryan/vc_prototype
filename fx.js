@@ -12,6 +12,12 @@
   const anim = (el, frames, opts) => (el && el.animate ? el.animate(frames, Object.assign({ fill: 'both' }, opts)) : null);
   const done = (a, fn) => { if (a) a.onfinish = a.oncancel = fn; else fn(); };
 
+  // pages with the navy band: the band is fixed behind the scroller, so a moving page carries a copy of it
+  function bandBg(app, bg) {
+    const b = app && app.querySelector('[data-band]');
+    if (!b) return bg;
+    return getComputedStyle(b).backgroundImage + ' 0 0 / 100% ' + b.offsetHeight + 'px no-repeat, ' + bg;
+  }
   function bgOf(el) {
     for (let e = el; e && e !== document.documentElement; e = e.parentElement) {
       const c = getComputedStyle(e).backgroundColor;
@@ -49,16 +55,19 @@
     const app = sc && sc.parentElement;
     if (!app) return null;
     const plan = { layers: [], nav: classify(prev, patch), sc, app, loadingEnd: prev.loading && patch.loading === false };
+    if (plan.nav === 'tab') { const ord = ['home', 'discover', 'vouchers', 'account']; plan.dir = Math.sign(ord.indexOf(patch.tab) - ord.indexOf(prev.tab)) || 1; }
     app.querySelectorAll('[data-fx]').forEach((el) => plan.layers.push({ el, parent: el.parentElement }));
     if (plan.nav === 'push' || plan.nav === 'pop' || plan.nav === 'down' || plan.nav === 'tab' || plan.nav === 'fade') {
       const page = sc.firstElementChild;
       if (page) {
         const ghost = document.createElement('div');
         ghost.setAttribute('aria-hidden', 'true');
-        ghost.style.cssText = 'position:absolute;inset:0;overflow:hidden;pointer-events:none;background:' + bgOf(sc) + ';';
+        ghost.style.cssText = 'position:absolute;inset:0;overflow:hidden;pointer-events:none;background:' + bandBg(app, bgOf(sc)) + ';';
         const clone = page.cloneNode(true);
         clone.style.translate = '0 ' + (-sc.scrollTop) + 'px';
         clone.querySelectorAll('[data-in],[data-seg],[data-tabind],[data-fx],[data-tabbar]').forEach((e) => ['data-in', 'data-seg', 'data-tabind', 'data-fx', 'data-tabbar'].forEach((k) => e.removeAttribute(k)));
+        // a tab switch keeps the navy band in place: only the page content travels
+        if (plan.nav === 'tab' && app.querySelector('[data-band]')) { ghost.style.background = 'transparent'; ghost.dataset.keepBand = '1'; }
         ghost.appendChild(clone);
         plan.ghost = ghost;
       }
@@ -126,7 +135,7 @@
     const finish = () => { if (g) g.remove(); sc.style.background = ''; sc.style.boxShadow = ''; };
     if (kind === 'push') {
       if (g) sc.before(g);
-      sc.style.background = bg; sc.style.boxShadow = '-8px 0 24px rgba(0,0,0,.10)';
+      sc.style.background = bandBg(app, bg); sc.style.boxShadow = '-8px 0 24px rgba(0,0,0,.10)';
       const a = anim(sc, [{ translate: '100% 0' }, { translate: '0 0' }], { duration: 420, easing: EASE_PUSH, fill: 'none' });
       if (g) anim(g.firstElementChild, [{ translate: '0 ' + g.firstElementChild.style.translate.split(' ')[1] }, { translate: '-28% ' + g.firstElementChild.style.translate.split(' ')[1] }], { duration: 420, easing: EASE_PUSH });
       if (g) anim(g, [{ filter: 'brightness(1)' }, { filter: 'brightness(.92)' }], { duration: 420, easing: EASE_PUSH });
@@ -148,7 +157,19 @@
       done(a, finish);
     } else {
       stack.length = 0;
-      // tab switch or a reset to home: quick cross-fade
+      const page = sc.firstElementChild;
+      const band = app.querySelector('[data-band]');
+      if (kind === 'tab' && band && g && g.dataset.keepBand) {
+        // tab switch: the band stays, its waves glide (CSS), the old page slides out and the new one slides in
+        const d = plan.dir || 1;
+        const inner = page && page.querySelector(':scope > div');
+        sc.after(g);
+        const a = anim(g.firstElementChild, [{ opacity: 1, transform: 'translateX(0)' }, { opacity: 0, transform: 'translateX(' + (-d * 70) + 'px)' }], { duration: 260, easing: EASE_PUSH });
+        if (inner) anim(inner, [{ opacity: 0, transform: 'translateX(' + (d * 70) + 'px)' }, { opacity: 1, transform: 'translateX(0)' }], { duration: 440, easing: 'cubic-bezier(.25,.9,.3,1)', fill: 'none' });
+        done(a, finish);
+        return;
+      }
+      // a reset to home: quick cross-fade
       if (g) sc.after(g);
       const a = g ? anim(g, [{ opacity: 1 }, { opacity: 0 }], { duration: 180, easing: 'ease' }) : null;
       anim(sc.firstElementChild, [{ opacity: 0.4, translate: '0 6px' }, { opacity: 1, translate: '0 0' }], { duration: 240, easing: EASE_PUSH, fill: 'none' });
