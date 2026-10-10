@@ -226,8 +226,10 @@
       const bg = cs.backgroundColor;
       if (bg && bg !== 'transparent' && !/rgba\(.*,\s*0\)$/.test(bg) && parseFloat(cs.opacity) > 0.5) { col = bg; break; }
     }
-    if (!col) col = getComputedStyle(document.body).backgroundColor;
+    if (!col) col = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#F2F3F8';
     if (tcMeta.getAttribute('content') !== col) tcMeta.setAttribute('content', col);
+    // iOS 26 colours the status area from the page background, not theme-color, so set that too
+    if (document.documentElement.style.backgroundColor !== col) { document.documentElement.style.backgroundColor = col; document.body.style.backgroundColor = col; }
   }
   const queueTheme = () => { if (!tcRaf) tcRaf = requestAnimationFrame(syncTheme); };
   new MutationObserver(queueTheme).observe(document.getElementById('root'), { childList: true, subtree: true });
