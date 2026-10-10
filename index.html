@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <title>ValueClub</title>
-<meta name="vc-build" content="20">
+<meta name="vc-build" content="21">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="description" content="ValueClub app prototype">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<!-- Paint a stable page background behind the iOS Home Screen status bar. -->
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!-- Use the native status region; avoid the reduced viewport of translucent mode. -->
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ValueClub">
 <meta name="theme-color" id="vcTheme" content="#3348AD">
 <meta name="format-detection" content="telephone=no">
@@ -29,10 +29,6 @@
   input, textarea, select { -webkit-user-select: text; user-select: text; font-size: 16px; }
   #root { position: fixed; inset: 0; overflow: hidden; }
   html { --vc-status: #3348AD; --vc-bottom: #F2F3F8; }
-  html.vc-standalone, html.vc-standalone body { background: var(--vc-bottom); }
-  html.vc-standalone #root { top: env(safe-area-inset-top, 0px); }
-  #vcStatus { display: none; }
-  html.vc-standalone #vcStatus { display: block; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: var(--vc-status); z-index: 100; pointer-events: none; }
   #root [data-sheet] { overflow-anchor: none; }
   @media (prefers-reduced-motion: reduce) {
     #root *, #a2hs { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
@@ -117,17 +113,16 @@
 </style>
 </head>
 <body>
-<div id="vcStatus" aria-hidden="true"></div>
 <div id="root"></div>
 <div id="island"></div>
 <div id="deskNote"><b>ValueClub app prototype</b><br>Best on iPhone: open this page in Safari, tap Share, then Add to Home Screen. It opens full screen like the real app.</div>
 <div id="a2hs" role="dialog" aria-label="Add to Home Screen"><b>Add ValueClub to your Home Screen</b>Tap <span aria-label="Share">Share</span> in Safari, then <b style="display:inline;font-size:15px;margin:0">Add to Home Screen</b>. It opens full screen, like the real app.<button type="button" id="a2hsOk">Got it</button></div>
 <div id="devLayer"></div>
 <div id="resetFlash"></div>
-<script src="preact.min.v20.js"></script>
-<script src="runtime.v20.js"></script>
-<script src="app.v20.js"></script>
-<script src="fx.v20.js"></script>
-<script src="main.v20.js"></script>
+<script src="preact.min.v21.js"></script>
+<script src="runtime.v21.js"></script>
+<script src="app.v21.js"></script>
+<script src="fx.v21.js"></script>
+<script src="main.v21.js"></script>
 </body>
 </html>

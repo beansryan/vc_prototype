@@ -78,3 +78,11 @@ The focused geometry regression checks simulate a display taller than the report
 - HTML references versioned v19 scripts. The new offline worker matches only its own cache and preserves request query strings. Failed navigation responses fall back to the offline page rather than replacing it with an error document.
 
 Validation: 120 rendering logic configurations, navigation and simulated scan, full-screen geometry, keyboard open/closing/recovery, physical landscape, colour blend endpoints/midpoint/reversal, dark mode, startup and deduplicated style writes. All shipped scripts parse; referenced assets and offline precache paths exist. These checks execute real application functions with simulated browser geometry, not visual browser or iPhone tests. Browser launching remains blocked by the local sandbox. Actual scrolling smoothness, installed iOS system chrome and clock legibility still require device validation.
+
+## Prototype 21 — correction using device measurements
+
+The iPhone 17 Pro Max screenshot reports screen 440×956, inner and visual viewport 440×894, safe top 62px and bottom 34px, app root top 62px/bottom 894px/height 832px. That establishes the extra 62px inset in our app. Prototype 21 removes this inset and the separate status overlay, and restores default status-bar mode. It measures the remaining root viewport directly; no physical screen-height override is used. The runtime safe top is measured only for the colour blend distance, not deducted from layout.
+
+Native default mode is required to be reinstalled via a fresh Home Screen icon. The previous translucent installation displayed a truncated usable viewport; simulated geometry tests did not establish that the native screen would paint outside it. The colour blend still drives theme-color and the root HTML/body background; its effect on the native iOS status region is device-dependent and unverified. Filling the actual content viewport and keeping the navigation visible takes priority over recreating a separate page-owned status strip.
+
+Measured-geometry regression checks verify a root of 894px rather than 832px for the supplied metrics. Real device confirmation of the newly installed default mode is pending.

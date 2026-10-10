@@ -7,7 +7,7 @@ This is a prototype. Nothing connects to real systems. Accounts are stored only 
 ## Put it on GitHub Pages
 
 1. Create a new repository on GitHub, for example `valueclub-prototype`. It can be private if your plan allows private Pages.
-2. Upload everything in this folder to the root of the repository: `index.html`, the versioned `.v19.js` scripts, `assets/`, `icons/`, and the rest. Include the empty `.nojekyll` file.
+2. Upload everything in this folder to the root of the repository: `index.html`, the versioned `.v21.js` scripts, `assets/`, `icons/`, and the rest. Include the empty `.nojekyll` file.
 3. In the repository, open **Settings > Pages**.
 4. Under **Build and deployment**, set Source to **Deploy from a branch**, choose `main` and `/ (root)`, then **Save**.
 5. After a minute the site is live at `https://<your-github-name>.github.io/valueclub-prototype/`.
@@ -69,3 +69,5 @@ On a computer, the same link shows the app inside an iPhone 17 frame.
 - Light and dark mode follow the phone setting.
 - Works offline after the first open.
 - Uses Preact (MIT licence, see `PREACT-LICENSE`).
+
+Version 21 changes installation metadata: remove the existing Home Screen app and add the updated site again to apply the native status-bar mode.
