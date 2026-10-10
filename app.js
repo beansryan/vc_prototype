@@ -38,21 +38,16 @@ class AppLogic extends DCLogic {
     if (!sc || !sc.parentElement) return;
     const root = sc.parentElement, sh = sc.querySelector('[data-sheet]'), page = sc.firstElementChild, P = this.props, cl = (v) => Math.max(0, Math.min(1, v));
     const setVar = (el, k, v) => { if (el && el.style.getPropertyValue(k) !== v) el.style.setProperty(k, v); };
-    if (!sh) { setVar(root, '--stO', '1'); if (window.VCApp && window.VCApp.syncStatus) window.VCApp.syncStatus(); return; }
+    if (!sh) { setVar(root, '--stO', '1'); return; }
     const duoV = (P.platform ?? 'ios') !== 'android' && String(P.duo ?? 'false') === 'true' && String(P.vbar ?? 'false') === 'true';
     const statusBottom = duoV ? ((P.size ?? 'compact') === 'compact' ? 72 : 24) + 86 : 58;
     // layout is measured once per page, never while scrolling (reading layout on every scroll frame causes jank)
-    if (sh._vcStart === undefined) {
+    if (sh._vcStart === undefined || sh._vcH !== sc.clientHeight) {
       const rel = () => sh.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop;
       if (duoV) { const first = sh.parentElement && sh.parentElement.firstElementChild; if (first && first !== sh) { first.style.marginTop = ''; const nat = rel(); if (nat < statusBottom + 12) first.style.marginTop = (statusBottom + 12 - nat) + 'px'; } }
       sh._vcStart = rel(); sh._vcH = sc.clientHeight;
     }
     const y = sc.scrollTop, start = sh._vcStart, top = start - y;
-    const covered = top <= 0;
-    if (root._vcStatusCovered !== covered) {
-      root._vcStatusCovered = covered;
-      if (window.VCApp && window.VCApp.syncStatus) window.VCApp.syncStatus();
-    }
     // the sheet and the header live inside the page, so their values are set there, not on the whole app
     setVar(page, '--sheetR', (cl((top - 10) / 70) * 28).toFixed(1) + 'px');
     setVar(page, '--hdrY', (y * 0.45).toFixed(1) + 'px');
@@ -70,7 +65,7 @@ class AppLogic extends DCLogic {
     if (prev.intro !== this.props.intro) this.setState({ iam: this.props.intro === 'duo' ? 'duo' : '' });
   }
 
-  componentWillUnmount() { clearTimeout(this._tt); clearTimeout(this._st); clearTimeout(this._spinT); if (this._bandRaf) cancelAnimationFrame(this._bandRaf); }
+  componentWillUnmount() { clearTimeout(this._tt); clearTimeout(this._st); }
 
   makeQr() {
     const n = 25, cells = [];
@@ -109,21 +104,22 @@ class AppLogic extends DCLogic {
     if (tab === 'rewards') tab = 'vouchers';
     const h = root ? [] : this.state.history.concat([this.state.tab]).slice(-8);
     const next = { tab, history: h, fabHide: false };
-    this._lastY = 0;
+    // Tell the motion layer whether this is a root-tab switch or a pushed page.
+    // The motion layer owns scroll restoration so Back can return to the exact prior position.
+    this._navIntent = root ? 'tab' : 'push';
     if (tab === 'scan') {
       next.scan = 'scanning';
       clearTimeout(this._st);
       this._st = setTimeout(() => { if (this.state.tab === 'scan' && this.state.scan === 'scanning') this.setState({ scan: 'done' }); }, 2600);
     }
     this.setState(next);
-    if (this.scroller) this.scroller.scrollTop = 0;
   }
 
   back() {
     const h = this.state.history.slice();
     const prev = h.pop() || 'home';
+    this._navIntent = 'back';
     this.setState({ tab: prev, history: h });
-    if (this.scroller) this.scroller.scrollTop = 0;
   }
 
   // Swipe across the page to switch tabs (any segmented control marked data-seg="tabs").
@@ -694,7 +690,7 @@ class AppLogic extends DCLogic {
       back: (vbar && !full) ? 'display:none;' : ios
         ? 'display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;width:44px;height:44px;border-radius:50%;cursor:pointer;color:' + ink + ';padding:0;' + glassC
         : 'display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;width:48px;height:48px;border:0;border-radius:50%;background:transparent;color:' + ink + ';cursor:pointer;padding:0;margin-left:-12px;',
-      edgeTop: 'position:absolute;left:0;right:' + padRight + 'px;top:0;height:' + Math.max(0, (vbar ? 20 : (compact || medium) ? 58 : 18) - (P.topAdjust || 0)) + 'px;pointer-events:none;z-index:5;background:#1A2150;height:' + (P.topAdjust === 54 ? '0px' : 'env(safe-area-inset-top,0px)') + ';' + (bandOn ? 'opacity:var(--edgeO,0);' : ''),
+      edgeTop: 'position:absolute;left:0;right:' + padRight + 'px;top:0;height:' + Math.max(0, (vbar ? 20 : (compact || medium) ? 58 : 18) - (P.topAdjust || 0)) + 'px;pointer-events:none;z-index:5;background:#1A2150;height:env(safe-area-inset-top,47px);' + (bandOn ? 'opacity:var(--edgeO,0);' : ''),
       edgeBottom: 'position:absolute;left:0;right:0;bottom:0;height:120px;pointer-events:none;z-index:4;background:linear-gradient(rgba(0,0,0,0), ' + (dark ? 'rgba(0,0,0,0.85)' : 'rgba(242,242,247,0.85)') + ' 70%);',
       sideToggle: 'width:52px;height:36px;border:0;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;color:' + ink + ';flex:none;',
       vBar: 'position:absolute;z-index:6;top:0;right:0;bottom:0;width:84px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:' + (duo ? duoTop + 86 + 12 : 20) + 'px 0 24px;box-sizing:border-box;pointer-events:none;' + (duo ? '--ink:#FFFFFF;--accent:#FFFFFF;color:#FFFFFF;' : ''),
@@ -1475,7 +1471,7 @@ class AppLogic extends DCLogic {
       keepPlan: () => { this.setState({ subCancelled: false }); this.toastMsg('Auto-renew is back on. Next payment 7 Jan 2027'); },
       goRecap: () => this.go('recap'),
       annualNudge: isM3 && !S.subCancelled && (S.renewals === undefined ? 2 : S.renewals) >= 2, renewals: String(S.renewals === undefined ? 2 : S.renewals),
-      dealItems: [['ASUS', 'Zenbook S14 UX5406AA, Ultra 9, 32GB, 1TB, 14" OLED', '$3,999', 1], ['ASUS', 'Zenbook 14 UX3405CA, Ultra 7, 32GB, 1TB, 14" OLED', '$2,649', 2], ['ASUS', 'Zenbook S16 UX5606SA, Ultra 7, 32GB, 1TB, 16" OLED', '$2,899', 3], ['ASUS', 'Vivobook S14 S3407AA, Ultra 7, 32GB, 1TB, 14"', '$2,199', 4], ['ASUS', 'TUF Gaming F16, i7, 32GB, 1TB, RTX 5070', '$3,299', 5], ['MSI', 'Katana 15 HX, i7, 16GB, 512GB, RTX 5060', '$1,899', 6]].map((d) => ({ brand: d[0], name: d[1], price: d[2], img: ['assets/d140cb8800b18fcadd308cd279ed04f7.jpg', 'assets/756b2a9aa853d0e4aa0b55ee8f8967cf.jpg', 'assets/7ee051c627c52b393a4afacbc93f2a61.jpg', 'assets/eb79d24a3a3b837fc614d883978ea6f6.jpg', 'assets/b5ef8f8a7ae1d1dffe0456083ba922a6.jpg', 'assets/f7b5ee2a9a440913f685e18f56a1b0d4.jpg'][d[3] - 1], go: () => this.toastMsg('Opens this laptop on challenger.sg') })),
+      dealItems: [['ASUS', 'Zenbook S14 UX5406AA, Ultra 9, 32GB, 1TB, 14" OLED', '$3,999', 1], ['ASUS', 'Zenbook 14 UX3405CA, Ultra 7, 32GB, 1TB, 14" OLED', '$2,649', 2], ['ASUS', 'Zenbook S16 UX5606SA, Ultra 7, 32GB, 1TB, 16" OLED', '$2,899', 3], ['ASUS', 'Vivobook S14 S3407AA, Ultra 7, 32GB, 1TB, 14"', '$2,199', 4], ['ASUS', 'TUF Gaming F16, i7, 32GB, 1TB, RTX 5070', '$3,299', 5], ['MSI', 'Katana 15 HX, i7, 16GB, 512GB, RTX 5060', '$1,899', 6]].map((d) => ({ brand: d[0], name: d[1], price: d[2], img: ['assets/zenbook-s14-transparent.png', 'assets/756b2a9aa853d0e4aa0b55ee8f8967cf.jpg', 'assets/7ee051c627c52b393a4afacbc93f2a61.jpg', 'assets/eb79d24a3a3b837fc614d883978ea6f6.jpg', 'assets/b5ef8f8a7ae1d1dffe0456083ba922a6.jpg', 'assets/f7b5ee2a9a440913f685e18f56a1b0d4.jpg'][d[3] - 1], go: () => this.toastMsg('Opens this laptop on challenger.sg') })),
       dealCount: '6 laptops', dealSeeAll: () => this.toastMsg('Opens the collection on challenger.sg'),
       attnOn: loggedIn && String(S.attn ?? P.attn ?? 'on') !== 'off',
       attn: (() => {
@@ -1610,7 +1606,7 @@ class AppLogic extends DCLogic {
       sendFeedback: () => { this.toastMsg('Thanks, we have received your feedback'); },
       toastOtp: () => this.toastMsg('Code sent to your mobile'), toastCall: () => this.toastMsg('Calling 6282 8548'), toastDir: () => this.toastMsg('Opens Maps|Challenger Service Centre'),
       sendReset: () => this.setState({ resetSent: true }), resetSent: !!S.resetSent, resetForm: !S.resetSent,
-      doSpin: () => { if (this.state.spun || this.state.spinning) return; this.setState({ spinning: true, spinDeg: 1800 + 112 }); clearTimeout(this._spinT); this._spinT = setTimeout(() => this.setState({ spinning: false, spun: true, ...(this.state.tab === 'spin' ? { modal: 'spinwin' } : {}) }), 2700); },
+      doSpin: () => { if (this.state.spun || this.state.spinning) return; this.setState({ spinning: true, spinDeg: 1800 + 112 }); setTimeout(() => this.setState({ spinning: false, spun: true, modal: 'spinwin' }), 2700); },
       pzSolve: () => this.setState({ pz: [3, 7, 1, 5, 0, 8, 2, 6, 4], pzSel: -1, pzMoves: 0 }),
       t, scr, nav, navItems, compact, notCompact: !compact,
       showHeaderLogo: !ios || !(expanded && S.side), hideHeaderLogo: ios && expanded && S.side,

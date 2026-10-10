@@ -6,10 +6,13 @@
   const EASE_OUT = 'cubic-bezier(.3,0,.8,.15)';
   const MAIN_TABS = { home: 1, vouchers: 1, account: 1, discover: 1 };
   let L, pendingPopFrom = 0, under = null;
-  const stack = []; // snapshots of the pages underneath, for the swipe back
+  const stack = []; // visual snapshots of the pages underneath, for the swipe back
+  const scrollStack = []; // matching vertical offsets for pushed pages
+  const tabScroll = new Map(); // each root tab remembers its own scroll position
+  let scanReturnY = 0;
   const stash = (g) => { g.getAnimations({ subtree: true }).forEach((a) => a.cancel()); g.remove(); g.style.boxShadow = ''; stack.push(g); if (stack.length > 8) stack.shift(); };
 
-  const anim = (el, frames, opts) => (!reduce.matches && el && el.animate ? el.animate(frames, Object.assign({ fill: 'both' }, opts)) : null);
+  const anim = (el, frames, opts) => (el && el.animate ? el.animate(frames, Object.assign({ fill: 'both' }, opts)) : null);
   const done = (a, fn) => { if (a) a.onfinish = a.oncancel = fn; else fn(); };
 
   // pages with the navy band: the band is fixed behind the scroller, so a moving page carries a copy of it
@@ -41,9 +44,11 @@
     }
     if (patch.tab === undefined || patch.tab === prev.tab || prev.splash) return '';
     const to = patch.tab, from = prev.tab;
+    const intent = L && L._navIntent;
     if (patch.tier !== undefined) return 'fade';
     if (to === 'scan') return 'up';
     if (from === 'scan') return 'down';
+    if (intent === 'tab' && MAIN_TABS[to]) return 'tab';
     const ph = (prev.history || []).length;
     const nh = patch.history ? patch.history.length : ph;
     if (nh === 0 && MAIN_TABS[to] && MAIN_TABS[from]) return 'tab';
@@ -61,11 +66,31 @@
     if (!app) return null;
     const plan = { layers: [], nav: classify(prev, patch), sc, app, loadingEnd: prev.loading && patch.loading === false };
     plan.hadBand = !!app.querySelector('[data-band]');
+    plan.fromY = sc.scrollTop || 0;
+    const rootTabOf = (st) => MAIN_TABS[st.tab] ? st.tab : (((st.history || []).length && MAIN_TABS[st.history[0]]) ? st.history[0] : '');
+    if (plan.nav === 'push') {
+      scrollStack.push(plan.fromY); if (scrollStack.length > 8) scrollStack.shift();
+      const rt = rootTabOf(prev); if (rt && MAIN_TABS[prev.tab]) tabScroll.set(rt, plan.fromY);
+      plan.toY = 0;
+    } else if (plan.nav === 'pop') {
+      plan.toY = scrollStack.length ? scrollStack[scrollStack.length - 1] : 0;
+    } else if (plan.nav === 'tab') {
+      if (MAIN_TABS[prev.tab]) tabScroll.set(prev.tab, plan.fromY);
+      plan.toY = tabScroll.get(patch.tab) || 0;
+    } else if (plan.nav === 'up') {
+      scanReturnY = plan.fromY; plan.toY = 0;
+    } else if (plan.nav === 'down') {
+      plan.toY = scanReturnY || 0;
+    } else if (plan.nav === 'fade' && patch.tier !== undefined) {
+      plan.toY = 0;
+    }
+    if (L) L._navIntent = '';
     // a new page starts with its header in place and the sheet's corners round (the scroll position is reset)
     if (plan.nav === 'tab') { const ord = ['home', 'discover', 'vouchers', 'account']; plan.dir = Math.sign(ord.indexOf(patch.tab) - ord.indexOf(prev.tab)) || 1; }
     app.querySelectorAll('[data-fx]').forEach((el) => plan.layers.push({ el, parent: el.parentElement }));
     const vtSkip = useVT && plan.nav === 'pop' && !pendingPopFrom;
-    if (!vtSkip && (plan.nav === 'push' || plan.nav === 'pop' || plan.nav === 'down' || plan.nav === 'tab' || plan.nav === 'fade')) {
+    // Root-tab changes deliberately avoid full-page DOM snapshots; only the Liquid Glass indicator moves.
+    if (!vtSkip && (plan.nav === 'push' || plan.nav === 'pop' || plan.nav === 'down' || plan.nav === 'fade')) {
       const page = sc.firstElementChild;
       if (page) {
         const ghost = document.createElement('div');
@@ -84,6 +109,19 @@
       }
     }
     return plan;
+  }
+
+  function applyScrollPlan(plan) {
+    if (!plan || plan.toY === undefined || !L || !L.scroller) return;
+    const y = Math.max(0, Number(plan.toY) || 0);
+    L.scroller.scrollTop = y;
+    L._lastY = y;
+    try { if (L.syncBand) L.syncBand(L.scroller); } catch (e) {}
+  }
+  function commitScrollPlan(plan) {
+    if (!plan) return;
+    if (plan.nav === 'pop' && scrollStack.length) scrollStack.pop();
+    else if (plan.nav === 'tab') scrollStack.length = 0;
   }
 
   // ---------- after the new screen is drawn: animate the difference ----------
@@ -125,7 +163,7 @@
         anim(el, [{ opacity: 0 }, { opacity: 1 }], { duration: 260, easing: 'ease', fill: 'none' });
         const box = el.firstElementChild;
         if (box) {
-          if (isSheet(box)) anim(box, [{ translate: '0 100%' }, { translate: '0 0' }], { duration: 420, easing: EASE_PUSH, fill: 'none' });
+          if (isSheet(box)) anim(box, [{ translate: '0 100%' }, { translate: '0 0' }], { duration: 360, easing: EASE_PUSH, fill: 'none' });
           else anim(box, [{ scale: '.88', opacity: 0 }, { scale: '1.015', opacity: 1, offset: 0.7 }, { scale: '1', opacity: 1 }], { duration: 380, easing: 'cubic-bezier(.2,.8,.3,1)', fill: 'none' });
         }
       } else if (kind === 'toast') {
@@ -180,7 +218,7 @@
       stack.pop(); if (under) { under.remove(); under = null; }
       // the top layer slides off to the right and uncovers the page underneath, which does not move
       if (g) { sc.after(g); g.style.zIndex = '3'; g.style.boxShadow = '-10px 0 30px rgba(0,0,0,.14)'; }
-      const a = g ? anim(g, [{ translate: from + 'px 0' }, { translate: '100% 0' }], { duration: 360, easing: EASE_PUSH }) : null;
+      const a = g ? anim(g, [{ translate: from + 'px 0' }, { translate: '100% 0' }], { duration: 320, easing: EASE_PUSH }) : null;
       done(a, finish);
     } else if (kind === 'up') {
       sc.style.background = bg;
@@ -190,14 +228,16 @@
       if (g) sc.after(g);
       const a = anim(g, [{ translate: '0 0' }, { translate: '0 100%' }], { duration: 380, easing: EASE_PUSH });
       done(a, finish);
-    } else {
+    } else if (kind === 'tab') {
+      // Top-level tabs switch immediately. The Liquid Glass selection pill is the transition;
+      // fading the whole page caused a visible flash on iPhone and forced unnecessary DOM cloning.
       stack.length = 0;
-      const page = sc.firstElementChild;
-      const band = app.querySelector('[data-band]');
-      // tab switch: the whole screen, navy included, cross-fades
+      finish();
+    } else {
+      // Non-spatial state changes may still use a very short dissolve.
       if (g) { sc.after(g); g.style.zIndex = '3'; }
-      const a = g ? anim(g, [{ opacity: 1 }, { opacity: 0 }], { duration: 240, easing: 'ease' }) : null;
-      const pg = sc.firstElementChild; if (pg) anim(pg, [{ opacity: 0 }, { opacity: 1 }], { duration: 300, easing: 'ease', fill: 'none' });
+      const a = g ? anim(g, [{ opacity: 1 }, { opacity: 0 }], { duration: 140, easing: 'ease' }) : null;
+      const pg = sc.firstElementChild; if (pg) anim(pg, [{ opacity: 0.7 }, { opacity: 1 }], { duration: 140, easing: 'ease', fill: 'none' });
       done(a, finish);
     }
   }
@@ -209,22 +249,13 @@
 
   // ---------- iOS edge swipe back ----------
   function edgeSwipe(rootEl) {
-    let sx = 0, sy = 0, on = false, dx = 0, sb = null;
+    let sx = 0, sy = 0, on = false, dx = 0, sb = null, axis = '', lastX = 0, lastT = 0, vx = 0;
     const dropSb = () => { if (sb) { sb.remove(); sb = null; } };
-    const cancel = () => {
-      on = false; dx = 0; dropSb();
-      const sc = L && L.scroller;
-      if (sc) { sc.style.translate = ''; sc.style.boxShadow = ''; sc.style.background = ''; }
-      if (under) { under.remove(); under = null; }
-    };
-    rootEl.addEventListener('touchcancel', cancel);
     rootEl.addEventListener('touchstart', (e) => {
-      cancel();
-      if (reduce.matches || e.touches.length !== 1) return;
       const t = e.touches[0]; const r = rootEl.getBoundingClientRect();
       const s = L && L.state;
       on = !!(s && ((s.history || []).length || inReceiptDetail(s)) && !s.modal && !s.iam && !s.bdaySheet && s.tab !== 'scan' && t.clientX - r.left < 24);
-      sx = t.clientX; sy = t.clientY; dx = 0;
+      sx = t.clientX; sy = t.clientY; dx = 0; axis = ''; lastX = sx; lastT = performance.now(); vx = 0;
       if (on && stack.length && L.scroller) {
         under = stack[stack.length - 1];
         under.style.translate = '0 0';
@@ -235,22 +266,37 @@
     }, { passive: true });
     rootEl.addEventListener('touchmove', (e) => {
       if (!on) return;
-      const t = e.touches[0]; dx = Math.max(0, t.clientX - sx);
-      if (Math.abs(t.clientY - sy) > 40 && dx < 30) { cancel(); return; }
+      const t = e.touches[0]; const rawX = t.clientX - sx, rawY = t.clientY - sy;
+      if (!axis && (Math.abs(rawX) > 7 || Math.abs(rawY) > 7)) axis = Math.abs(rawX) > Math.abs(rawY) * 1.15 ? 'x' : 'y';
+      if (axis === 'y') { on = false; dropSb(); L.scroller.style.translate = ''; L.scroller.style.background = ''; if (under) { under.remove(); under = null; } return; }
+      if (axis !== 'x') return;
+      e.preventDefault();
+      const now = performance.now(), dt = Math.max(1, now - lastT);
+      const inst = (t.clientX - lastX) / dt;
+      vx = vx * 0.65 + inst * 0.35; lastX = t.clientX; lastT = now;
+      dx = Math.max(0, rawX);
       L.scroller.style.translate = dx + 'px 0';
       L.scroller.style.boxShadow = '-10px 0 30px rgba(0,0,0,.14)';
-    }, { passive: true });
+    }, { passive: false });
     rootEl.addEventListener('touchend', () => {
       if (!on) return; on = false;
       const sc = L.scroller;
-      if (dx > Math.min(110, sc.clientWidth * 0.3)) {
+      const enoughDistance = dx > Math.min(110, sc.clientWidth * 0.3);
+      const enoughVelocity = dx > 24 && vx > 0.48;
+      if (enoughDistance || enoughVelocity) {
         sc.style.translate = ''; sc.style.boxShadow = ''; dropSb();
         pendingPopFrom = dx; if (inReceiptDetail(L.state)) L.setState({ rSel: '' }); else L.back();
       } else {
-        const a = anim(sc, [{ translate: dx + 'px 0' }, { translate: '0 0' }], { duration: 250, easing: EASE_PUSH, fill: 'none' });
+        const duration = Math.max(160, Math.min(230, 150 + dx * 0.45));
+        const a = anim(sc, [{ translate: dx + 'px 0' }, { translate: '0 0' }], { duration, easing: EASE_PUSH, fill: 'none' });
         const u = under; under = null;
         sc.style.translate = ''; done(a, () => { dropSb(); sc.style.boxShadow = ''; sc.style.background = ''; if (u) u.remove(); });
       }
+    });
+    rootEl.addEventListener('touchcancel', () => {
+      on = false; axis = ''; dx = 0; dropSb();
+      if (L && L.scroller) { L.scroller.style.translate = ''; L.scroller.style.boxShadow = ''; L.scroller.style.background = ''; }
+      if (under) { under.remove(); under = null; }
     });
   }
 
@@ -416,6 +462,45 @@
     });
   }
 
+  // ---------- tap guard: a touch used to stop scrolling must not activate a card ----------
+  function tapGuard(rootEl) {
+    let lastScrollAt = 0, lastY = 0, velocity = 0, touch = null, suppressUntil = 0;
+    const scroller = () => L && L.scroller;
+    const onScroll = () => {
+      const sc = scroller(); if (!sc) return;
+      const now = performance.now(), y = sc.scrollTop;
+      const dt = Math.max(1, now - (lastScrollAt || now));
+      const v = (y - lastY) / dt;
+      velocity = velocity * 0.55 + v * 0.45;
+      lastY = y; lastScrollAt = now;
+    };
+    rootEl.addEventListener('scroll', onScroll, true);
+    rootEl.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) { touch = null; return; }
+      const sc = scroller(), t = e.touches[0], now = performance.now();
+      const coasting = !!sc && now - lastScrollAt < 110 && Math.abs(velocity) > 0.035;
+      touch = { x: t.clientX, y: t.clientY, sy: sc ? sc.scrollTop : 0, moved: false, coasting };
+    }, { passive: true });
+    rootEl.addEventListener('touchmove', (e) => {
+      if (!touch || !e.touches.length) return;
+      const t = e.touches[0], sc = scroller();
+      if (Math.hypot(t.clientX - touch.x, t.clientY - touch.y) > 7 || (sc && Math.abs(sc.scrollTop - touch.sy) > 3)) touch.moved = true;
+    }, { passive: true });
+    rootEl.addEventListener('touchend', () => {
+      if (!touch) return;
+      const sc = scroller();
+      if (touch.coasting || touch.moved || (sc && Math.abs(sc.scrollTop - touch.sy) > 3)) suppressUntil = performance.now() + 420;
+      touch = null;
+    }, { passive: true });
+    rootEl.addEventListener('touchcancel', () => { touch = null; }, { passive: true });
+    rootEl.addEventListener('click', (e) => {
+      if (!e.isTrusted || performance.now() > suppressUntil) return;
+      const hit = e.target && e.target.closest && e.target.closest('button,a,[role="button"],[onclick]');
+      if (!hit || !rootEl.contains(hit)) return;
+      e.preventDefault(); e.stopImmediatePropagation(); e.stopPropagation(); suppressUntil = 0;
+    }, true);
+  }
+
   // ---------- small touches ----------
   function extras(rootEl) {
     // scratch card wiggles when scratched
@@ -426,17 +511,16 @@
     // banners never auto-advance (canvas principle): members swipe them
   }
 
-  const useVT = !!document.startViewTransition && !reduce.matches && !document.documentElement.classList.contains('vc-standalone');
+  const useVT = !!document.startViewTransition && !reduce.matches;
   const app0 = () => L.scroller.parentElement;
   if (useVT) {
     const st = document.createElement('style');
     st.textContent = [
-      '::view-transition-group(*){animation-duration:.42s;animation-timing-function:cubic-bezier(.2,.85,.25,1)}',
+      '::view-transition-group(*){animation-duration:.36s;animation-timing-function:cubic-bezier(.2,.85,.25,1)}',
       'html[data-vcnav=push]::view-transition-old(root){animation:none}',
-      'html[data-vcnav=push]::view-transition-new(root){animation:vcIn .42s cubic-bezier(.2,.85,.25,1) both;box-shadow:-10px 0 30px rgba(0,0,0,.14)}',
+      'html[data-vcnav=push]::view-transition-new(root){animation:vcIn .36s cubic-bezier(.2,.85,.25,1) both;box-shadow:-10px 0 30px rgba(0,0,0,.14)}',
       'html[data-vcnav=pop]::view-transition-new(root){animation:none}',
-      'html[data-vcnav=pop]::view-transition-old(root){animation:vcOut .36s cubic-bezier(.2,.85,.25,1) both;z-index:2;box-shadow:-10px 0 30px rgba(0,0,0,.14)}',
-      'html[data-vcnav=tab]::view-transition-old(root),html[data-vcnav=tab]::view-transition-new(root){animation-duration:.26s}',
+      'html[data-vcnav=pop]::view-transition-old(root){animation:vcOut .32s cubic-bezier(.2,.85,.25,1) both;z-index:2;box-shadow:-10px 0 30px rgba(0,0,0,.14)}',
       '@keyframes vcIn{from{transform:translateX(100%)}}',
       '@keyframes vcOut{to{transform:translateX(100%)}}',
       // the tab bar is its own layer, so it stays put while pages move under it
@@ -464,6 +548,7 @@
           if (kind === 'tab') stack.length = 0;
           const self = this; document.documentElement.dataset.vcnav = kind;
           const vt = document.startViewTransition(() => new Promise((res) => orig.call(self, patch, () => {
+            try { applyScrollPlan(plan); commitScrollPlan(plan); } catch (e) {}
             try { after(plan); } catch (e) {}
             try { postRender(); } catch (e) {}
             // settle the header and sheet before the new screen is captured, so nothing moves after the fade
@@ -471,17 +556,21 @@
             if (kind === 'push' && g) { try { const b = app0().querySelector('[data-band]'); g.style.background = bandBg(app0(), bgOf(L.scroller)); stash(g); } catch (e) {} }
             if (cb) cb(); res();
           })));
-          vt.finished.catch(() => {}).finally(() => { delete document.documentElement.dataset.vcnav; });
+          vt.finished.finally(() => { delete document.documentElement.dataset.vcnav; });
           return;
         }
         orig.call(this, patch, () => {
-          if (plan) { try { after(plan); } catch (e) { if (plan.ghost) plan.ghost.remove(); } }
+          if (plan) {
+            try { applyScrollPlan(plan); commitScrollPlan(plan); } catch (e) {}
+            try { after(plan); } catch (e) { if (plan.ghost) plan.ghost.remove(); }
+          }
           try { postRender(); } catch (e) {}
           if (cb) cb();
         });
       };
       edgeSwipe(rootEl);
       tabBarGestures(rootEl);
+      tapGuard(rootEl);
       extras(rootEl);
       addEventListener('resize', () => setTimeout(() => { try { if (L.scroller) syncTabBar(L.scroller.parentElement, true); } catch (e) {} }, 60));
       setTimeout(postRender, 0);

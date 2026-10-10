@@ -11,9 +11,9 @@
   const store = {
     get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
-    clear() { try { [KEY_STATE, KEY_ACCTS, KEY_A2HS, KEY_DEV].forEach((k) => localStorage.removeItem(k)); } catch (e) {} }
+    clear() { try { localStorage.clear(); } catch (e) {} }
   };
-  const today = () => { const d = new Date(); return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-'); };
+  const today = () => new Date().toISOString().slice(0, 10);
 
   // state that survives a relaunch (everything else starts fresh, like a cold app start)
   const KEEP = ['tier', 'uFirst', 'uLast', 'uEmail', 'uMobile', 'acctKey', 'claimed', 'read', 'dismissed', 'bday', 'themePref', 'bigText',
@@ -99,8 +99,7 @@
       }
       if (/^Share sheet/.test(msg)) {
         if (navigator.share) { navigator.share({ title: 'My ValueClub savings', text: 'I saved with ValueClub this year.', url: WEB }).catch(() => {}); return; }
-        if (navigator.clipboard) navigator.clipboard.writeText(WEB).then(() => toast('Link copied'), () => toast('Could not copy the link'));
-        else toast('Sharing is unavailable in this browser'); return;
+        toast('Link copied'); try { navigator.clipboard.writeText(WEB); } catch (e) {} return;
       }
       toast(msg);
     };
@@ -149,7 +148,6 @@
   const isTouchPhone = matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) < 600;
   const desk = !isTouchPhone;
   if (desk) document.body.classList.add('desk');
-  document.documentElement.classList.toggle('vc-standalone', isStandalone && !desk);
   const darkMq = matchMedia('(prefers-color-scheme: dark)');
 
   function size() {
@@ -163,15 +161,11 @@
       isl.style.transformOrigin = 'top center';
       return { w: 402, h: 874 };
     }
-    const root = document.getElementById('root');
-    // The shell starts below the safe area; remove the canvas's simulated status space.
-    const safeTop = parseFloat(getComputedStyle(root).top) || 0;
-    // Let fixed top/bottom insets define the shell. iOS standalone visualViewport
-    // can already exclude system areas; subtracting safeTop again leaves a bottom gap.
-    root.style.removeProperty('height');
-    return { w: Math.round(root.clientWidth), h: Math.round(root.clientHeight),
-      topAdjust: isStandalone ? 54 : Math.max(0, 54 - safeTop) };
-
+    // how much of the 54px status bar area the page actually sits under (0 in Safari or a light standalone bar)
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;top:0;height:0;padding-top:env(safe-area-inset-top);visibility:hidden';
+    document.body.appendChild(probe); const safeTop = parseFloat(getComputedStyle(probe).paddingTop) || 0; probe.remove();
+    return { w: Math.round(innerWidth), h: Math.round(innerHeight), topAdjust: Math.max(0, 54 - safeTop) };
   }
 
   // ---------- mount ----------
@@ -193,53 +187,77 @@
       s.tier = 'guest';
     }
     s.tab = 'home'; s.history = []; s.splash = true; s.iam = '';
-    L._onState = () => { persist(L); queueTheme(); };
+    L._onState = () => persist(L);
     wireLinks(L);
     window.VCFx.install(L, document.getElementById('root'));
   }
 
-  let lastMount = "";
   function mount() {
     const sz = size();
-    const signature = JSON.stringify([sz, darkMq.matches, devProps]);
-    if (signature === lastMount) return;
-    lastMount = signature;
     render(h(App, { p: { platform: 'ios', size: 'compact', tier: 'guest', w: sz.w, h: sz.h, theme: darkMq.matches ? 'dark' : 'light', intro: 'none', topAdjust: sz.topAdjust || 0, ...devProps }, onLogic }), document.getElementById('root'));
   }
   mount();
+
+  // Warm the next likely commerce screen while the member is idle. Cached bytes still need image decode;
+  // doing it here prevents first-open decode work from landing inside the page-push animation.
+  const prewarmImages = () => {
+    const urls = [
+      'assets/zenbook-s14-transparent.png',
+      'assets/756b2a9aa853d0e4aa0b55ee8f8967cf.jpg',
+      'assets/7ee051c627c52b393a4afacbc93f2a61.jpg',
+      'assets/eb79d24a3a3b837fc614d883978ea6f6.jpg',
+      'assets/b5ef8f8a7ae1d1dffe0456083ba922a6.jpg',
+      'assets/f7b5ee2a9a440913f685e18f56a1b0d4.jpg'
+    ];
+    urls.forEach((src) => { const im = new Image(); im.src = src; if (im.decode) im.decode().catch(() => {}); });
+  };
+  if ('requestIdleCallback' in window) requestIdleCallback(prewarmImages, { timeout: 1800 }); else setTimeout(prewarmImages, 900);
+
   let mT;
   const remount = () => { clearTimeout(mT); mT = setTimeout(mount, 60); };
   addEventListener('resize', remount);
   addEventListener('orientationchange', remount);
   addEventListener('pageshow', remount);
   if (window.visualViewport) visualViewport.addEventListener('resize', remount);
-  if (window.ResizeObserver) new ResizeObserver(remount).observe(document.getElementById('root'));
+  setTimeout(mount, 300); setTimeout(mount, 1200);
 
-  // A stable status background avoids top-edge sampling and layout reads during scrolling.
+  // ---------- status bar colour: iOS paints the opaque bar in theme-color, so match whatever is at the top ----------
   const tcMeta = document.getElementById('vcTheme');
+  const BAND_TOP = { light: '#3348AD', dark: '#222E73' };
   let tcRaf = 0;
   function syncTheme() {
     tcRaf = 0;
-    if (desk) return;
-    const pref = L && L.state.themePref;
-    const dark = pref === 'dark' || (pref !== 'light' && darkMq.matches);
-    const sc = L && L.scroller;
-    const sheet = sc && sc.querySelector('[data-sheet]');
-    const covered = sheet && sheet._vcStart !== undefined && sheet._vcStart - sc.scrollTop <= 0;
-    const col = covered ? (dark ? '#000000' : '#F2F3F8') : (dark ? '#222E73' : '#3348AD');
-    document.documentElement.style.setProperty('--vc-status', col);
-    document.documentElement.style.backgroundColor = col;
-    document.body.style.backgroundColor = col;
-    if (tcMeta) tcMeta.content = col;
+    if (desk || !tcMeta) return;
+    const root = document.getElementById('root');
+    // the band ignores taps (pointer-events: none), so let it be hit for this one check
+    const peStyle = document.createElement('style'); peStyle.textContent = '#root [data-band], #root [data-band] * { pointer-events: auto !important; }';
+    document.head.appendChild(peStyle);
+    const els = document.elementsFromPoint(innerWidth / 2, 2);
+    peStyle.remove();
+    let col = '';
+    for (const el of els) {
+      if (!root.contains(el) || el === root) continue;
+      if (el.closest('[data-band]')) { col = BAND_TOP[darkMq.matches ? 'dark' : 'light']; break; }
+      const cs = getComputedStyle(el);
+      const bg = cs.backgroundColor;
+      if (bg && bg !== 'transparent' && !/rgba\(.*,\s*0\)$/.test(bg) && parseFloat(cs.opacity) > 0.5) { col = bg; break; }
+    }
+    if (!col) col = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#F2F3F8';
+    if (tcMeta.getAttribute('content') !== col) tcMeta.setAttribute('content', col);
+    // iOS 26 colours the status area from the page background, not theme-color, so set that too
+    // Safari 26 also samples fixed elements touching the top edge
+    let tint = document.getElementById('vcTint');
+    if (!tint) { tint = document.createElement('div'); tint.id = 'vcTint'; tint.style.cssText = 'position:fixed;top:0;left:0;right:0;height:6px;z-index:1;pointer-events:none'; document.body.appendChild(tint); }
+    tint.style.backgroundColor = col; root.style.backgroundColor = col;
+    if (document.documentElement.style.backgroundColor !== col) { document.documentElement.style.backgroundColor = col; document.body.style.backgroundColor = col; }
   }
-  function queueTheme() { if (!tcRaf) tcRaf = requestAnimationFrame(syncTheme); }
-  VCApp.syncStatus = queueTheme;
+  const queueTheme = () => { if (!tcRaf) tcRaf = requestAnimationFrame(syncTheme); };
+  new MutationObserver(queueTheme).observe(document.getElementById('root'), { childList: true, subtree: true });
+  document.addEventListener('scroll', queueTheme, true);
+  addEventListener('touchend', () => setTimeout(queueTheme, 450), { passive: true });
   if (darkMq.addEventListener) darkMq.addEventListener('change', queueTheme);
   queueTheme();
   if (darkMq.addEventListener) darkMq.addEventListener('change', remount);
-  const flush = () => { if (L) { clearTimeout(saveT); store.set(KEY_STATE, snapshot(L.state)); } };
-  document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
-  addEventListener('pagehide', flush);
 
   // cold start: launch screen, then a short skeleton while "Braze and member data load"
   setTimeout(() => {
@@ -362,6 +380,8 @@
 
   // offline support once installed
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    const had = !!navigator.serviceWorker.controller; let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !reloaded) { reloaded = true; location.reload(); } });
     navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then((r) => r.update()).catch(() => {});
   }
 })();

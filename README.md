@@ -7,12 +7,12 @@ This is a prototype. Nothing connects to real systems. Accounts are stored only 
 ## Put it on GitHub Pages
 
 1. Create a new repository on GitHub, for example `valueclub-prototype`. It can be private if your plan allows private Pages.
-2. Upload everything in this folder to the root of the repository: `index.html`, the versioned `.v22.js` scripts, `assets/`, `icons/`, and the rest. Include the empty `.nojekyll` file.
+2. Upload everything in this folder to the root of the repository: `index.html`, `app.js`, `assets/`, `icons/`, and the rest. Include the empty `.nojekyll` file.
 3. In the repository, open **Settings > Pages**.
 4. Under **Build and deployment**, set Source to **Deploy from a branch**, choose `main` and `/ (root)`, then **Save**.
 5. After a minute the site is live at `https://<your-github-name>.github.io/valueclub-prototype/`.
 
-To update it later, upload the changed files again. After uploading an update, fully close and reopen the app. The HTML references versioned scripts to prevent a previous offline cache from supplying older code. Updates do not force a reload during an active session. For this status-bar update, remove the existing Home Screen icon and add the site again.
+To update it later, upload the changed files again. The app picks up the new version the next time it opens twice (the first open refreshes the offline copy).
 
 ## Install on an iPhone
 
@@ -63,11 +63,19 @@ On a computer, the same link shows the app inside an iPhone 17 frame.
   - change appearance and text size
   - restart or reset the app
 
+## Prototype fluidity fixes (10 Oct 2026)
+
+- Back and edge-swipe Back restore the exact previous scroll position. Root tabs remember their own scroll positions.
+- Bottom-tab page crossfades were removed; only the Liquid Glass selection motion remains.
+- Touches used to stop momentum scrolling no longer activate cards underneath.
+- Edge-swipe Back now uses direction locking and velocity, with a faster cancelled-swipe settle.
+- Push/pop timings were tightened and likely deal images are decoded while idle.
+- The first ASUS Zenbook image now uses the supplied transparent product PNG.
+- PWA manifest launch/theme colours now match the ValueClub navy to avoid the grey standalone launch/status strip.
+
 ## Notes
 
 - Built for iPhone 17 portrait only.
 - Light and dark mode follow the phone setting.
 - Works offline after the first open.
 - Uses Preact (MIT licence, see `PREACT-LICENSE`).
-
-Version 21 changes installation metadata: remove the existing Home Screen app and add the updated site again to apply the native status-bar mode.
