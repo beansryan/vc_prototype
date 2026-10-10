@@ -65,7 +65,8 @@
     if (plan.nav) ['--hdrY:0px', '--hdrO:1', '--sheetR:28px', '--edgeO:0', '--stO:0'].forEach((kv) => { const [k, v] = kv.split(':'); app.style.setProperty(k, v); });
     if (plan.nav === 'tab') { const ord = ['home', 'discover', 'vouchers', 'account']; plan.dir = Math.sign(ord.indexOf(patch.tab) - ord.indexOf(prev.tab)) || 1; }
     app.querySelectorAll('[data-fx]').forEach((el) => plan.layers.push({ el, parent: el.parentElement }));
-    if (plan.nav === 'push' || plan.nav === 'pop' || plan.nav === 'down' || plan.nav === 'tab' || plan.nav === 'fade') {
+    const vtSkip = useVT && (plan.nav === 'tab' || (plan.nav === 'pop' && !pendingPopFrom));
+    if (!vtSkip && (plan.nav === 'push' || plan.nav === 'pop' || plan.nav === 'down' || plan.nav === 'tab' || plan.nav === 'fade')) {
       const page = sc.firstElementChild;
       if (page) {
         const ghost = document.createElement('div');
@@ -268,7 +269,7 @@
     const bar = app.querySelector('[data-tabbar]');
     if (!bar) { tb.ind = null; return; }
     const wrap = bar.parentElement;
-    wrap.setAttribute('data-tbwrap', '1');
+    wrap.setAttribute('data-tbwrap', '1'); if (!wrap.style.viewTransitionName) wrap.style.viewTransitionName = 'vc-tabs';
     const ind = bar.querySelector('[data-tabind]');
     const s = L.state;
     // minimise while scrolling down a main tab, like tabBarMinimizeBehavior(.onScrollDown)
@@ -413,6 +414,26 @@
     // banners never auto-advance (canvas principle): members swipe them
   }
 
+  const useVT = !!document.startViewTransition && !reduce.matches;
+  const app0 = () => L.scroller.parentElement;
+  if (useVT) {
+    const st = document.createElement('style');
+    st.textContent = [
+      '::view-transition-group(*){animation-duration:.42s;animation-timing-function:cubic-bezier(.2,.85,.25,1)}',
+      'html[data-vcnav=push]::view-transition-old(root){animation:none}',
+      'html[data-vcnav=push]::view-transition-new(root){animation:vcIn .42s cubic-bezier(.2,.85,.25,1) both;box-shadow:-10px 0 30px rgba(0,0,0,.14)}',
+      'html[data-vcnav=pop]::view-transition-new(root){animation:none}',
+      'html[data-vcnav=pop]::view-transition-old(root){animation:vcOut .36s cubic-bezier(.2,.85,.25,1) both;z-index:2;box-shadow:-10px 0 30px rgba(0,0,0,.14)}',
+      'html[data-vcnav=tab]::view-transition-old(root),html[data-vcnav=tab]::view-transition-new(root){animation-duration:.26s}',
+      '@keyframes vcIn{from{transform:translateX(100%)}}',
+      '@keyframes vcOut{to{transform:translateX(100%)}}',
+      // the tab bar is its own layer, so it stays put while pages move under it
+      '::view-transition-old(vc-tabs),::view-transition-new(vc-tabs){animation:none}',
+      'html[data-vcnav]::view-transition-old(vc-tabs){display:none}'
+    ].join('');
+    document.head.appendChild(st);
+  }
+
   window.VCFx = {
     install(logic, rootEl) {
       L = logic;
@@ -422,6 +443,23 @@
         if (!patch) return;
         let plan = null;
         try { plan = before(this.state, patch); } catch (e) { plan = null; }
+        // page moves use the browser's own view transitions where available: it animates flat snapshots on the GPU,
+        // so nothing is rebuilt, re-decoded or re-laid out mid-animation
+        const kind = plan && plan.nav;
+        if (useVT && (kind === 'push' || kind === 'tab' || (kind === 'pop' && !pendingPopFrom))) {
+          const g = plan.ghost; plan.ghost = null; plan.nav = '';
+          if (kind === 'pop') { stack.pop(); if (under) { under.remove(); under = null; } }
+          if (kind === 'tab') stack.length = 0;
+          const self = this; document.documentElement.dataset.vcnav = kind;
+          const vt = document.startViewTransition(() => new Promise((res) => orig.call(self, patch, () => {
+            try { after(plan); } catch (e) {}
+            try { postRender(); } catch (e) {}
+            if (kind === 'push' && g) { try { const b = app0().querySelector('[data-band]'); g.style.background = bandBg(app0(), bgOf(L.scroller)); stash(g); } catch (e) {} }
+            if (cb) cb(); res();
+          })));
+          vt.finished.finally(() => { delete document.documentElement.dataset.vcnav; });
+          return;
+        }
         orig.call(this, patch, () => {
           if (plan) { try { after(plan); } catch (e) { if (plan.ghost) plan.ghost.remove(); } }
           try { postRender(); } catch (e) {}

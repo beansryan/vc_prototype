@@ -36,23 +36,29 @@ class AppLogic extends DCLogic {
   // the sheet over the navy band: corners, header drift, status-bar scrim and the Duo status colour all follow where the sheet is
   syncBand(sc) {
     if (!sc || !sc.parentElement) return;
-    const root = sc.parentElement, sh = sc.querySelector('[data-sheet]'), P = this.props, cl = (v) => Math.max(0, Math.min(1, v));
-    if (!sh) { root.style.setProperty('--stO', '1'); return; }
+    const root = sc.parentElement, sh = sc.querySelector('[data-sheet]'), page = sc.firstElementChild, P = this.props, cl = (v) => Math.max(0, Math.min(1, v));
+    const setVar = (el, k, v) => { if (!el) return; const c = el._vc || (el._vc = {}); if (c[k] !== v) { c[k] = v; el.style.setProperty(k, v); } };
+    if (!sh) { setVar(root, '--stO', '1'); return; }
     const duoV = (P.platform ?? 'ios') !== 'android' && String(P.duo ?? 'false') === 'true' && String(P.vbar ?? 'false') === 'true';
     const statusBottom = duoV ? ((P.size ?? 'compact') === 'compact' ? 72 : 24) + 86 : 58;
-    const rel = () => sh.getBoundingClientRect().top - sc.getBoundingClientRect().top;
-    // on the Duo side bar the status sits on the navy, so the sheet starts below it
-    if (duoV) { const first = sh.parentElement && sh.parentElement.firstElementChild; if (first && first !== sh) { first.style.marginTop = ''; const nat = rel() + sc.scrollTop; if (nat < statusBottom + 12) first.style.marginTop = (statusBottom + 12 - nat) + 'px'; } }
-    const y = sc.scrollTop, top = rel(), start = top + y;
-    root.style.setProperty('--sheetR', (cl((top - 10) / 70) * 28).toFixed(1) + 'px');
-    root.style.setProperty('--edgeO', String(cl((50 - top) / 20)));
-    root.style.setProperty('--stO', String(cl((statusBottom - top) / 30)));
-    root.style.setProperty('--hdrY', (y * 0.45).toFixed(1) + 'px');
-    root.style.setProperty('--hdrO', String(cl(1 - y / Math.max(60, start * 0.8))));
+    // layout is measured once per page, never while scrolling (reading layout on every scroll frame causes jank)
+    if (sh._vcStart === undefined || sh._vcH !== sc.clientHeight) {
+      const rel = () => sh.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop;
+      if (duoV) { const first = sh.parentElement && sh.parentElement.firstElementChild; if (first && first !== sh) { first.style.marginTop = ''; const nat = rel(); if (nat < statusBottom + 12) first.style.marginTop = (statusBottom + 12 - nat) + 'px'; } }
+      sh._vcStart = rel(); sh._vcH = sc.clientHeight;
+    }
+    const y = sc.scrollTop, start = sh._vcStart, top = start - y;
+    // the sheet and the header live inside the page, so their values are set there, not on the whole app
+    setVar(page, '--sheetR', (cl((top - 10) / 70) * 28).toFixed(1) + 'px');
+    setVar(page, '--hdrY', (y * 0.45).toFixed(1) + 'px');
+    setVar(page, '--hdrO', cl(1 - y / Math.max(60, start * 0.8)).toFixed(3));
+    setVar(root, '--edgeO', cl((50 - top) / 20).toFixed(2));
+    setVar(root, '--stO', cl((statusBottom - top) / 30).toFixed(2));
   }
 
+
   componentDidUpdate(prev) {
-    if (typeof requestAnimationFrame !== 'undefined') requestAnimationFrame(() => this.syncBand(this.scroller));
+    if (typeof requestAnimationFrame !== 'undefined') requestAnimationFrame(() => { const sh = this.scroller && this.scroller.querySelector('[data-sheet]'); if (sh) sh._vcStart = undefined; this.syncBand(this.scroller); });
     if (prev.tier !== this.props.tier && this.props.tier) this.setState({ tier: this.props.tier, tab: 'home', history: [] });
     if (prev.screen !== this.props.screen) this.setState({ tab: ({ rewards: 'vouchers', promos: 'discover', deals: 'vouchers' })[this.props.screen] || this.props.screen || 'home', history: [] });
     if (prev.theme !== this.props.theme) this.setState({ themePref: 'system' });
@@ -1627,7 +1633,10 @@ class AppLogic extends DCLogic {
       andFabStyle: t.andFab + ((['scan', 'spin', 'puzzle', 'tiles', 'card', 'subscribe', 'login', 'otp', 'forgot', 'signup'].indexOf(tab) >= 0) ? 'transform:translateY(180px);opacity:0;pointer-events:none;' : '') + ((S.fabHide || bigText) ? 'padding:0 16px;' : 'padding:0 20px 0 16px;') + 'transition:transform .28s cubic-bezier(.2,0,0,1),opacity .2s,padding .2s;',
       splashOn: !!S.splash, skFour: [1, 2, 3, 4], android: !ios, ios,
       andFabLabel: (S.fabHide || bigText) ? 'display:none;' : 'display:inline;white-space:nowrap;',
-      onMainScroll: (e) => { const sc = e.currentTarget, y = sc.scrollTop; this.syncBand(sc);
+      onMainScroll: (e) => { const sc = e.currentTarget, y = sc.scrollTop;
+        if (!this._bandRaf) this._bandRaf = (typeof requestAnimationFrame !== 'undefined' ? requestAnimationFrame : setTimeout)(() => { this._bandRaf = 0; this.syncBand(sc); });
+        // only Android hides its Scan button on scroll; iOS never re-renders while scrolling
+        if (ios) return;
         const last = this._lastY || 0; this._lastY = y; if (Math.abs(y - last) < 6) return; const hide = y > last && y > 80; if (hide !== this.state.fabHide) this.setState({ fabHide: hide }); },
       toggleSide: () => this.setState({ side: !this.state.side }),
       greeting: loggedIn ? ((new Date().getHours() < 12 ? 'Good morning, ' : new Date().getHours() < 18 ? 'Good afternoon, ' : 'Good evening, ') + uFirst) : 'Welcome to ValueClub',
