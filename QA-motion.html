@@ -7,7 +7,9 @@
 <meta name="description" content="ValueClub app prototype">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<!-- Stable neutral system chrome; use a fresh installation for device QA. -->
+<!-- Opaque status bar. iOS 26 sizes a black-translucent home-screen app one status bar short at the bottom
+     (WebKit bug 301108), which cut off the tab bar. With "default", iOS paints the strip in theme-color,
+     which main.js keeps in step with the page (navy on band pages). iOS reads this tag only when the app is added. -->
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ValueClub">
 <meta name="theme-color" id="vcTheme" content="#F2F3F8">
@@ -118,5 +120,5 @@
 <script src="app.js"></script>
 <script src="fx.js"></script>
 <script src="main.js"></script>
-</body>
+<script src="qa-motion.js"></script></body>
 </html>

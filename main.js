@@ -8,16 +8,17 @@
   const { defineDC, h, render } = window.VCRuntime;
 
   // ---------- storage (never fatal) ----------
+  const isQA = /\/QA(?:-motion)?\.html$/.test(location.pathname);
   const store = {
-    get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
-    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
-    clear() { try { localStorage.clear(); } catch (e) {} }
+    get(k, d) { if(isQA)return d; try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+    set(k, v) { if(isQA)return; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+    clear() { if(isQA)return; try { localStorage.clear(); } catch (e) {} }
   };
   const today = () => new Date().toISOString().slice(0, 10);
 
   // state that survives a relaunch (everything else starts fresh, like a cold app start)
   const KEEP = ['tier', 'uFirst', 'uLast', 'uEmail', 'uMobile', 'acctKey', 'claimed', 'read', 'dismissed', 'bday', 'themePref', 'bigText',
-    'push', 'notif', 'subCancelled', 'lapsed', 'renewals', 'checked', 'spun', 'saver', 'mktOn', 'remember', 'reminded', 'chJoined', 'sr', 'earned', 'day',
+    'affinity', 'push', 'notif', 'subCancelled', 'lapsed', 'renewals', 'checked', 'spun', 'saver', 'mktOn', 'remember', 'reminded', 'chJoined', 'sr', 'earned', 'day',
     'attn', 'attnSet', 'campaign', 'game', 'games', 'loc', 'cardLead'];
 
   // ---------- accounts (prototype only: any details work) ----------
@@ -197,22 +198,8 @@
     render(h(App, { p: { platform: 'ios', size: 'compact', tier: 'guest', w: sz.w, h: sz.h, theme: darkMq.matches ? 'dark' : 'light', intro: 'none', topAdjust: sz.topAdjust || 0, ...devProps }, onLogic }), document.getElementById('root'));
   }
   mount();
-
-  // Warm the next likely commerce screen while the member is idle. Cached bytes still need image decode;
-  // doing it here prevents first-open decode work from landing inside the page-push animation.
-  const prewarmImages = () => {
-    const urls = [
-      'assets/zenbook-s14-transparent.png',
-      'assets/756b2a9aa853d0e4aa0b55ee8f8967cf.jpg',
-      'assets/7ee051c627c52b393a4afacbc93f2a61.jpg',
-      'assets/eb79d24a3a3b837fc614d883978ea6f6.jpg',
-      'assets/b5ef8f8a7ae1d1dffe0456083ba922a6.jpg',
-      'assets/f7b5ee2a9a440913f685e18f56a1b0d4.jpg'
-    ];
-    urls.forEach((src) => { const im = new Image(); im.src = src; if (im.decode) im.decode().catch(() => {}); });
-  };
-  if ('requestIdleCallback' in window) requestIdleCallback(prewarmImages, { timeout: 1800 }); else setTimeout(prewarmImages, 900);
-
+  const warmImages = () => ['assets/zenbook.png','assets/756b2a9aa853d0e4aa0b55ee8f8967cf.jpg','assets/7ee051c627c52b393a4afacbc93f2a61.jpg','assets/eb79d24a3a3b837fc614d883978ea6f6.jpg','assets/b5ef8f8a7ae1d1dffe0456083ba922a6.jpg','assets/f7b5ee2a9a440913f685e18f56a1b0d4.jpg'].forEach(src=>{const img=new Image();img.src=src;if(img.decode)img.decode().catch(()=>{});});
+  if(window.requestIdleCallback)requestIdleCallback(warmImages,{timeout:3000});else setTimeout(warmImages,3000);
   let mT;
   const remount = () => { clearTimeout(mT); mT = setTimeout(mount, 60); };
   addEventListener('resize', remount);
@@ -221,42 +208,11 @@
   if (window.visualViewport) visualViewport.addEventListener('resize', remount);
   setTimeout(mount, 300); setTimeout(mount, 1200);
 
-  // ---------- status bar colour: iOS paints the opaque bar in theme-color, so match whatever is at the top ----------
+  // Keep system chrome stable; never sample pixels or recolour the canvas during motion.
   const tcMeta = document.getElementById('vcTheme');
-  const BAND_TOP = { light: '#3348AD', dark: '#222E73' };
-  let tcRaf = 0;
-  function syncTheme() {
-    tcRaf = 0;
-    if (desk || !tcMeta) return;
-    const root = document.getElementById('root');
-    // the band ignores taps (pointer-events: none), so let it be hit for this one check
-    const peStyle = document.createElement('style'); peStyle.textContent = '#root [data-band], #root [data-band] * { pointer-events: auto !important; }';
-    document.head.appendChild(peStyle);
-    const els = document.elementsFromPoint(innerWidth / 2, 2);
-    peStyle.remove();
-    let col = '';
-    for (const el of els) {
-      if (!root.contains(el) || el === root) continue;
-      if (el.closest('[data-band]')) { col = BAND_TOP[darkMq.matches ? 'dark' : 'light']; break; }
-      const cs = getComputedStyle(el);
-      const bg = cs.backgroundColor;
-      if (bg && bg !== 'transparent' && !/rgba\(.*,\s*0\)$/.test(bg) && parseFloat(cs.opacity) > 0.5) { col = bg; break; }
-    }
-    if (!col) col = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#F2F3F8';
-    if (tcMeta.getAttribute('content') !== col) tcMeta.setAttribute('content', col);
-    // iOS 26 colours the status area from the page background, not theme-color, so set that too
-    // Safari 26 also samples fixed elements touching the top edge
-    let tint = document.getElementById('vcTint');
-    if (!tint) { tint = document.createElement('div'); tint.id = 'vcTint'; tint.style.cssText = 'position:fixed;top:0;left:0;right:0;height:6px;z-index:1;pointer-events:none'; document.body.appendChild(tint); }
-    tint.style.backgroundColor = col; root.style.backgroundColor = col;
-    if (document.documentElement.style.backgroundColor !== col) { document.documentElement.style.backgroundColor = col; document.body.style.backgroundColor = col; }
-  }
-  const queueTheme = () => { if (!tcRaf) tcRaf = requestAnimationFrame(syncTheme); };
-  new MutationObserver(queueTheme).observe(document.getElementById('root'), { childList: true, subtree: true });
-  document.addEventListener('scroll', queueTheme, true);
-  addEventListener('touchend', () => setTimeout(queueTheme, 450), { passive: true });
-  if (darkMq.addEventListener) darkMq.addEventListener('change', queueTheme);
-  queueTheme();
+  const setSystemChrome = () => { if (tcMeta) tcMeta.setAttribute('content', darkMq.matches ? '#000000' : '#F2F3F8'); };
+  setSystemChrome();
+  if (darkMq.addEventListener) darkMq.addEventListener('change', setSystemChrome);
   if (darkMq.addEventListener) darkMq.addEventListener('change', remount);
 
   // cold start: launch screen, then a short skeleton while "Braze and member data load"
@@ -264,7 +220,7 @@
     L.setState({ splash: false, loading: true });
     setTimeout(() => {
       L.setState({ loading: false });
-      if (firstRun) setTimeout(() => L.setState({ iam: 'duo' }), 500);
+      // Campaigns are user-invoked in this prototype; never interrupt POS or payment.
       persist(L);
     }, firstRun ? 900 : 500);
   }, firstRun ? 1400 : 700);
@@ -296,9 +252,9 @@
           get: () => (st().renewals === undefined ? 2 : st().renewals), set: (v) => set({ renewals: v }) },
         { label: 'Birthday added', type: 'toggle', get: () => !!st().bday, set: (v) => set({ bday: v }) }
       ]],
-      ['Home', [
+      ['Home', [{label:'Campaign audience',type:'seg',opts:[['general','General'],['apple','Apple'],['gaming','Gaming']],get:()=>st().affinity||'general',set:(v)=>set({affinity:v})},
         { label: 'Banners', type: 'seg', opts: [['3', '3'], ['1', '1'], ['0', 'None'], ['loading', 'Loading']], get: () => String(devProps.hero || '3'), set: (v) => setProp('hero', v) },
-        { label: 'Coming up', type: 'seg', opts: [['off', 'Off'], ['vew,ship', 'Default'], ['collect', 'Collect'], ['voucher', 'Voucher'], ['vew,ship,collect,voucher', 'All']],
+        { label: 'Coming up', type: 'seg', opts: [['off', 'Off'], ['vew,ship', 'Default'], ['collect', 'Collect'], ['voucher', 'Voucher'], ['expiry,renewal', 'Expiry / renewal'], ['launch,streak', 'Launch / streak'], ['vew,ship,collect,voucher', 'All']],
           get: () => (st().attn === 'off' ? 'off' : (st().attnSet || 'vew,ship')),
           set: (v) => set(v === 'off' ? { attn: 'off' } : { attn: 'on', attnSet: v }) },
         { label: 'Cashback added today', type: 'toggle', get: () => !!st().earned, set: (v) => set({ earned: v }) },
@@ -319,6 +275,7 @@
         { label: 'Show a message', type: 'buttons', opts: [['duo', 'iPhone Duo'], ['welcome', 'Welcome'], ['push', 'Notifications']],
           set: (v) => { close(); setTimeout(() => set({ modal: '', iam: v }), 280); } }
       ]],
+      ['Scan QA', [{ label: 'Simulate result', type: 'buttons', opts: [['done','Success'],['expired','Expired'],['linked','Linked'],['offline','Offline'],['permission','Permission'],['camera','Camera'],['service','Service'],['wrong','Wrong QR']], set: (v) => { close(); L.go('scan'); clearTimeout(L._st); set({scan:v}); } }]],
       ['Display', [
         { label: 'Appearance', type: 'seg', opts: [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']], get: () => st().themePref || 'system', set: (v) => set({ themePref: v }) },
         { label: 'Text size', type: 'seg', opts: [[false, 'Default'], [true, 'Large']], get: () => st().bigText === true, set: (v) => set({ bigText: v }) }
@@ -358,7 +315,7 @@
         });
         html += '</div>';
       });
-      html += '<p class="dv-foot">3 taps on the ValueClub logo opens this menu. 5 taps resets the app.<br>Build: status bar v3</p></div></div>';
+      html += '<p class="dv-foot">3 taps on the ValueClub logo opens this menu. 5 taps resets the app.<br>Build: navigation rebuild v15</p></div></div>';
       const keep = layer.querySelector('.dv-body'); const top = keep ? keep.scrollTop : 0;
       layer.innerHTML = html;
       const body = layer.querySelector('.dv-body'); if (body) body.scrollTop = top;
@@ -380,8 +337,7 @@
 
   // offline support once installed
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
-    const had = !!navigator.serviceWorker.controller; let reloaded = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !reloaded) { reloaded = true; location.reload(); } });
+    // Apply the new offline cache on the next launch; never reload an active interaction.
     navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then((r) => r.update()).catch(() => {});
   }
 })();

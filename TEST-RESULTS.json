@@ -1,0 +1,444 @@
+{
+  "normal": {
+    "tests": [
+      {
+        "name": "Detail starts at top",
+        "pass": true
+      },
+      {
+        "name": "Detail has neutral background",
+        "pass": true
+      },
+      {
+        "name": "Button Back runs slide",
+        "pass": true,
+        "detail": "pop"
+      },
+      {
+        "name": "Home restores exact scroll",
+        "pass": true,
+        "detail": {
+          "homeY": 420,
+          "actual": 420
+        }
+      },
+      {
+        "name": "Back clears layers",
+        "pass": true
+      },
+      {
+        "name": "Bottom-tab switch never clones the page",
+        "pass": true
+      },
+      {
+        "name": "Tab restores scroll",
+        "pass": true
+      },
+      {
+        "name": "Tab restores detail stack",
+        "pass": true
+      },
+      {
+        "name": "Active tab returns root at saved position",
+        "pass": true
+      },
+      {
+        "name": "Second active-tab tap scrolls to top",
+        "pass": true
+      },
+      {
+        "name": "Receipt detail pushes",
+        "pass": true
+      },
+      {
+        "name": "Receipt detail Back restores list",
+        "pass": true
+      },
+      {
+        "name": "Nested Back restores Account",
+        "pass": true
+      },
+      {
+        "name": "Swipe locks horizontally and creates two layers",
+        "pass": true
+      },
+      {
+        "name": "Cancelled swipe retains route and clears layers",
+        "pass": true
+      },
+      {
+        "name": "Committed swipe restores Home",
+        "pass": true
+      },
+      {
+        "name": "Vertical gesture never starts Back",
+        "pass": true
+      },
+      {
+        "name": "Rapid push/pop stays coherent and cleans up",
+        "pass": true
+      },
+      {
+        "name": "Scroll-stop click cannot open a card",
+        "pass": true
+      },
+      {
+        "name": "Bottom tab is never caught by scroll-stop guard",
+        "pass": true
+      },
+      {
+        "name": "Camera failure has member QR fallback",
+        "pass": true
+      },
+      {
+        "name": "Fallback opens existing member QR",
+        "pass": true
+      },
+      {
+        "name": "Scan state expired",
+        "pass": true
+      },
+      {
+        "name": "Scan state linked",
+        "pass": true
+      },
+      {
+        "name": "Scan state offline",
+        "pass": true
+      },
+      {
+        "name": "Scan state permission",
+        "pass": true
+      },
+      {
+        "name": "Scan state camera",
+        "pass": true
+      },
+      {
+        "name": "Scan state service",
+        "pass": true
+      },
+      {
+        "name": "Scan state wrong",
+        "pass": true
+      },
+      {
+        "name": "Scan state done",
+        "pass": true
+      },
+      {
+        "name": "Marketing cannot interrupt Scan",
+        "pass": true
+      },
+      {
+        "name": "Scan action never contaminates originating tab",
+        "pass": true
+      },
+      {
+        "name": "Screen renders home",
+        "pass": true
+      },
+      {
+        "name": "Screen renders vouchers",
+        "pass": true
+      },
+      {
+        "name": "Screen renders account",
+        "pass": true
+      },
+      {
+        "name": "Screen renders cashback",
+        "pass": true
+      },
+      {
+        "name": "Screen renders spendreward",
+        "pass": true
+      },
+      {
+        "name": "Screen renders settings",
+        "pass": true
+      },
+      {
+        "name": "Screen renders inbox",
+        "pass": true
+      },
+      {
+        "name": "Screen renders deal",
+        "pass": true
+      },
+      {
+        "name": "Screen renders vewbuy",
+        "pass": true
+      },
+      {
+        "name": "Screen renders receipts",
+        "pass": true
+      },
+      {
+        "name": "Personalisation retains three manual banners general",
+        "pass": true
+      },
+      {
+        "name": "Personalisation retains three manual banners apple",
+        "pass": true
+      },
+      {
+        "name": "Personalisation retains three manual banners gaming",
+        "pass": true
+      },
+      {
+        "name": "Push is compositor-friendly",
+        "pass": true
+      },
+      {
+        "name": "No leaked navigation animations",
+        "pass": true
+      },
+      {
+        "name": "No runtime errors",
+        "pass": true,
+        "detail": []
+      }
+    ],
+    "errors": [],
+    "motion": [
+      {
+        "sample": "Local preview rAF intervals; not iPhone performance",
+        "maxMs": 9.200000000000728,
+        "meanMs": 7.8439999998807615
+      },
+      {
+        "sample": "Push animation",
+        "duration": 320,
+        "layers": 2,
+        "properties": [
+          "transform"
+        ]
+      }
+    ],
+    "reduced": false,
+    "passed": 48,
+    "total": 48
+  },
+  "reduced": {
+    "tests": [
+      {
+        "name": "Detail starts at top",
+        "pass": true
+      },
+      {
+        "name": "Detail has neutral background",
+        "pass": true
+      },
+      {
+        "name": "Button Back runs slide",
+        "pass": true,
+        "detail": "pop"
+      },
+      {
+        "name": "Home restores exact scroll",
+        "pass": true,
+        "detail": {
+          "homeY": 420,
+          "actual": 420
+        }
+      },
+      {
+        "name": "Back clears layers",
+        "pass": true
+      },
+      {
+        "name": "Bottom-tab switch never clones the page",
+        "pass": true
+      },
+      {
+        "name": "Tab restores scroll",
+        "pass": true
+      },
+      {
+        "name": "Tab restores detail stack",
+        "pass": true
+      },
+      {
+        "name": "Active tab returns root at saved position",
+        "pass": true
+      },
+      {
+        "name": "Second active-tab tap scrolls to top",
+        "pass": true
+      },
+      {
+        "name": "Receipt detail pushes",
+        "pass": true
+      },
+      {
+        "name": "Receipt detail Back restores list",
+        "pass": true
+      },
+      {
+        "name": "Nested Back restores Account",
+        "pass": true
+      },
+      {
+        "name": "Swipe locks horizontally and creates two layers",
+        "pass": true
+      },
+      {
+        "name": "Cancelled swipe retains route and clears layers",
+        "pass": true
+      },
+      {
+        "name": "Committed swipe restores Home",
+        "pass": true
+      },
+      {
+        "name": "Vertical gesture never starts Back",
+        "pass": true
+      },
+      {
+        "name": "Rapid push/pop stays coherent and cleans up",
+        "pass": true
+      },
+      {
+        "name": "Scroll-stop click cannot open a card",
+        "pass": true
+      },
+      {
+        "name": "Bottom tab is never caught by scroll-stop guard",
+        "pass": true
+      },
+      {
+        "name": "Camera failure has member QR fallback",
+        "pass": true
+      },
+      {
+        "name": "Fallback opens existing member QR",
+        "pass": true
+      },
+      {
+        "name": "Scan state expired",
+        "pass": true
+      },
+      {
+        "name": "Scan state linked",
+        "pass": true
+      },
+      {
+        "name": "Scan state offline",
+        "pass": true
+      },
+      {
+        "name": "Scan state permission",
+        "pass": true
+      },
+      {
+        "name": "Scan state camera",
+        "pass": true
+      },
+      {
+        "name": "Scan state service",
+        "pass": true
+      },
+      {
+        "name": "Scan state wrong",
+        "pass": true
+      },
+      {
+        "name": "Scan state done",
+        "pass": true
+      },
+      {
+        "name": "Marketing cannot interrupt Scan",
+        "pass": true
+      },
+      {
+        "name": "Scan action never contaminates originating tab",
+        "pass": true
+      },
+      {
+        "name": "Screen renders home",
+        "pass": true
+      },
+      {
+        "name": "Screen renders vouchers",
+        "pass": true
+      },
+      {
+        "name": "Screen renders account",
+        "pass": true
+      },
+      {
+        "name": "Screen renders cashback",
+        "pass": true
+      },
+      {
+        "name": "Screen renders spendreward",
+        "pass": true
+      },
+      {
+        "name": "Screen renders settings",
+        "pass": true
+      },
+      {
+        "name": "Screen renders inbox",
+        "pass": true
+      },
+      {
+        "name": "Screen renders deal",
+        "pass": true
+      },
+      {
+        "name": "Screen renders vewbuy",
+        "pass": true
+      },
+      {
+        "name": "Screen renders receipts",
+        "pass": true
+      },
+      {
+        "name": "Personalisation retains three manual banners general",
+        "pass": true
+      },
+      {
+        "name": "Personalisation retains three manual banners apple",
+        "pass": true
+      },
+      {
+        "name": "Personalisation retains three manual banners gaming",
+        "pass": true
+      },
+      {
+        "name": "Push is compositor-friendly",
+        "pass": true
+      },
+      {
+        "name": "No leaked navigation animations",
+        "pass": true
+      },
+      {
+        "name": "No runtime errors",
+        "pass": true,
+        "detail": []
+      }
+    ],
+    "errors": [],
+    "motion": [
+      {
+        "sample": "Local preview rAF intervals; not iPhone performance",
+        "maxMs": 9.299999999999272,
+        "meanMs": 7.715999999880733
+      },
+      {
+        "sample": "Push animation",
+        "duration": 0,
+        "layers": 0,
+        "properties": [
+          "transform"
+        ]
+      }
+    ],
+    "reduced": true,
+    "passed": 48,
+    "total": 48
+  }
+}
