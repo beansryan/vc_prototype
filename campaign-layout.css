@@ -36,3 +36,5 @@
 @container(max-width:350px){.campaign-body{padding-left:16px;padding-right:16px}.campaign-title{font-size:calc(28px * var(--vc-display-scale,1))}.campaign-products{gap:20px 12px}.campaign-product-image{padding:8px}}
 [data-text="large"] .campaign-intro,[data-text="large"] .campaign-products{grid-template-columns:minmax(0,1fr)}
 @media(prefers-reduced-motion:reduce){.campaign-nav-title{transition:none}}
+
+.campaign-product-price{display:flex;flex-direction:column;gap:3px}.campaign-product-usual{font-size:calc(14px * var(--vc-type-scale,1));font-weight:400;color:var(--sub);text-decoration-thickness:1px}

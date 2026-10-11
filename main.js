@@ -1,6 +1,6 @@
 /* ValueClub MVP shell: mounts the App, saves state, fake accounts, real links, hidden reset. */
 (function () {
-  document.documentElement.dataset.vcBuild='39';
+  document.documentElement.dataset.vcBuild='40';
   const WEB = 'https://online.challenger.sg';
   const KEY_STATE = 'vc_state_v1';
   const KEY_ACCTS = 'vc_accounts_v1';
@@ -9,7 +9,7 @@
   const { defineDC, h, render } = window.VCRuntime;
 
   // ---------- storage (never fatal) ----------
-  const isQA = /\/QA(?:-motion|-review|-shop|-sections|-audit|-regressions|-PWA|-focused|-campaigns|-android-campaigns|-tablet|-campaign-layout)?\.html$/.test(location.pathname);
+  const isQA = /\/QA(?:-motion|-review|-shop|-sections|-audit|-regressions|-PWA|-focused|-campaigns|-android-campaigns|-tablet|-campaign-layout|-prices)?\.html$/.test(location.pathname);
   const store = {
     get(k, d) { if(isQA)return d; try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
     set(k, v) { if(isQA)return; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
@@ -267,7 +267,7 @@
     const named = () => (st().uFirst ? {} : { uFirst: 'Alex', uLast: 'Tan' });
     const sections = [
       ['Device', [{label:'Device version',sub:'Automatic uses your operating system, available space and touch support. Overrides keep actual screen size on mobile; desktop previews use sample dimensions.',type:'seg',opts:[['auto','Automatic'],['iphone','iPhone'],['iphone-duo','iPhone Duo'],['ipad','iPad'],['android','Android'],['android-foldable','Android foldable'],['android-tablet','Android tablet']],get:()=>devProps.deviceOverride||'auto',set:v=>{devProps={...devProps,deviceOverride:v};for(const k of ['w','h','size','platform','duo','vbar'])delete devProps[k];store.set(KEY_DEV,devProps);mount();}}]],
-      ['Demo dates · Build 39', [{label:'Shift original dates',sub:'Applies to all demo calendar dates and warranty eligibility',type:'seg',opts:[[0,'Original'],[3,'+3 days'],[7,'+7 days'],[14,'+14 days']],get:()=>st().dateOffsetDays??3,set:v=>set({dateOffsetDays:Number(v)})},{label:'Custom offset in days',type:'number',get:()=>st().dateOffsetDays??3},{label:'Warranty purchase window',type:'seg',opts:[['auto','Use shifted dates'],['available','Available'],['expired','Expired']],get:()=>st().warrantyDemoState||'auto',set:v=>set({warrantyDemoState:v})}]],
+      ['Demo dates · Build 42', [{label:'Shift original dates',sub:'Applies to all demo calendar dates and warranty eligibility',type:'seg',opts:[[0,'Original'],[3,'+3 days'],[7,'+7 days'],[14,'+14 days']],get:()=>st().dateOffsetDays??3,set:v=>set({dateOffsetDays:Number(v)})},{label:'Custom offset in days',type:'number',get:()=>st().dateOffsetDays??3},{label:'Warranty purchase window',type:'seg',opts:[['auto','Use shifted dates'],['available','Available'],['expired','Expired']],get:()=>st().warrantyDemoState||'auto',set:v=>set({warrantyDemoState:v})}]],
       ['Account', [
         { label: 'Tier', type: 'seg', opts: [['guest', 'Guest'], ['free', 'Free'], ['m3', '3-month'], ['m12', '12-month']], get: () => st().tier,
           set: (v) => set(Object.assign(v === 'guest' ? {} : named(), { tier: v, tab: 'home', history: [], modal: '', iam: '' })) },
