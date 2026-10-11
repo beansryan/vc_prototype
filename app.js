@@ -644,7 +644,7 @@ class AppLogic extends DCLogic {
       vBar: 'position:absolute;z-index:6;top:0;right:0;bottom:0;width:84px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:' + (duo ? duoTop + 86 + 12 : 20) + 'px 0 24px;box-sizing:border-box;pointer-events:none;' + (duo ? '--ink:#FFFFFF;--accent:#FFFFFF;color:#FFFFFF;' : ''),
       vGroup: 'pointer-events:auto;display:flex;flex-direction:column;align-items:center;gap:0;width:48px;padding:0;border-radius:24px;' + (duo ? 'background:rgba(255,255,255,0.14);box-shadow:inset 0 0 0 0.5px rgba(255,255,255,0.25);' : glassFlat),
       vBtn: 'width:48px;height:48px;border:0;background:transparent;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:' + ink + ';position:relative;padding:0;',
-      vTabs: 'position:relative;touch-action:none;pointer-events:auto;display:flex;flex-direction:column;gap:2px;width:48px;padding:6px 0;box-sizing:border-box;border-radius:24px;' + (duo ? 'background:rgba(255,255,255,0.14);box-shadow:inset 0 0 0 0.5px rgba(255,255,255,0.25);' : glassFlat),
+      vTabs: 'position:relative;touch-action:none;pointer-events:auto;display:flex;flex-direction:column;align-items:center;gap:'+(duo?6:2)+'px;width:'+(duo?56:48)+'px;padding:'+(duo?'4px':'6px 0')+';box-sizing:border-box;border-radius:'+(duo?28:24)+'px;' + (duo ? 'background:rgba(255,255,255,0.14);box-shadow:inset 0 0 0 0.5px rgba(255,255,255,0.25);' : glassFlat),
       sideClose: 'width:44px;height:44px;border:0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;color:' + ink + ';',
       authWrap: 'display:flex;flex-direction:column;gap:16px;width:100%;max-width:440px;margin:0 auto;',
       field: 'display:flex;flex-direction:column;gap:6px;',
@@ -733,7 +733,7 @@ class AppLogic extends DCLogic {
         // kit: selected tab = grey pill (Fills/Secondary) with the accent on symbol + label
         sIosBar: 'flex:1;height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:0;border:0;border-radius:27px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;position:relative;z-index:1;background:transparent;transition:color .25s;color:' + (on ? (dark ? '#FFFFFF' : accent) : ink) + ';',
         sIosTop: 'display:inline-flex;align-items:center;height:44px;flex:1;min-width:0;justify-content:center;padding:0 12px;border:0;border-radius:22px;font:inherit;font-size:15px;font-weight:' + (on ? 600 : 500) + ';cursor:pointer;position:relative;z-index:1;touch-action:none;background:transparent;transition:color .25s;color:' + (on ? accent : ink) + ';',
-        sV: 'position:relative;z-index:1;touch-action:none;width:48px;height:54px;border:0;border-radius:24px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;background:transparent;color:' + (on ? accent : ink) + ';',
+        sV: 'position:relative;z-index:1;touch-action:none;width:48px;height:'+(duo?48:54)+'px;border:0;border-radius:24px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;background:transparent;color:' + (on ? accent : ink) + ';',
         sSide: sideRow(on)
       };
     });
@@ -1555,7 +1555,7 @@ class AppLogic extends DCLogic {
       hero1: heroes[0], hero2: heroes[1], hero3: heroes[2],heroCount:heroN,heroReady:!heroLoading,heroPlacements:heroes.slice(0,heroN).map((h,i)=>({...h,priority:i?'low':'high',loading:i>1?'lazy':'eager',track:e=>{VCCampaigns.click(h.id);if(h.openCampaign){e.preventDefault();this.setState({campaignId:h.key,tab:'deal',history:S.history.concat(S.tab).slice(-8),fabHide:false});}}})),
       t, scr, nav, navItems, compact, notCompact: !compact,
       showHeaderLogo: !ios || !(expanded && S.side), hideHeaderLogo: ios && expanded && S.side,
-      iosTabs, iosTabsSide, vTabIndStyle:'position:absolute;left:0;top:0;width:48px;height:54px;border-radius:24px;pointer-events:none;background:'+(duo?'rgba(255,255,255,0.24)':tint)+';', goScan, edgeTop: ios && (!full || !gameTab), canSidebar: !compact && !vbar, scanBack: !ios,
+      iosTabs, iosTabsSide, vTabIndStyle:'position:absolute;left:'+(duo?4:0)+'px;top:0;width:48px;height:'+(duo?48:54)+'px;border-radius:24px;pointer-events:none;background:'+(duo?'rgba(255,255,255,0.24)':tint)+';', goScan, edgeTop: ios && (!full || !gameTab), canSidebar: !compact && !vbar, scanBack: !ios,
       canBack: S.history.length > 0 && ['home', 'vouchers', 'scan', 'account'].indexOf(tab) < 0,
       vBack: () => { if(this.receiptBack)this.receiptBack();else this.back(); },
       showDots: compact && ios && heroN > 1 && !heroLoading,
