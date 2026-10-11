@@ -59,7 +59,32 @@
   /* desktop: show the app in an iPhone 17 frame */
   body.desk { background: var(--desk); }
   body.desk #root { inset: auto; left: 50%; top: 50%; width: 402px; height: 874px; transform-origin: center; border-radius: 56px; box-shadow: 0 0 0 11px #1C1C1E, 0 0 0 13px #3A3A3D, 0 30px 80px rgba(0,0,0,.35); }
-  body.desk #island { position: fixed; left: 50%; top: 50%; width: 124px; height: 36px; border-radius: 20px; background: #000; z-index: 50; pointer-events: none; }
+  body.desk #island { display:block; position: fixed; left: 50%; top: 50%; width: 124px; height: 36px; border-radius: 20px; background: #000; z-index: 50; pointer-events: none; }
+
+  /* Hardware decoration exists exclusively in desktop preview mode. */
+  body.desk[data-preview-frame="duo-closed"] #root,body.desk[data-preview-frame="duo-closed"] #devLayer {border-radius:42px;}
+  body.desk[data-preview-frame="duo-closed"] #island {width:37px;height:37px;border-radius:50%;background:#000;}
+  body.desk[data-preview-frame="fold"] #root,body.desk[data-preview-frame="fold"] #devLayer {border-radius:18px;}
+  body.desk[data-preview-frame="fold-ultra"] #root,body.desk[data-preview-frame="fold-ultra"] #devLayer {border-radius:20px;}
+  #island { display:none; }
+  body.desk[data-preview-frame="duo"] #root, body.desk[data-preview-frame="duo"] #devLayer { border-radius:42px; }
+  body.desk[data-preview-frame="ipad"] #root, body.desk[data-preview-frame="ipad"] #devLayer { border-radius:24px; }
+  body.desk[data-preview-frame="galaxy"] #root, body.desk[data-preview-frame="galaxy"] #devLayer { border-radius:22px; }
+  body.desk[data-preview-frame^="fold"] #root, body.desk[data-preview-frame^="fold"] #devLayer { border-radius:20px; }
+  body.desk[data-preview-frame="tab"] #root, body.desk[data-preview-frame="tab"] #devLayer { border-radius:24px; }
+  body.desk[data-preview-frame="ipad"] #root, body.desk[data-preview-frame="tab"] #root { box-shadow:0 0 0 16px #151518,0 0 0 19px #777980,0 24px 70px #0005; }
+  body.desk[data-preview-frame="galaxy"] #root { box-shadow:0 0 0 6px #141416,0 0 0 8px #797d83,0 24px 70px #0005; }
+  body.desk[data-preview-frame^="fold"] #root { box-shadow:0 0 0 8px #121315,0 0 0 11px #8a8d92,0 24px 70px #0005; }
+  body.desk[data-preview-frame="galaxy"] #island,body.desk[data-preview-frame^="fold"] #island { width:11px;height:11px;box-shadow:inset 0 0 0 2px #272c32; }
+  /* Desktop hardware decoration: keep the S26 lens distinct from foldables. */
+  body.desk[data-preview-frame="galaxy"] #island { width:14px;height:14px;border-radius:50%;box-shadow:0 0 0 1px #15191f,inset 0 0 0 2px #30363e; }
+  body.desk[data-preview-frame="ipad"] #island,body.desk[data-preview-frame="tab"] #island { width:8px;height:8px;box-shadow:0 0 0 2px #24272c; }
+  body.desk[data-preview-frame="duo"] #island { display:none !important; }
+  body:not(.desk) #island { display:none !important; }
+
+  #hinge {display:none;pointer-events:none;position:fixed;left:50%;top:50%;transform-origin:center;z-index:49;}
+  body.desk[data-preview-frame^="fold"] #hinge {display:block;background:linear-gradient(90deg,transparent calc(50% - 2px),#00000008 50%,transparent calc(50% + 2px));}
+  body.desk[data-preview-frame="fold"][data-preview-orientation="landscape"] #hinge,body.desk[data-preview-frame="fold-ultra"][data-preview-orientation="landscape"] #hinge {background:linear-gradient(0deg,transparent calc(50% - 2px),#00000008 50%,transparent calc(50% + 2px));}
   #deskNote { display: none; }
   body.desk #deskNote { display: block; position: fixed; left: 24px; bottom: 20px; max-width: 300px; font-size: 13px; line-height: 1.45; color: var(--sub); }
   body.desk #deskNote b { color: var(--ink); }
@@ -141,6 +166,7 @@
 <body>
 <div id="root"></div>
 <div id="island"></div>
+<div id="hinge" aria-hidden="true"></div>
 <div id="deskNote"><b>ValueClub app prototype</b><br>Best on iPhone: open this page in Safari, tap Share, then Add to Home Screen. It opens full screen like the real app.</div>
 <div id="a2hs" role="dialog" aria-label="Add to Home Screen"><b>Add ValueClub to your Home Screen</b>Tap <span aria-label="Share">Share</span> in Safari, then <b style="display:inline;font-size:15px;margin:0">Add to Home Screen</b>. It opens full screen, like the real app.<button type="button" id="a2hsOk">Got it</button></div>
 <div id="devLayer"></div>
@@ -148,14 +174,14 @@
 <script src="preact.min.js"></script>
 <script src="dates.js?v=23-fix"></script>
 <script src="runtime.js?v=23-fix"></script>
-<script src="app.js?v=43"></script>
+<script src="app.js?v=46"></script>
 <script src="campaigns-fixture.js?v=43"></script>
 <script src="campaigns.js?v=43"></script>
-<script src="fx.js?v=38-fix2"></script>
-<script src="sections.js?v=23-fix"></script>
+<script src="fx.js?v=46"></script>
+<script src="sections.js?v=46-fix"></script>
 <script src="accessibility.js?v=23-fix"></script>
 <script src="store-maps.js"></script>
 <script src="devices.js"></script>
-<script src="main.js?v=43"></script>
+<script src="main.js?v=46"></script>
 </body>
 </html>

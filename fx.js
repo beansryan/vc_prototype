@@ -22,6 +22,7 @@
     // Let accelerated animations follow the browser's display cadence. The frameRate
     // hint is an experimental API: request highest only when the browser exposes it.
     const motion=(el,frames,options)=>{const a=el.animate(frames,options);if('frameRate' in a){try{a.frameRate='highest';}catch(e){}}return a;};
+    const complete=(a,ms,fn)=>{let done=false;const finish=()=>{if(done)return;done=true;clearTimeout(timer);fn();};const timer=setTimeout(finish,ms+100);a.finished.then(finish,finish);};
     function settle() { if (running) { const f = running; running = null; f(); } }
     function snapshot() {
       const sc = L.scroller, app = frame(); if (!sc || !app) return null;
@@ -59,7 +60,7 @@
     const chrome=()=>{
       const bar=frame()?.querySelector('[data-tabbar]'),ind=bar?.querySelector('[data-tabind]'),btn=bar?.querySelector('button[data-on]');
       if(!ind||!btn)return;
-      const vertical=bar.dataset.tabAxis==='vertical',pos=vertical?btn.offsetTop:btn.offsetLeft,old=Number((ind.style.translate||'0 0').split(' ')[vertical?1:0]?.replace('px',''))||0;
+      const vertical=bar.dataset.tabAxis==='vertical',pos=vertical?btn.offsetTop:btn.offsetLeft,base=Number((ind.style.translate||'0 0').split(' ')[vertical?1:0]?.replace('px',''))||0,transform=getComputedStyle(ind).transform,matrix=transform==='none'?null:new DOMMatrixReadOnly(transform),old=base+(matrix?(vertical?matrix.m42:matrix.m41):0);
       ind.getAnimations().forEach(a=>a.cancel());ind.style.translate=vertical?'0 '+pos+'px':pos+'px 0';ind.style.width=btn.offsetWidth+'px';ind.style.height=btn.offsetHeight+'px';
       if(!reduced.matches&&old!==pos)motion(ind,[{transform:vertical?'translateY('+(old-pos)+'px)':'translateX('+(old-pos)+'px)'},{transform:'translate(0,0)'}],{duration:220,easing:'ease-out'});
     };
@@ -77,6 +78,7 @@
         else if(pop){const saved=stack.pop();y=saved?.y||0;}
         else{if(old)stack.push({layer:old,y:L.scroller.scrollTop,key:key(prev)});if(stack.length>8)stack.shift();y=0;}
       }
+      const revealsBefore=new Set(frame()?.querySelectorAll('[data-in="reveal"]')||[]);
       const overlayBefore=new Map(Array.from(frame()?.querySelectorAll('[data-fx]')||[]).map(el=>[el,{parent:el.parentElement,kind:el.getAttribute('data-fx')} ]));
       if(patch.iam){if(iamShown||['scan','card','subscribe','otp'].includes(patch.tab||prev.tab)||prev.modal)patch.iam='';else iamShown=true;}
       if((patch.tier!==undefined&&patch.tier!==prev.tier)||(patch.acctKey!==undefined&&patch.acctKey!==prev.acctKey)){tabs.clear();stack=[];selected='home';}
@@ -96,7 +98,7 @@
               el.append(shade);
             }
             const a=motion(shade,enter?[{opacity:0},{opacity:1}]:[{opacity:1},{opacity:0}],{duration:enter?200:180,easing:'ease-out',fill:enter?'none':'forwards'});
-            a.finished.then(()=>shade.style.willChange='',()=>shade.style.willChange='');return a;
+            complete(a,200,()=>shade.style.willChange='');return a;
           };
           for(const [el,meta] of overlayBefore){
             if(el.isConnected||!meta.parent?.isConnected)continue;
@@ -108,7 +110,7 @@
               motion(box,[{transform:'translate3d(0,0,0)',opacity:1},{transform:sheet?'translate3d(0,100%,0)':'translate3d(0,8px,0)',opacity:sheet?1:0}],{duration:180,easing:'ease-in',fill:'forwards'});
               a=shadeMotion(el,false);
             }else a=motion(el,[{opacity:1},{opacity:0}],{duration:160});
-            a.finished.then(()=>el.remove(),()=>el.remove());
+            complete(a,180,()=>el.remove());
           }
           for(const el of frame()?.querySelectorAll('[data-fx]')||[]){
             if(overlayBefore.has(el))continue;
@@ -116,9 +118,10 @@
               const box=el.firstElementChild,sheet=getComputedStyle(box).bottom==='0px';
               shadeMotion(el,true);box.style.willChange='transform, opacity';
               const a=motion(box,[{transform:sheet?'translate3d(0,100%,0)':'translate3d(0,12px,0)',opacity:sheet?1:0},{transform:'translate3d(0,0,0)',opacity:1}],{duration:sheet?320:260,easing:'cubic-bezier(.2,.8,.25,1)'});
-              a.finished.then(()=>box.style.willChange='',()=>box.style.willChange='');
+              complete(a,sheet?320:260,()=>box.style.willChange='');
             }else motion(el,[{opacity:0},{opacity:1}],{duration:180});
           }
+          for(const el of frame()?.querySelectorAll('[data-in="reveal"]')||[])if(!revealsBefore.has(el))motion(el,[{opacity:0,transform:'translateY(4px)'},{opacity:1,transform:'translateY(0)'}],{duration:180,easing:'ease-out'});
           if(!nav&&(patch.checked||patch.spun||patch.scan==='done'||patch.sr==='got'))for(const el of frame()?.querySelectorAll('[data-in]')||[])motion(el,[{opacity:.5,transform:'translateY(6px)'},{opacity:1,transform:'translateY(0)'}],{duration:240,easing:'ease-out'});
         }
 
@@ -182,7 +185,7 @@
         if(reduced.matches)return;const card=frame()?.querySelector('[data-scratch-card]');if(card)motion(card,[{transform:'rotate(-3deg) scale(.97)'},{transform:'rotate(0deg) scale(1.03)'},{transform:'rotate(-3deg) scale(1)'}],{duration:420,easing:'ease-out'});
         frame()?.querySelectorAll('[data-in=coin]').forEach((coin,i)=>motion(coin,[{opacity:0,translate:'0 24px'},{opacity:1,translate:'0 -12px',offset:.45},{opacity:0,translate:'0 -60px'}],{duration:700,delay:i*40,easing:'ease-out',fill:'forwards'}));
       });};
-      if(!face||reduced.matches){done();return;}const a=motion(face,[{opacity:1},{opacity:0}],{duration:260,easing:'ease-out',fill:'forwards'});a.finished.then(done,done);
+      if(!face||reduced.matches){done();return;}const a=motion(face,[{opacity:1},{opacity:0}],{duration:260,easing:'ease-out',fill:'forwards'});complete(a,260,done);
     };
     function prepareScratch(){
       const card=frame()?.querySelector('[data-scratch-card]');if(!card||card._scratchReady||L.state.scratch==='done')return;card._scratchReady=true;++scratchRevision;scratchReveal=0;card.style.touchAction='none';

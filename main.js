@@ -1,6 +1,6 @@
 /* ValueClub MVP shell: mounts the App, saves state, fake accounts, real links, hidden reset. */
 (function () {
-  document.documentElement.dataset.vcBuild='40';
+  document.documentElement.dataset.vcBuild='46';
   const WEB = 'https://online.challenger.sg';
   const KEY_STATE = 'vc_state_v1';
   const KEY_ACCTS = 'vc_accounts_v1';
@@ -9,7 +9,7 @@
   const { defineDC, h, render } = window.VCRuntime;
 
   // ---------- storage (never fatal) ----------
-  const isQA = /\/QA(?:-motion|-review|-shop|-sections|-audit|-regressions|-PWA|-focused|-campaigns|-android-campaigns|-tablet|-campaign-layout|-prices)?\.html$/.test(location.pathname);
+  const isQA = /\/QA(?:-motion|-review|-shop|-sections|-audit|-regressions|-PWA|-focused|-campaigns|-android-campaigns|-tablet|-campaign-layout|-prices|-nav|-frames)?\.html$/.test(location.pathname);
   const store = {
     get(k, d) { if(isQA)return d; try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
     set(k, v) { if(isQA)return; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
@@ -165,15 +165,31 @@
 
   function size() {
     if (desk) {
-      const preset=VCDevices.presets[devProps.deviceOverride];
+      const preset=VCDevices.preview(devProps.deviceOverride,devProps.previewPosture,devProps.previewOrientation);
       const w=Number(devProps.w || (preset&&preset.w) || 402), h=Number(devProps.h || (preset&&preset.h) || 874);
       const sc = Math.min(1, (innerHeight - 48) / h, (innerWidth - 48) / w);
       const root = document.getElementById('root');
+      document.body.dataset.previewFrame=preset.frame;
+      document.body.dataset.previewOrientation=devProps.previewOrientation||(preset.w>preset.h?'landscape':'portrait');
+      document.getElementById('deskNote').textContent=preset.label+' · Desktop preview';
       root.style.width=w+'px';root.style.height=h+'px';
       root.style.transform = 'translate(-50%, -50%) scale(' + sc + ')';
       const devLayer=document.getElementById('devLayer');devLayer.style.transform=root.style.transform;devLayer.style.width=w+'px';devLayer.style.height=h+'px';
-      const isl = document.getElementById('island');isl.style.display=w>=600?'none':'';
-      isl.style.transform = 'translate(-50%, ' + (-h/2 * sc + 11 * sc) + 'px) scale(' + sc + ')';
+      const isl = document.getElementById('island');isl.style.display=preset.frame==='duo'?'none':'';
+      let cameraX=w/2,cameraY=['ipad','tab'].includes(preset.frame)?-8:11;
+      if(preset.frame==='duo-closed'){
+        // Apple kit: Outer Display Lens at (370,0), 95.67 square, 37px lens inset 29.333.
+        cameraX=417.833;cameraY=29.333;
+        
+      }
+      if(preset.frame==='fold-ultra'){
+        cameraX=540;cameraY=11;
+        if(w>h){cameraX=800-16.5;cameraY=540-5.5;}
+      }
+      if(preset.frame==='fold'&&w<h){cameraX=720-16.5;cameraY=480-5.5;}
+      const hinge=document.getElementById('hinge');if(hinge){hinge.style.transform=root.style.transform;hinge.style.width=w+'px';hinge.style.height=h+'px';}
+      if(['ipad','tab'].includes(preset.frame)&&w<h){cameraX=w+8;cameraY=h/2-4;}
+      isl.style.transform='translate(calc(-50% + '+((cameraX-w/2)*sc)+'px), '+((-h/2+cameraY)*sc)+'px) scale('+sc+')';
       isl.style.transformOrigin = 'top center';
       return { w, h };
     }
@@ -186,6 +202,10 @@
 
   // ---------- mount ----------
   let devProps = store.get(KEY_DEV, {});
+  if(desk&&VCDevices.presets[preview.get('device')])devProps={...devProps,deviceOverride:preview.get('device')};
+  if(desk&&['open','closed'].includes(preview.get('posture')))devProps.previewPosture=preview.get('posture');
+  if(desk&&['portrait','landscape'].includes(preview.get('orientation')))devProps.previewOrientation=preview.get('orientation');
+  function setPreview(key,value){devProps={...devProps,[key]:value};delete devProps.w;delete devProps.h;store.set(KEY_DEV,devProps);mount();}
   const comps = {};
   defineDC('Icon', window.VC_TPL.Icon, window.IconLogic, comps);
   const App = defineDC('App', window.VC_TPL.App, window.AppLogic, comps);
@@ -266,8 +286,10 @@
     const setProp = (k, v) => { devProps = Object.assign({}, devProps, { [k]: v }); store.set(KEY_DEV, devProps); mount(); };
     const named = () => (st().uFirst ? {} : { uFirst: 'Alex', uLast: 'Tan' });
     const sections = [
-      ['Device', [{label:'Device version',sub:'Automatic uses your operating system, available space and touch support. Overrides keep actual screen size on mobile; desktop previews use sample dimensions.',type:'seg',opts:[['auto','Automatic'],['iphone','iPhone'],['iphone-duo','iPhone Duo'],['ipad','iPad'],['android','Android'],['android-foldable','Android foldable'],['android-tablet','Android tablet']],get:()=>devProps.deviceOverride||'auto',set:v=>{devProps={...devProps,deviceOverride:v};for(const k of ['w','h','size','platform','duo','vbar'])delete devProps[k];store.set(KEY_DEV,devProps);mount();}}]],
-      ['Demo dates · Build 43', [{label:'Shift original dates',sub:'Applies to all demo calendar dates and warranty eligibility',type:'seg',opts:[[0,'Original'],[3,'+3 days'],[7,'+7 days'],[14,'+14 days']],get:()=>st().dateOffsetDays??3,set:v=>set({dateOffsetDays:Number(v)})},{label:'Custom offset in days',type:'number',get:()=>st().dateOffsetDays??3},{label:'Warranty purchase window',type:'seg',opts:[['auto','Use shifted dates'],['available','Available'],['expired','Expired']],get:()=>st().warrantyDemoState||'auto',set:v=>set({warrantyDemoState:v})}]],
+      ['Device', [{label:'Device version',sub:'Automatic uses your operating system, available space and touch support. Overrides keep actual screen size on mobile; desktop previews use sample dimensions.',type:'seg',opts:[['auto','Automatic'],['iphone','iPhone'],['iphone-duo','iPhone Duo'],['ipad','iPad Pro 11-inch'],['android','Galaxy S26 Ultra'],['android-foldable','Galaxy Z Fold8'],['android-foldable-ultra','Galaxy Z Fold8 Ultra'],['android-tablet','Galaxy Tab S12 Ultra']],get:()=>devProps.deviceOverride||'auto',set:v=>{devProps={...devProps,deviceOverride:v};for(const k of ['w','h','size','platform','duo','vbar'])delete devProps[k];store.set(KEY_DEV,devProps);mount();}},
+      {label:'Duo display',when:()=>desk&&devProps.deviceOverride==='iphone-duo',type:'seg',opts:[['open','Open'],['closed','Closed']],get:()=>devProps.previewPosture||'open',set:v=>setPreview('previewPosture',v)},
+      {label:'Preview orientation',when:()=>desk&&['iphone-duo','ipad','android-foldable','android-foldable-ultra','android-tablet'].includes(devProps.deviceOverride)&&!(devProps.deviceOverride==='iphone-duo'&&devProps.previewPosture==='closed'),type:'seg',opts:[['portrait','Portrait'],['landscape','Landscape']],get:()=>devProps.previewOrientation||(VCDevices.presets[devProps.deviceOverride]?.w>VCDevices.presets[devProps.deviceOverride]?.h?'landscape':'portrait'),set:v=>setPreview('previewOrientation',v)}]],
+      ['Demo dates · Build 46', [{label:'Shift original dates',sub:'Applies to all demo calendar dates and warranty eligibility',type:'seg',opts:[[0,'Original'],[3,'+3 days'],[7,'+7 days'],[14,'+14 days']],get:()=>st().dateOffsetDays??3,set:v=>set({dateOffsetDays:Number(v)})},{label:'Custom offset in days',type:'number',get:()=>st().dateOffsetDays??3},{label:'Warranty purchase window',type:'seg',opts:[['auto','Use shifted dates'],['available','Available'],['expired','Expired']],get:()=>st().warrantyDemoState||'auto',set:v=>set({warrantyDemoState:v})}]],
       ['Account', [
         { label: 'Tier', type: 'seg', opts: [['guest', 'Guest'], ['free', 'Free'], ['m3', '3-month'], ['m12', '12-month']], get: () => st().tier,
           set: (v) => set(Object.assign(v === 'guest' ? {} : named(), { tier: v, tab: 'home', history: [], modal: '', iam: '' })) },
@@ -323,6 +345,7 @@
       sections.forEach(([title, rows]) => {
         html += '<div class="dv-sec">' + esc(title) + '</div><div class="dv-group">';
         rows.forEach((r) => {
+          if(r.when&&!r.when())return;
           const i = flat.push(r) - 1;
           const lab = '<div class="dv-lab"><span>' + esc(r.label) + '</span>' + (r.sub ? '<small>' + esc(r.sub) + '</small>' : '') + '</div>';
           if (r.type === 'toggle') {
@@ -342,7 +365,7 @@
         });
         html += '</div>';
       });
-      html += '<p class="dv-foot">3 taps on the ValueClub logo opens this menu. 5 taps resets the app.<br>Build: Campaign pages v38</p></div></div>';
+      html += '<p class="dv-foot">3 taps on the ValueClub logo opens this menu. 5 taps resets the app.<br>Build: Device previews v46</p></div></div>';
       const keep = layer.querySelector('.dv-body'); const top = keep ? keep.scrollTop : 0;
       layer.innerHTML = html;
       const body = layer.querySelector('.dv-body'); if (body) body.scrollTop = top;
