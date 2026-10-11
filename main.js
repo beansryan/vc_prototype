@@ -1,6 +1,6 @@
 /* ValueClub MVP shell: mounts the App, saves state, fake accounts, real links, hidden reset. */
 (function () {
-  document.documentElement.dataset.vcBuild='35';
+  document.documentElement.dataset.vcBuild='36';
   const WEB = 'https://online.challenger.sg';
   const KEY_STATE = 'vc_state_v1';
   const KEY_ACCTS = 'vc_accounts_v1';
@@ -267,7 +267,7 @@
     const named = () => (st().uFirst ? {} : { uFirst: 'Alex', uLast: 'Tan' });
     const sections = [
       ['Device', [{label:'Device version',sub:'Automatic uses your operating system, available space and touch support. Overrides keep actual screen size on mobile; desktop previews use sample dimensions.',type:'seg',opts:[['auto','Automatic'],['iphone','iPhone'],['iphone-duo','iPhone Duo'],['ipad','iPad'],['android','Android'],['android-foldable','Android foldable'],['android-tablet','Android tablet']],get:()=>devProps.deviceOverride||'auto',set:v=>{devProps={...devProps,deviceOverride:v};for(const k of ['w','h','size','platform','duo','vbar'])delete devProps[k];store.set(KEY_DEV,devProps);mount();}}]],
-      ['Demo dates · Build 35', [{label:'Shift original dates',sub:'Applies to all demo calendar dates and warranty eligibility',type:'seg',opts:[[0,'Original'],[3,'+3 days'],[7,'+7 days'],[14,'+14 days']],get:()=>st().dateOffsetDays??3,set:v=>set({dateOffsetDays:Number(v)})},{label:'Custom offset in days',type:'number',get:()=>st().dateOffsetDays??3},{label:'Warranty purchase window',type:'seg',opts:[['auto','Use shifted dates'],['available','Available'],['expired','Expired']],get:()=>st().warrantyDemoState||'auto',set:v=>set({warrantyDemoState:v})}]],
+      ['Demo dates · Build 36', [{label:'Shift original dates',sub:'Applies to all demo calendar dates and warranty eligibility',type:'seg',opts:[[0,'Original'],[3,'+3 days'],[7,'+7 days'],[14,'+14 days']],get:()=>st().dateOffsetDays??3,set:v=>set({dateOffsetDays:Number(v)})},{label:'Custom offset in days',type:'number',get:()=>st().dateOffsetDays??3},{label:'Warranty purchase window',type:'seg',opts:[['auto','Use shifted dates'],['available','Available'],['expired','Expired']],get:()=>st().warrantyDemoState||'auto',set:v=>set({warrantyDemoState:v})}]],
       ['Account', [
         { label: 'Tier', type: 'seg', opts: [['guest', 'Guest'], ['free', 'Free'], ['m3', '3-month'], ['m12', '12-month']], get: () => st().tier,
           set: (v) => set(Object.assign(v === 'guest' ? {} : named(), { tier: v, tab: 'home', history: [], modal: '', iam: '' })) },
@@ -342,7 +342,7 @@
         });
         html += '</div>';
       });
-      html += '<p class="dv-foot">3 taps on the ValueClub logo opens this menu. 5 taps resets the app.<br>Build: Android carousel spacing v35</p></div></div>';
+      html += '<p class="dv-foot">3 taps on the ValueClub logo opens this menu. 5 taps resets the app.<br>Build: Android banner paging v36</p></div></div>';
       const keep = layer.querySelector('.dv-body'); const top = keep ? keep.scrollTop : 0;
       layer.innerHTML = html;
       const body = layer.querySelector('.dv-body'); if (body) body.scrollTop = top;
