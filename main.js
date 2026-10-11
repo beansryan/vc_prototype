@@ -1,6 +1,6 @@
 /* ValueClub MVP shell: mounts the App, saves state, fake accounts, real links, hidden reset. */
 (function () {
-  document.documentElement.dataset.vcBuild='46';
+  document.documentElement.dataset.vcBuild='48';
   const WEB = 'https://online.challenger.sg';
   const KEY_STATE = 'vc_state_v1';
   const KEY_ACCTS = 'vc_accounts_v1';
@@ -289,7 +289,7 @@
       ['Device', [{label:'Device version',sub:'Automatic uses your operating system, available space and touch support. Overrides keep actual screen size on mobile; desktop previews use sample dimensions.',type:'seg',opts:[['auto','Automatic'],['iphone','iPhone'],['iphone-duo','iPhone Duo'],['ipad','iPad Pro 11-inch'],['android','Galaxy S26 Ultra'],['android-foldable','Galaxy Z Fold8'],['android-foldable-ultra','Galaxy Z Fold8 Ultra'],['android-tablet','Galaxy Tab S12 Ultra']],get:()=>devProps.deviceOverride||'auto',set:v=>{devProps={...devProps,deviceOverride:v};for(const k of ['w','h','size','platform','duo','vbar'])delete devProps[k];store.set(KEY_DEV,devProps);mount();}},
       {label:'Duo display',when:()=>desk&&devProps.deviceOverride==='iphone-duo',type:'seg',opts:[['open','Open'],['closed','Closed']],get:()=>devProps.previewPosture||'open',set:v=>setPreview('previewPosture',v)},
       {label:'Preview orientation',when:()=>desk&&['iphone-duo','ipad','android-foldable','android-foldable-ultra','android-tablet'].includes(devProps.deviceOverride)&&!(devProps.deviceOverride==='iphone-duo'&&devProps.previewPosture==='closed'),type:'seg',opts:[['portrait','Portrait'],['landscape','Landscape']],get:()=>devProps.previewOrientation||(VCDevices.presets[devProps.deviceOverride]?.w>VCDevices.presets[devProps.deviceOverride]?.h?'landscape':'portrait'),set:v=>setPreview('previewOrientation',v)}]],
-      ['Demo dates · Build 46', [{label:'Shift original dates',sub:'Applies to all demo calendar dates and warranty eligibility',type:'seg',opts:[[0,'Original'],[3,'+3 days'],[7,'+7 days'],[14,'+14 days']],get:()=>st().dateOffsetDays??3,set:v=>set({dateOffsetDays:Number(v)})},{label:'Custom offset in days',type:'number',get:()=>st().dateOffsetDays??3},{label:'Warranty purchase window',type:'seg',opts:[['auto','Use shifted dates'],['available','Available'],['expired','Expired']],get:()=>st().warrantyDemoState||'auto',set:v=>set({warrantyDemoState:v})}]],
+      ['Demo dates · Build 48', [{label:'Shift original dates',sub:'Applies to all demo calendar dates and warranty eligibility',type:'seg',opts:[[0,'Original'],[3,'+3 days'],[7,'+7 days'],[14,'+14 days']],get:()=>st().dateOffsetDays??3,set:v=>set({dateOffsetDays:Number(v)})},{label:'Custom offset in days',type:'number',get:()=>st().dateOffsetDays??3},{label:'Warranty purchase window',type:'seg',opts:[['auto','Use shifted dates'],['available','Available'],['expired','Expired']],get:()=>st().warrantyDemoState||'auto',set:v=>set({warrantyDemoState:v})}]],
       ['Account', [
         { label: 'Tier', type: 'seg', opts: [['guest', 'Guest'], ['free', 'Free'], ['m3', '3-month'], ['m12', '12-month']], get: () => st().tier,
           set: (v) => set(Object.assign(v === 'guest' ? {} : named(), { tier: v, tab: 'home', history: [], modal: '', iam: '' })) },
@@ -365,7 +365,7 @@
         });
         html += '</div>';
       });
-      html += '<p class="dv-foot">3 taps on the ValueClub logo opens this menu. 5 taps resets the app.<br>Build: Device previews v46</p></div></div>';
+      html += '<p class="dv-foot">3 taps on the ValueClub logo opens this menu. 5 taps resets the app.<br>Build: Device previews v48</p></div></div>';
       const keep = layer.querySelector('.dv-body'); const top = keep ? keep.scrollTop : 0;
       layer.innerHTML = html;
       const body = layer.querySelector('.dv-body'); if (body) body.scrollTop = top;
