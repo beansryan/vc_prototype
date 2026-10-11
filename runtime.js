@@ -45,8 +45,8 @@
     if (node.nodeType === 3) {
       const txt = node.nodeValue;
       if (/^\s*$/.test(txt) && txt.indexOf('\n') >= 0) return null;
-      if (txt.indexOf('{{') < 0) return () => txt;
-      return (sc) => { const v = interp(txt, sc); return v == null ? '' : String(v); };
+      if (txt.indexOf('{{') < 0) return sc=>window.VCDates?VCDates.text(txt,VCDates.scopeOffset(sc)):txt;
+      return (sc) => { const v = interp(txt, sc); return v == null ? '' : (window.VCDates?VCDates.text(String(v),VCDates.scopeOffset(sc)):String(v)); };
     }
     if (node.nodeType !== 1) return null;
     const tag = node.localName;
@@ -92,8 +92,13 @@
         const [k, v] = attrs[i];
         let val = interp(v, sc);
         if (BOOL[k] && val === '') val = true;
-        if (k.slice(0, 2) === 'on' && typeof val !== 'function') continue;
-        p[k] = val;
+        if (k.slice(0, 2) === 'on' && typeof val !== 'function') { if(k==='onClick')p['data-missing-action']=v; continue; }
+        if (k === 'style' && typeof val === 'string') {
+          // Scale type only. Icons, spacing, hit targets and screen dimensions remain physical pixels.
+          if (/t\.(avatarSm|badgeCount|stepNum|badge|avatar)\b/.test(v)) val += ';--vc-type-scale:1;';
+          val = val.replace(/font-size:\s*([\d.]+)px/g, (_, n) => 'font-size:calc(' + n + 'px * var(' + (+n >= 28 ? '--vc-display-scale' : '--vc-type-scale') + ',1))');
+        }
+        if(window.VCDates&&typeof val==='string'&&!['style','href','src'].includes(k))val=VCDates.text(val,VCDates.scopeOffset(sc));p[k] = val;
       }
       return h(tag, p, renderKids(sc));
     };
@@ -126,7 +131,7 @@
       componentWillUnmount() { if (this.L.componentWillUnmount) this.L.componentWillUnmount(); }
       render() {
         this.L.props = Object.assign({}, this.props.p);
-        const vals = this.L.renderVals ? this.L.renderVals() : {};
+        const raw = this.L.renderVals ? this.L.renderVals() : {};const vals=window.VCDates?VCDates.values(raw,this.L):raw;
         const sc = { vars: vals, parent: null };
         return h(Fragment, null, kids.map((k) => k(sc)));
       }
