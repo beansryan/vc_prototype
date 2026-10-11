@@ -469,7 +469,7 @@ class AppLogic extends DCLogic {
       // Android: M3 hero carousel (one large item, the next item peeks as a 48dp small item; no page dots)
       bannerRow: heroSide ? 'display:flex;'
         : heroInset && !ios && heroN > 1
-        ? 'display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:20px;'
+        ? 'display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:20px;'
         : heroInset
         ? 'display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:' + nestR + 'px;'
         : compact
