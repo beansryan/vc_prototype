@@ -1,6 +1,6 @@
 /* ValueClub MVP shell: mounts the App, saves state, fake accounts, real links, hidden reset. */
 (function () {
-  document.documentElement.dataset.vcBuild='60';
+  document.documentElement.dataset.vcBuild='61';
   const WEB = 'https://online.challenger.sg';
   const KEY_STATE = 'vc_state_v1';
   const KEY_ACCTS = 'vc_accounts_v1';

@@ -1,6 +1,6 @@
 /* v18: one bounded navigation owner, opaque page-local layers, no document ViewTransitions. */
 (() => {
-  document.documentElement.dataset.vcMotionRevision='23';
+  document.documentElement.dataset.vcMotionRevision='24';
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const roots = new Set(['home','vouchers','account','discover']);
   window.VCFx = { install(L, root) {
@@ -249,9 +249,9 @@
       if(['home','vouchers','account'].includes(tab))isRoot=true;
       if(isRoot&&roots.has(tab)){
         if(tab===selected){
-          if(this.state.tab===tab&&!this.state.history.length){settle();return;}
+          if(this.state.tab===tab&&!this.state.history.length){settle();this.scroller.scrollTo({top:0,behavior:reduced.matches?'auto':'smooth'});return;}
           const origin=stack.find(entry=>entry.key===tab);
-          const saved={root:tab,tab,history:[],rSel:'',stack:[],y:origin?.y||0};
+          const saved={root:tab,tab,history:[],rSel:'',stack:[],y:0};
           sessions.set(tab,saved);this._tabRestore=saved;this._rootNav=true;
           this.setState({tab,history:[],rSel:'',fabHide:false});return;
         }
