@@ -1,0 +1,150 @@
+{
+  "destinations": {
+    "duo": "https://online.challenger.sg/products/mk2f4x-a-iphone-duo-512gb-star-white",
+    "instax": "https://online.challenger.sg/products/fujifilm-instax-pal-2-digital-camera-white",
+    "huawei": "https://online.challenger.sg/products/huawei-watch-gt-7-pro-46mm-black",
+    "laptop1010": "https://online.challenger.sg/collections/10-10-notebook-mega-sales",
+    "polaroid": "https://online.challenger.sg/collections/polaroid-september-promotion",
+    "valore": "https://online.challenger.sg/collections/valore-and-vce-buy-1-get-1-free",
+    "mario": "https://online.challenger.sg/collections/gaming-consoles",
+    "acer": "https://online.challenger.sg/collections/acer-redemption-promotion",
+    "brother": "https://online.challenger.sg/collections/brother",
+    "membership": "https://online.challenger.sg/pages/valueclub-membership",
+    "laptops": [
+      "https://online.challenger.sg/products/asus-zb-ux5406aa-su098w-u9-386h-32gb-1tb-14-cp-t",
+      "https://online.challenger.sg/products/asus-zb-ux3405ca-su954w-u7-255h-32gb-1tb-14-t",
+      "https://online.challenger.sg/products/asus-zb-ux5606sa-rk231w-u7-258v-32gb-1tb-16-t",
+      "https://online.challenger.sg/products/asus-vb-s3407aa-sf014w-ut7-355-32gb-1tb-14-cp",
+      "https://online.challenger.sg/products/asus-tuf-fx608jpr-qt046w-i7-14650h-32gb-1tb-rtx5070-16-grey",
+      "https://online.challenger.sg/products/msi-katana-15-hx-b14wfk-452sg-i7-14650hx-16gb-512gb-rtx5060"
+    ]
+  },
+  "bannerSources": [
+    {
+      "id": "instax",
+      "image": "work/base/assets/hero-instax.png",
+      "source": "https://online.challenger.sg/cdn/shop/files/instax_Pal_2_Digital_Camera_1080x1080px_480cc07b-d219-47c5-a58e-04cf0f7b7027.png?v=1791423921&width=800",
+      "url": "https://online.challenger.sg/products/fujifilm-instax-pal-2-digital-camera-white"
+    },
+    {
+      "id": "huawei",
+      "image": "work/base/assets/hero-huawei.jpg",
+      "source": "https://online.challenger.sg/cdn/shop/files/Challenger_Social_Media_FB_1080_x_1080_9c4c9262-80a5-4368-89b2-b4f3643c6744.jpg?v=1791352542&width=800",
+      "url": "https://online.challenger.sg/products/huawei-watch-gt-7-pro-46mm-black"
+    }
+  ],
+  "verified": [
+    {
+      "url": "https://online.challenger.sg/collections/10-10-notebook-mega-sales",
+      "status": 200,
+      "title": null,
+      "products": 1,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/collections/acer-redemption-promotion",
+      "status": 200,
+      "title": null,
+      "products": 1,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/collections/brother",
+      "status": 200,
+      "title": null,
+      "products": 1,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/collections/gaming-consoles",
+      "status": 200,
+      "title": null,
+      "products": 1,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/collections/polaroid-september-promotion",
+      "status": 200,
+      "title": null,
+      "products": 1,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/collections/valore-and-vce-buy-1-get-1-free",
+      "status": 200,
+      "title": null,
+      "products": 1,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/pages/valueclub-membership",
+      "status": 200,
+      "title": null,
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/asus-tuf-fx608jpr-qt046w-i7-14650h-32gb-1tb-rtx5070-16-grey",
+      "status": 200,
+      "title": "Asus TUF Gaming F16 FX608JPR-QT046W - i7-14650H 32GB 1TB RTX5070 16\"",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/asus-vb-s3407aa-sf014w-ut7-355-32gb-1tb-14-cp",
+      "status": 200,
+      "title": "Asus Vivobook S14 S3407AA-SF014W - UT7-355 32GB 1TB 14\" CP+",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/asus-zb-ux3405ca-su954w-u7-255h-32gb-1tb-14-t",
+      "status": 200,
+      "title": "Asus Zenbook 14 UX3405CA-SU954W - U7-255H 32GB 1TB 14\" OLED Touch",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/asus-zb-ux5406aa-su098w-u9-386h-32gb-1tb-14-cp-t",
+      "status": 200,
+      "title": "Asus Zenbook S14 UX5406AA-SU098W - U9-386H 32GB 1TB 14\" OLED Touch CP+",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/asus-zb-ux5606sa-rk231w-u7-258v-32gb-1tb-16-t",
+      "status": 200,
+      "title": "Asus Zenbook S16 UX5606SA-RK231W - U7-258V 32GB 1TB 16\" OLED",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/fujifilm-instax-pal-2-digital-camera-white",
+      "status": 200,
+      "title": "Fujifilm Instax Pal 2 Digital Camera - White",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/huawei-watch-gt-7-pro-46mm-black",
+      "status": 200,
+      "title": "Huawei Watch GT 7 Pro 46mm Black",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/mk2f4x-a-iphone-duo-512gb-star-white",
+      "status": 200,
+      "title": "Apple iPhone Duo 512GB Star White",
+      "products": null,
+      "pass": true
+    },
+    {
+      "url": "https://online.challenger.sg/products/msi-katana-15-hx-b14wfk-452sg-i7-14650hx-16gb-512gb-rtx5060",
+      "status": 200,
+      "title": "MSI Katana 15 HX B14WFK-452SG - i7-14650HX 16GB 512GB GeForce RTX 5060",
+      "products": null,
+      "pass": true
+    }
+  ]
+}

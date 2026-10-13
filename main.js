@@ -1,25 +1,37 @@
 /* ValueClub MVP shell: mounts the App, saves state, fake accounts, real links, hidden reset. */
 (function () {
-  document.documentElement.dataset.vcBuild='51';
+  document.documentElement.dataset.vcBuild='60';
   const WEB = 'https://online.challenger.sg';
   const KEY_STATE = 'vc_state_v1';
   const KEY_ACCTS = 'vc_accounts_v1';
   const KEY_A2HS = 'vc_a2hs_seen';
   const KEY_DEV = 'vc_dev_v1';
+  const KEY_UI = 'vc_preview_ui_v1';
   const { defineDC, h, render } = window.VCRuntime;
 
   // ---------- storage (never fatal) ----------
-  const isQA = /\/QA(?:-motion|-review|-shop|-sections|-audit|-regressions|-PWA|-focused|-campaigns|-android-campaigns|-tablet|-campaign-layout|-prices|-nav|-frames)?\.html$/.test(location.pathname);
+  const isQA = /\/QA(?:-motion|-review|-shop|-sections|-audit|-regressions|-PWA|-focused|-campaigns|-android-campaigns|-tablet|-campaign-layout|-prices|-nav|-frames|-guide|-rail|-stores|-alignment)?\.html$/.test(location.pathname);
   const store = {
-    get(k, d) { if(isQA)return d; try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
-    set(k, v) { if(isQA)return; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+    get(k, d) { if(isQA&&k!==KEY_UI)return d; try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+    set(k, v) { if(isQA&&k!==KEY_UI)return; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
     clear() { if(isQA)return; try { localStorage.clear(); } catch (e) {} }
   };
+  let previewUI = store.get(KEY_UI, {});
+  function applyPreviewControls() {
+    const button = document.getElementById('devicePickerButton');
+    if (!button) return;
+    const hide = !!previewUI.hideDeviceButton;
+    button.hidden = hide;
+    button.style.display = hide ? 'none' : '';
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', applyPreviewControls, { once: true });
+  else applyPreviewControls();
+
   const today = () => {const parts=new Intl.DateTimeFormat('en',{timeZone:'Asia/Singapore',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const get=t=>parts.find(p=>p.type===t).value;return get('year')+'-'+get('month')+'-'+get('day');};
 
   // state that survives a relaunch (everything else starts fresh, like a cold app start)
   const KEEP = ['tier', 'uFirst', 'uLast', 'uEmail', 'uMobile', 'acctKey', 'claimed', 'read', 'dismissed', 'bday', 'themePref', 'bigText',
-    'affinity', 'push', 'notif', 'subCancelled', 'lapsed', 'renewals', 'checked', 'spun', 'saver', 'mktOn', 'remember', 'reminded', 'chJoined', 'sr', 'earned', 'day',
+    'affinity', 'push', 'notif', 'subCancelled', 'lapsed', 'renewals', 'checked', 'spun', 'saver', 'mktOn', 'remember', 'reminded', 'chJoined', 'sr', 'earned', 'day', 'nextPaymentDate', 'paymentRecovered', 'paymentFail',
     'dateOffsetDays','warrantyDemoState','attn', 'attnSet', 'campaign', 'game', 'games', 'loc', 'cardLead'];
 
   // ---------- accounts (prototype only: any details work) ----------
@@ -240,7 +252,7 @@
     mountedLayout=layoutKey;
     render(h(App, { p: { platform: VCDevices.platform(navigator), size: sz.w < 600 ? 'compact' : sz.w < 840 ? 'medium' : 'expanded', tier: 'guest', w: sz.w, h: sz.h, theme: darkMq.matches ? 'dark' : 'light', intro: 'none', topAdjust: sz.topAdjust || 0, ...devProps, ...VCDevices.resolve(navigator,sz.w,sz.h,devProps.deviceOverride||'auto'), ...(preview.get('platform') === 'android' ? {platform:'android'} : {}), ...(preview.get('text') === '200' ? {textSize:'large'} : {}) }, onLogic }), document.getElementById('root'));
   }
-  if (isQA) VCApp.testLayout = (w,h,p={}) => {devProps={...p,w,h,size:w<600?'compact':w<840?'medium':'expanded'};mount();};
+  if (isQA) VCApp.testLayout = (w,h,p={}) => {devProps={...p,deviceOverride:p.deviceOverride||(p.duo?'iphone-duo':p.platform==='android'?'android':'iphone'),previewPosture:p.duo&&w===466?'closed':'open',previewOrientation:w>h?'landscape':'portrait',w,h,size:w<600?'compact':w<840?'medium':'expanded'};mount();};
   mount();
   const warmImages = () => ['assets/f4f1fe1c497a6645f7a23a31777d8539.jpg','assets/45fa7290869b5e4143ac98d29a13cc15.jpg','assets/hero-instax.png','assets/hero-huawei.jpg','assets/zenbook.png','assets/756b2a9aa853d0e4aa0b55ee8f8967cf.jpg','assets/7ee051c627c52b393a4afacbc93f2a61.jpg','assets/eb79d24a3a3b837fc614d883978ea6f6.jpg','assets/b5ef8f8a7ae1d1dffe0456083ba922a6.jpg','assets/f7b5ee2a9a440913f685e18f56a1b0d4.jpg'].forEach(src=>{const img=new Image();img.src=src;if(img.decode)img.decode().catch(()=>{});});
   if(window.requestIdleCallback)requestIdleCallback(warmImages,{timeout:3000});else setTimeout(warmImages,3000);
@@ -286,10 +298,11 @@
     const setProp = (k, v) => { devProps = Object.assign({}, devProps, { [k]: v }); store.set(KEY_DEV, devProps); mount(); };
     const named = () => (st().uFirst ? {} : { uFirst: 'Alex', uLast: 'Tan' });
     const sections = [
+      ['Preview controls', [{ label: 'Show Devices & states button', sub: 'Hide for a clean preview. Tap the ValueClub logo three times to reopen this menu.', type: 'toggle', get: () => !previewUI.hideDeviceButton, set: (v) => { previewUI = { ...previewUI, hideDeviceButton: !v }; store.set(KEY_UI, previewUI); applyPreviewControls(); } }]],
       ['Device', [{label:'Device version',sub:'Automatic uses your operating system, available space and touch support. Overrides keep actual screen size on mobile; desktop previews use sample dimensions.',type:'seg',opts:[['auto','Automatic'],['iphone','iPhone'],['iphone-duo','iPhone Duo'],['ipad','iPad Pro 11-inch'],['android','Galaxy S26 Ultra'],['android-foldable','Galaxy Z Fold8'],['android-foldable-ultra','Galaxy Z Fold8 Ultra'],['android-tablet','Galaxy Tab S12 Ultra']],get:()=>devProps.deviceOverride||'auto',set:v=>{devProps={...devProps,deviceOverride:v};for(const k of ['w','h','size','platform','duo','vbar'])delete devProps[k];store.set(KEY_DEV,devProps);mount();}},
       {label:'Duo display',when:()=>desk&&devProps.deviceOverride==='iphone-duo',type:'seg',opts:[['open','Open'],['closed','Closed']],get:()=>devProps.previewPosture||'open',set:v=>setPreview('previewPosture',v)},
       {label:'Preview orientation',when:()=>desk&&['iphone-duo','ipad','android-foldable','android-foldable-ultra','android-tablet'].includes(devProps.deviceOverride)&&!(devProps.deviceOverride==='iphone-duo'&&devProps.previewPosture==='closed'),type:'seg',opts:[['portrait','Portrait'],['landscape','Landscape']],get:()=>devProps.previewOrientation||(VCDevices.presets[devProps.deviceOverride]?.w>VCDevices.presets[devProps.deviceOverride]?.h?'landscape':'portrait'),set:v=>setPreview('previewOrientation',v)}]],
-      ['Demo dates · Build 51', [{label:'Shift original dates',sub:'Applies to all demo calendar dates and warranty eligibility',type:'seg',opts:[[0,'Original'],[3,'+3 days'],[7,'+7 days'],[14,'+14 days']],get:()=>st().dateOffsetDays??3,set:v=>set({dateOffsetDays:Number(v)})},{label:'Custom offset in days',type:'number',get:()=>st().dateOffsetDays??3},{label:'Warranty purchase window',type:'seg',opts:[['auto','Use shifted dates'],['available','Available'],['expired','Expired']],get:()=>st().warrantyDemoState||'auto',set:v=>set({warrantyDemoState:v})}]],
+      ['Demo dates · Build 52', [{label:'Shift original dates',sub:'Shifts marketing demo dates and warranty eligibility; preserves membership/payment dates',type:'seg',opts:[[0,'Original'],[3,'+3 days'],[7,'+7 days'],[14,'+14 days']],get:()=>st().dateOffsetDays??3,set:v=>set({dateOffsetDays:Number(v)})},{label:'Custom offset in days',type:'number',get:()=>st().dateOffsetDays??3},{label:'Warranty purchase window',type:'seg',opts:[['auto','Use shifted dates'],['available','Available'],['expired','Expired']],get:()=>st().warrantyDemoState||'auto',set:v=>set({warrantyDemoState:v})}]],
       ['Account', [
         { label: 'Tier', type: 'seg', opts: [['guest', 'Guest'], ['free', 'Free'], ['m3', '3-month'], ['m12', '12-month']], get: () => st().tier,
           set: (v) => set(Object.assign(v === 'guest' ? {} : named(), { tier: v, tab: 'home', history: [], modal: '', iam: '' })) },
@@ -365,7 +378,7 @@
         });
         html += '</div>';
       });
-      html += '<p class="dv-foot">3 taps on the ValueClub logo opens this menu. 5 taps resets the app.<br>Build: Device previews v51</p></div></div>';
+      html += '<p class="dv-foot">3 taps on the ValueClub logo opens this menu. 5 taps resets the app.<br>Build: Device previews v52 · handoff revision 6</p></div></div>';
       const keep = layer.querySelector('.dv-body'); const top = keep ? keep.scrollTop : 0;
       layer.innerHTML = html;
       const body = layer.querySelector('.dv-body'); if (body) body.scrollTop = top;

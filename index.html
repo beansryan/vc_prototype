@@ -162,26 +162,26 @@
   #resetFlash.on { opacity: 1; }
 </style>
 <style>[data-tabbar]{touch-action:none}button{min-height:44px} [data-vc-layer]{contain:layout paint;will-change:transform} @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}[data-spin-wheel]{transition:none!important}}</style><link rel="stylesheet" href="campaign-layout.css?v=43">
-</head>
+<style>[data-main-scroller]::-webkit-scrollbar{display:none}</style></head>
 <body>
 <div id="root"></div>
 <div id="island"></div>
 <div id="hinge" aria-hidden="true"></div>
-<div id="deskNote"><b>ValueClub app prototype</b><br>Best on iPhone: open this page in Safari, tap Share, then Add to Home Screen. It opens full screen like the real app.</div>
+<div id="deskNote"><b>ValueClub app prototype</b><br>Use Devices & states to choose a phone, tablet or foldable, then change posture and orientation. Hardware outlines are approximate.</div>
 <div id="a2hs" role="dialog" aria-label="Add to Home Screen"><b>Add ValueClub to your Home Screen</b>Tap <span aria-label="Share">Share</span> in Safari, then <b style="display:inline;font-size:15px;margin:0">Add to Home Screen</b>. It opens full screen, like the real app.<button type="button" id="a2hsOk">Got it</button></div>
 <div id="devLayer"></div>
 <div id="resetFlash"></div>
 <script src="preact.min.js"></script>
 <script src="dates.js?v=23-fix"></script>
 <script src="runtime.js?v=23-fix"></script>
-<script src="app-v51.js?v=51"></script>
+<script src="app-motion-r23.js?v=61"></script>
 <script src="campaigns-fixture.js?v=43"></script>
 <script src="campaigns.js?v=43"></script>
-<script src="fx.js?v=51"></script>
-<script src="sections.js?v=51-fix"></script>
+<script src="fx-motion-r23.js?v=61"></script>
+<script src="sections-stores-r23.js?v=62"></script>
 <script src="accessibility.js?v=23-fix"></script>
 <script src="store-maps.js"></script>
 <script src="devices.js"></script>
-<script src="main.js?v=51"></script>
-</body>
+<script src="main-motion-r23.js?v=61"></script>
+<button type="button" id="devicePickerButton" hidden style="position:fixed;top:12px;right:12px;z-index:10000;padding:8px 12px;border:1px solid #d3d7e4;border-radius:10px;background:#fff;color:#202958;font:13px system-ui" onclick="VCApp.dev.open()">Devices &amp; states</button></body>
 </html>
